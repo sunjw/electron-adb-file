@@ -1,12 +1,12 @@
 {
-  "name": "electron-quick-start",
-  "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "name": "electron-adb-file",
+  "version": "0.0.1",
+  "description": "An ADB file tool built on Electron",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
   },
-  "repository": "https://github.com/electron/electron-quick-start",
+  "repository": "https://github.com/sunjw/electron-adb-file",
   "keywords": [
     "Electron",
     "quick",
@@ -14,8 +14,8 @@
     "tutorial",
     "demo"
   ],
-  "author": "GitHub",
-  "license": "CC0-1.0",
+  "author": "Sun Junwen",
+  "license": "GPL-2.0",
   "devDependencies": {
     "electron": "^3.0.0"
   }
