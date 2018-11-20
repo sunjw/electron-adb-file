@@ -6,4 +6,7 @@ const ADBHelper = require('./adb-helper.js');
 
 $(function () {
     var adbHelper = new ADBHelper.ADBHelper('adb');
+    adbHelper.getDevices((adbDevices) => {
+        
+    });
 });

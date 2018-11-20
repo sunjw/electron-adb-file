@@ -5,11 +5,42 @@ class ADBHelper {
     constructor(adbPath) {
         this.adbPath = adbPath;
 
-        Utils.log('adb=[' + this.adbPath + ']');
+        //Utils.log('adb=[' + this.adbPath + ']');
     }
 
-    getDevices() {
+    getDevices(onDevicesCallback) {
+        var cmd = new ChildProcessHelper.ChildProcessHelper(this.adbPath, ['devices']);
+        var outChunks = [];
 
+        cmd.run((child, data) => {
+            outChunks.push(data.toString());
+        }, (child, exitCode) => {
+            var cmdOutput = outChunks.join('');
+            //Utils.log('cmdOutput=[' + cmdOutput + ']');
+
+            var adbDevices = [];
+            var foundHeader = false;
+            var lines = cmdOutput.split('\n');
+            for (var line of lines) {
+                line = line.trim();
+                if (line == '') {
+                    continue;
+                }
+                if (line == 'List of devices attached') {
+                    foundHeader = true;
+                    continue;
+                }
+                if (foundHeader) {
+                    var[id, status] = line.split('\t');
+                    var device = {};
+                    device.id = id;
+                    device.status = status;
+                    adbDevices.push(device);
+                }
+            }
+
+            onDevicesCallback(adbDevices);
+        });
     }
 }
 
