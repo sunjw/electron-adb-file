@@ -4,9 +4,13 @@
 const Utils = require('./utils.js');
 const ADBHelper = require('./adb-helper.js');
 
+var divFileList = 0;
+
 $(function () {
+    divFileList = $('#divFileList');
+
     var adbHelper = new ADBHelper.ADBHelper('adb');
     adbHelper.getDevices((adbDevices) => {
-        
+        divFileList.text('Found devices: ' + adbDevices.length);
     });
 });
