@@ -13,8 +13,10 @@ class ADBHelper {
         var outChunks = [];
 
         cmd.run((child, data) => {
+            // On process output...
             outChunks.push(data.toString());
         }, (child, exitCode) => {
+            // On process finished
             var cmdOutput = outChunks.join('');
             //Utils.log('cmdOutput=[' + cmdOutput + ']');
 
