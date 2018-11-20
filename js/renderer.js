@@ -8,6 +8,7 @@ var divFileList = 0;
 
 $(function () {
     divFileList = $('#divFileList');
+    divFileList.empty();
 
     var adbHelper = new ADBHelper.ADBHelper('adb');
     adbHelper.getDevices((adbDevices) => {
