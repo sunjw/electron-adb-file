@@ -211,5 +211,6 @@ class ADBHelper {
 // exports
 exports.CMD_DELIMITER = CMD_DELIMITER;
 exports.CMD_SELECT_DEVICE = CMD_SELECT_DEVICE;
+exports.isFileDir = isFileDir;
 exports.isFileLink = isFileLink;
 exports.ADBHelper = ADBHelper;

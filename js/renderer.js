@@ -27,6 +27,7 @@ function clearDirList() {
 function refreshDeviceList() {
     adbHelper.getDevices((adbDevicesResult) => {
         clearDeviceList();
+
         if (adbDevicesResult.code != 0) {
             divDeviceList.text('Error: ' + adbDevicesResult.code + ', ' + adbDevicesResult.err);
             return;
@@ -39,8 +40,8 @@ function refreshDeviceList() {
             for (const device of devices) {
                 var deviceAvailable = (device.status == 'device');
 
-                var divDeviceId = $('<div/>').addClass('deviceId')
-                    var divDeviceLine = $('<div/>').addClass('deviceLine');
+                var divDeviceLine = $('<div/>').addClass('deviceLine');
+                var divDeviceId = $('<div/>').addClass('deviceId');
                 if (deviceAvailable) {
                     var selectDeviceCmd = ADBHelper.CMD_SELECT_DEVICE + ADBHelper.CMD_DELIMITER + device.id;
                     var aDeviceLink = $('<a/>').text(device.id).attr('href', '#' + selectDeviceCmd).click(function () {
@@ -80,8 +81,29 @@ function selectDeviceAndRefreshRootDir(device) {
     adbHelper.setCurDevice(device);
     adbHelper.setCurDir('/');
     adbHelper.getDirList((adbDirListResult) => {
-        clearDeviceList();
-        Utils.log('adbDirListResult.dirList length: ' + adbDirListResult.dirList.length);
+        clearDirList();
+
+        if (adbDirListResult.code != 0) {
+            divDirList.text('Error: ' + adbDirListResult.code + ', ' + adbDirListResult.err);
+            return;
+        }
+
+        var dirList = adbDirListResult.dirList;
+        for (var file of dirList) {
+            var fileLine = $('<div/>').addClass('fileLine');
+
+            var fileName = $('<div/>').addClass('fileName').text(file.name);
+            fileLine.append(fileName);
+            var fileType = $('<div/>').addClass('fileType');
+            if (ADBHelper.isFileDir(file)) {
+                fileType.text('Folder');
+            } else {
+                fileType.text('File');
+            }
+            fileLine.append(fileType);
+
+            divDirList.append(fileLine);
+        }
     });
 }
 
