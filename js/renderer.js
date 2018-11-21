@@ -4,38 +4,24 @@ const ADBHelper = require('./adb-helper.js');
 var adbHelper = 0;
 
 var divDeviceList = 0;
-var divFileList = 0;
+var divDirList = 0;
 
 function init() {
     adbHelper = new ADBHelper.ADBHelper('adb');
 
     divDeviceList = $('#divDeviceList');
-    divFileList = $('#divFileList');
+    divDirList = $('#divDirList');
 
     clearDeviceList();
-    //clearFileList();
-}
-
-function handleCmdClick(cmdLink) {
-    var cmd = cmdLink.attr('href').substr(1);
-    var delimiterIdx = cmd.indexOf(ADBHelper.CMD_DELIMITER);
-    var adbCmd = cmd.substr(0, delimiterIdx);
-    var adbCmdParam = cmd.substr(delimiterIdx + 1);
-    switch (adbCmd) {
-    case ADBHelper.CMD_SELECT_DEVICE:
-        const device = adbCmdParam;
-        adbHelper.setCurDevice(device);
-        break;
-    }
-    return false;
+    //clearDirList();
 }
 
 function clearDeviceList() {
     divDeviceList.empty();
 }
 
-function clearFileList() {
-    divFileList.empty();
+function clearDirList() {
+    divDirList.empty();
 }
 
 function refreshDeviceList() {
@@ -73,6 +59,25 @@ function refreshDeviceList() {
             }
         }
     });
+}
+
+function handleCmdClick(cmdLink) {
+    var cmd = cmdLink.attr('href').substr(1);
+    var delimiterIdx = cmd.indexOf(ADBHelper.CMD_DELIMITER);
+    var adbCmd = cmd.substr(0, delimiterIdx);
+    var adbCmdParam = cmd.substr(delimiterIdx + 1);
+    switch (adbCmd) {
+    case ADBHelper.CMD_SELECT_DEVICE:
+        const device = adbCmdParam;
+        selectDeviceAndRefreshRootDir(device);
+        break;
+    }
+    return false;
+}
+
+function selectDeviceAndRefreshRootDir(device) {
+    adbHelper.setCurDevice(device);
+    adbHelper.setCurDir('/');
 }
 
 $(function () {

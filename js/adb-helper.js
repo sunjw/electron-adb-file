@@ -8,6 +8,7 @@ class ADBHelper {
     constructor(adbPath) {
         this.adbPath = adbPath;
         this.curDevice = '';
+        this.curDir = '';
 
         //Utils.log('adb=[' + this.adbPath + ']');
     }
@@ -55,6 +56,18 @@ class ADBHelper {
     setCurDevice(device) {
         this.curDevice = device;
         Utils.log('setCurDevice=[' + this.curDevice + ']');
+    }
+
+    getDirList() {}
+
+    setCurDir(path) {
+        // path must end with '/'
+        if (!path.endsWith('/')) {
+            Utils.log('setCurDir=[' + path + '], not end with \'/\'');
+            return;
+        }
+        this.curDir = path;
+        Utils.log('setCurDir=[' + this.curDir + ']');
     }
 }
 
