@@ -20,33 +20,43 @@ class ADBHelper {
         cmd.run((child, data) => {
             // On process output...
             outChunks.push(data.toString());
-        }, (child, exitCode) => {
+        }, (child, exitCode, err) => {
             // On process finished
+            var adbDevicesResult = {};
+            adbDevicesResult.code = 0;
+            adbDevicesResult.err = '';
+            adbDevicesResult.devices = [];
+
+            if (exitCode != 0) {
+                adbDevicesResult.code = exitCode;
+                adbDevicesResult.err = err.message;
+                onDevicesCallback(adbDevicesResult);
+                return;
+            }
+
             var cmdOutput = outChunks.join('');
             //Utils.log('cmdOutput=[' + cmdOutput + ']');
 
-            var adbDevicesResult = {};
-            adbDevicesResult.code = 0;
-            adbDevicesResult.devices = [];
-
-            var foundHeader = false;
             var lines = cmdOutput.split('\n');
+            // Check first
+            if (lines[0] != 'List of devices attached') {
+                adbDevicesResult.code = -1;
+                adbDevicesResult.err = cmdOutput;
+                onDevicesCallback(adbDevicesResult);
+                return;
+            }
+
             for (var line of lines) {
                 line = line.trim();
-                if (line == '') {
+                if (line == '' || line == 'List of devices attached') {
                     continue;
                 }
-                if (line == 'List of devices attached') {
-                    foundHeader = true;
-                    continue;
-                }
-                if (foundHeader) {
-                    var[id, status] = line.split('\t');
-                    var device = {};
-                    device.id = id;
-                    device.status = status;
-                    adbDevicesResult.devices.push(device);
-                }
+
+                var[id, status] = line.split('\t');
+                var device = {};
+                device.id = id;
+                device.status = status;
+                adbDevicesResult.devices.push(device);
             }
 
             onDevicesCallback(adbDevicesResult);

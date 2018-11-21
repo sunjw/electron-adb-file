@@ -28,7 +28,7 @@ function refreshDeviceList() {
     adbHelper.getDevices((adbDevicesResult) => {
         clearDeviceList();
         if (adbDevicesResult.code != 0) {
-            divDeviceList.text('Error: ' + adbDevicesResult.code);
+            divDeviceList.text('Error: ' + adbDevicesResult.code + ', ' + adbDevicesResult.err);
             return;
         }
 
