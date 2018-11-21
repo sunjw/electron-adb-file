@@ -14,6 +14,11 @@ class ADBHelper {
     }
 
     getDevices(onDevicesCallback) {
+        var adbDevicesResult = {};
+        adbDevicesResult.code = 0;
+        adbDevicesResult.err = '';
+        adbDevicesResult.devices = [];
+
         var cmd = new ChildProcessHelper.ChildProcessHelper(this.adbPath, ['devices']);
         var outChunks = [];
 
@@ -22,12 +27,7 @@ class ADBHelper {
             outChunks.push(data.toString());
         }, (child, exitCode, err) => {
             // On process finished
-            var adbDevicesResult = {};
-            adbDevicesResult.code = 0;
-            adbDevicesResult.err = '';
-            adbDevicesResult.devices = [];
-
-            if (exitCode != 0) {
+            if (err != 0) {
                 adbDevicesResult.code = exitCode;
                 adbDevicesResult.err = err.message;
                 onDevicesCallback(adbDevicesResult);
@@ -68,7 +68,39 @@ class ADBHelper {
         Utils.log('setCurDevice=[' + this.curDevice + ']');
     }
 
-    getDirList() {}
+    getDirList(onDirListCallback) {
+        var adbDirListResult = {};
+        adbDirListResult.code = 0;
+        adbDirListResult.err = '';
+        adbDirListResult.dirList = [];
+
+        // check
+        if (!this.curDir.endsWith('/')) {
+            adbDirListResult.code = -1;
+            adbDirListResult.err = 'Current directory error: [' + this.curDir + ']';
+            onDirListCallback(adbDirListResult);
+            return;
+        }
+
+        var cmd = new ChildProcessHelper.ChildProcessHelper(this.adbPath, ['shell', 'ls', '-l', this.curDir]);
+        var outChunks = [];
+
+        cmd.run((child, data) => {
+            // On process output...
+            outChunks.push(data.toString());
+        }, (child, exitCode, err) => {
+            // On process finished
+            if (err != 0) {
+                adbDirListResult.code = exitCode;
+                adbDirListResult.err = err.message;
+                onDirListCallback(adbDirListResult);
+                return;
+            }
+
+            var cmdOutput = outChunks.join('');
+            Utils.log('cmdOutput=[' + cmdOutput + ']');
+        });
+    }
 
     setCurDir(path) {
         // path must end with '/'
@@ -77,7 +109,7 @@ class ADBHelper {
             return;
         }
         this.curDir = path;
-        Utils.log('setCurDir=[' + this.curDir + ']');
+        //Utils.log('setCurDir=[' + this.curDir + ']');
     }
 }
 

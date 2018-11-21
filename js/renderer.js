@@ -62,6 +62,7 @@ function refreshDeviceList() {
 }
 
 function handleCmdClick(cmdLink) {
+    // CMD/PARAMETER
     var cmd = cmdLink.attr('href').substr(1);
     var delimiterIdx = cmd.indexOf(ADBHelper.CMD_DELIMITER);
     var adbCmd = cmd.substr(0, delimiterIdx);
@@ -78,6 +79,9 @@ function handleCmdClick(cmdLink) {
 function selectDeviceAndRefreshRootDir(device) {
     adbHelper.setCurDevice(device);
     adbHelper.setCurDir('/');
+    adbHelper.getDirList((adbDirListResult) => {
+        
+    });
 }
 
 $(function () {
