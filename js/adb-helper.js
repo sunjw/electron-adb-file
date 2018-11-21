@@ -1,9 +1,13 @@
 const Utils = require('./utils.js');
 const ChildProcessHelper = require('./child_process-helper.js');
 
+const CMD_DELIMITER = '/';
+const CMD_SELECT_DEVICE = 'select-device';
+
 class ADBHelper {
     constructor(adbPath) {
         this.adbPath = adbPath;
+        this.curDevice = '';
 
         //Utils.log('adb=[' + this.adbPath + ']');
     }
@@ -44,7 +48,14 @@ class ADBHelper {
             onDevicesCallback(adbDevices);
         });
     }
+
+    setCurDevice(device) {
+        this.curDevice = device;
+        Utils.log('setCurDevice=[' + this.curDevice + ']');
+    }
 }
 
 // exports
+exports.CMD_DELIMITER = CMD_DELIMITER;
+exports.CMD_SELECT_DEVICE = CMD_SELECT_DEVICE;
 exports.ADBHelper = ADBHelper;
