@@ -4,6 +4,10 @@ const ChildProcessHelper = require('./child_process-helper.js');
 const CMD_DELIMITER = '/';
 const CMD_SELECT_DEVICE = 'select-device';
 
+function isFileLink(file) {
+    return file.mode.startsWith('l');
+}
+
 class ADBHelper {
     constructor(adbPath) {
         this.adbPath = adbPath;
@@ -84,7 +88,7 @@ class ADBHelper {
             return;
         }
 
-        var cmd = new ChildProcessHelper.ChildProcessHelper(this.adbPath, ['shell', 'ls', '-l', this.curDir]);
+        var cmd = new ChildProcessHelper.ChildProcessHelper(this.adbPath, ['shell', 'ls', '-al', this.curDir]);
         var outChunks = [];
 
         cmd.run((child, data) => {
@@ -102,6 +106,31 @@ class ADBHelper {
             var cmdOutput = outChunks.join('');
             Utils.log('cmdOutput=[' + cmdOutput + ']');
 
+            var lines = cmdOutput.split('\n');
+            for (var line of lines) {
+                line = line.trim();
+                if (line == '' || line.startsWith('ls: ') || line.startsWith('total ')) {
+                    continue;
+                }
+
+                var details = line.split(/\s+/);
+                var file = {};
+                file.mode = details[0];
+                file.links = details[1];
+                file.ownUser = details[2];
+                file.ownGroup = details[3];
+                file.size = details[4];
+                file.modified = details[5] + ' ' + details[6];
+                file.name = '';
+                for (var i = 7; i < details.length; ++i) {
+                    file.name = file.name + details[i] + ' ';
+                }
+                file.name = file.name.trim();
+                if (isFileLink(file)) {
+                    file.name = file.name.split('->')[0].trim();
+                }
+                adbDirListResult.dirList.push(file);
+            }
         });
     }
 
