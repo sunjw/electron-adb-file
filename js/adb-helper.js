@@ -119,12 +119,42 @@ class ADBHelper {
             var lines = cmdOutput.split('\n');
             for (var line of lines) {
                 line = line.trim();
-                if (line == '' || line.startsWith('ls: ') || line.startsWith('total ')) {
+                if (line == '' || line.startsWith('total ')) {
+                    continue;
+                }
+
+                var file = {};
+
+                if (line.startsWith('ls: ')) {
+                    if (!line.endsWith('Permission denied')) {
+                        continue;
+                    }
+
+                    // Permission denied, but actually, there is a something
+                    var permDetails = line.split(/\s+/);
+                    if (permDetails.length < 3) {
+                        Utils.log('Format error: [' + line + ']');
+                        continue;
+                    }
+                    var fileName = permDetails[1];
+                    if (fileName.endsWith(':')) {
+                        fileName = fileName.substr(0, fileName.length - 1);
+                    }
+                    var pathDelimIdx = fileName.lastIndexOf('/');
+                    if (pathDelimIdx >= 0) {
+                        fileName = fileName.substr(pathDelimIdx + 1);
+                    }
+                    file.mode = 'Permission denied';
+                    file.name = fileName;
+                    adbDirListResult.dirList.push(file);
                     continue;
                 }
 
                 var details = line.split(/\s+/);
-                var file = {};
+                if (details.length < 7) {
+                    Utils.log('Format error: [' + line + ']');
+                    continue;
+                }
                 file.mode = details[0];
                 file.linkMode = 0;
                 file.links = details[1];
@@ -160,7 +190,7 @@ class ADBHelper {
                 } else {
                     file.linkMode = 'f';
                 }
-                Utils.log('[' + file.name + '] is a link, but it is a \'' + file.linkMode + '\'');
+                //Utils.log('[' + file.name + '] is a link, but it is a \'' + file.linkMode + '\'');
             }
         });
     }
