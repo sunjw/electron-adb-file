@@ -4,6 +4,16 @@ const ChildProcessHelper = require('./child_process-helper.js');
 const CMD_DELIMITER = '/';
 const CMD_SELECT_DEVICE = 'select-device';
 
+function isFileDir(file) {
+    if (file.mode.startsWith('d')) {
+        return true;
+    }
+    if (isFileLink(file) && file.linkMode == 'd') {
+        return true;
+    }
+    return false;
+}
+
 function isFileLink(file) {
     return file.mode.startsWith('l');
 }
@@ -80,7 +90,7 @@ class ADBHelper {
         adbDirListResult.err = '';
         adbDirListResult.dirList = [];
 
-        // check
+        // Check
         if (!this.curDir.endsWith('/')) {
             adbDirListResult.code = -1;
             adbDirListResult.err = 'Current directory error: [' + this.curDir + ']';
@@ -116,6 +126,7 @@ class ADBHelper {
                 var details = line.split(/\s+/);
                 var file = {};
                 file.mode = details[0];
+                file.linkMode = 0;
                 file.links = details[1];
                 file.ownUser = details[2];
                 file.ownGroup = details[3];
@@ -131,11 +142,31 @@ class ADBHelper {
                 }
                 adbDirListResult.dirList.push(file);
             }
+
+            // Fix link
+            for (var file of adbDirListResult.dirList) {
+                if (!isFileLink(file)) {
+                    continue;
+                }
+
+                //Utils.log('[' + file.name + '] is a link');
+                var tryPath = this.curDir + file.name + '/';
+                // Run some sync child_process in async callback
+                var cmdSync = new ChildProcessHelper.ChildProcessHelper(this.adbPath, ['shell', 'cd', tryPath]);
+                var cmdResult = cmdSync.runSync();
+                if (cmdResult.stdout.length == 0 && cmdResult.stderr.length == 0) {
+                    // We 'cd' this path succeed
+                    file.linkMode = 'd';
+                } else {
+                    file.linkMode = 'f';
+                }
+                Utils.log('[' + file.name + '] is a link, but it is a \'' + file.linkMode + '\'');
+            }
         });
     }
 
     setCurDir(path) {
-        // path must end with '/'
+        // Path must end with '/'
         if (!path.endsWith('/')) {
             Utils.log('setCurDir=[' + path + '], not end with \'/\'');
             return;
@@ -148,4 +179,5 @@ class ADBHelper {
 // exports
 exports.CMD_DELIMITER = CMD_DELIMITER;
 exports.CMD_SELECT_DEVICE = CMD_SELECT_DEVICE;
+exports.isFileLink = isFileLink;
 exports.ADBHelper = ADBHelper;

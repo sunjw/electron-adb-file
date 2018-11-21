@@ -32,6 +32,20 @@ class ChildProcessHelper {
             }
         });
     }
+
+    runSync() {
+        const childCmdResult = ChildProcess.spawnSync(this.cmd, this.args);
+        var retCmdResult = {};
+        retCmdResult.child = this;
+        retCmdResult.exitCode = childCmdResult.status;
+        retCmdResult.err = 0;
+        if (childCmdResult.error !== undefined) {
+            retCmdResult.err = childCmdResult.error;
+        }
+        retCmdResult.stdout = childCmdResult.stdout.toString();
+        retCmdResult.stderr = childCmdResult.stderr.toString();
+        return retCmdResult;
+    }
 }
 
 // exports
