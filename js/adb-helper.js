@@ -14,6 +14,8 @@ class ADBHelper {
     }
 
     getDevices(onDevicesCallback) {
+        const headerString = 'List of devices attached';
+
         var adbDevicesResult = {};
         adbDevicesResult.code = 0;
         adbDevicesResult.err = '';
@@ -39,7 +41,7 @@ class ADBHelper {
 
             var lines = cmdOutput.split('\n');
             // Check first
-            if (lines[0] != 'List of devices attached') {
+            if (lines[0] != headerString) {
                 adbDevicesResult.code = -1;
                 adbDevicesResult.err = cmdOutput;
                 onDevicesCallback(adbDevicesResult);
@@ -48,7 +50,7 @@ class ADBHelper {
 
             for (var line of lines) {
                 line = line.trim();
-                if (line == '' || line == 'List of devices attached') {
+                if (line == '' || line == headerString) {
                     continue;
                 }
 
@@ -99,6 +101,7 @@ class ADBHelper {
 
             var cmdOutput = outChunks.join('');
             Utils.log('cmdOutput=[' + cmdOutput + ']');
+
         });
     }
 

@@ -15,6 +15,10 @@ class ChildProcessHelper {
             onStdOutCallback(this, data);
         });
 
+        childCmd.stderr.on('data', (data) => {
+            onStdOutCallback(this, data);
+        });
+
         childCmd.on('error', (err) => {
             // error happened before close
             errToCallback = err;
