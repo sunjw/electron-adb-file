@@ -22,11 +22,11 @@ class ChildProcessHelper {
         childCmd.on('error', (err) => {
             // error happened before close
             errToCallback = err;
-            Utils.log('[' + this.cmd + '] exited with error: ' + err);
+            Utils.log('Async [' + this.cmd + ' ' + (this.args.join(' ')) + '] exited with error: ' + err);
         });
 
         childCmd.on('close', (code) => {
-            Utils.log('[' + this.cmd + '] exited with code: ' + code);
+            Utils.log('Async [' + this.cmd + ' ' + (this.args.join(' ')) + '] exited with code: ' + code);
             if (onExitCallback != 0) {
                 onExitCallback(this, code, errToCallback);
             }
@@ -35,6 +35,7 @@ class ChildProcessHelper {
 
     runSync() {
         const childCmdResult = ChildProcess.spawnSync(this.cmd, this.args);
+        Utils.log('Sync [' + this.cmd + ' ' + (this.args.join(' ')) + '] exited with code: ' + childCmdResult.status);
         var retCmdResult = {};
         retCmdResult.child = this;
         retCmdResult.exitCode = childCmdResult.status;

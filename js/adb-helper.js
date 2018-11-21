@@ -192,6 +192,8 @@ class ADBHelper {
                 }
                 //Utils.log('[' + file.name + '] is a link, but it is a \'' + file.linkMode + '\'');
             }
+
+            onDirListCallback(adbDirListResult);
         });
     }
 

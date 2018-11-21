@@ -13,7 +13,7 @@ function init() {
     divDirList = $('#divDirList');
 
     clearDeviceList();
-    //clearDirList();
+    clearDirList();
 }
 
 function clearDeviceList() {
@@ -80,7 +80,8 @@ function selectDeviceAndRefreshRootDir(device) {
     adbHelper.setCurDevice(device);
     adbHelper.setCurDir('/');
     adbHelper.getDirList((adbDirListResult) => {
-        
+        clearDeviceList();
+        Utils.log('adbDirListResult.dirList length: ' + adbDirListResult.dirList.length);
     });
 }
 
