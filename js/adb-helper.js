@@ -24,7 +24,10 @@ class ADBHelper {
             var cmdOutput = outChunks.join('');
             //Utils.log('cmdOutput=[' + cmdOutput + ']');
 
-            var adbDevices = [];
+            var adbDevicesResult = {};
+            adbDevicesResult.code = 0;
+            adbDevicesResult.devices = [];
+
             var foundHeader = false;
             var lines = cmdOutput.split('\n');
             for (var line of lines) {
@@ -41,11 +44,11 @@ class ADBHelper {
                     var device = {};
                     device.id = id;
                     device.status = status;
-                    adbDevices.push(device);
+                    adbDevicesResult.devices.push(device);
                 }
             }
 
-            onDevicesCallback(adbDevices);
+            onDevicesCallback(adbDevicesResult);
         });
     }
 

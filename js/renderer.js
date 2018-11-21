@@ -13,7 +13,7 @@ function init() {
     divFileList = $('#divFileList');
 
     clearDeviceList();
-    clearFileList();
+    //clearFileList();
 }
 
 function handleCmdClick(cmdLink) {
@@ -39,13 +39,18 @@ function clearFileList() {
 }
 
 function refreshDeviceList() {
+    adbHelper.getDevices((adbDevicesResult) => {
+        clearDeviceList();
+        if (adbDevicesResult.code != 0) {
+            divDeviceList.text('Error: ' + adbDevicesResult.code);
+            return;
+        }
 
-    adbHelper.getDevices((adbDevices) => {
-        clearFileList();
-        if (adbDevices.length == 0) {
-            divFileList.text('No device found');
+        var devices = adbDevicesResult.devices;
+        if (devices.length == 0) {
+            divDeviceList.text('No device found');
         } else {
-            for (const device of adbDevices) {
+            for (const device of devices) {
                 var deviceAvailable = (device.status == 'device');
 
                 var divDeviceId = $('<div/>').addClass('deviceId')
@@ -64,7 +69,7 @@ function refreshDeviceList() {
                 var divDeviceStatus = $('<div/>').addClass('deviceStatus').text(device.status);
                 divDeviceLine.append(divDeviceStatus);
 
-                divFileList.append(divDeviceLine);
+                divDeviceList.append(divDeviceLine);
             }
         }
     });
