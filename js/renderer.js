@@ -123,7 +123,7 @@ function refreshDirList() {
             if (ADBHelper.isFileDir(file)) {
                 divFileTypeOrSize.text('Folder');
             } else {
-                divFileTypeOrSize.text(file.size);
+                divFileTypeOrSize.text(Utils.byteSizeToShortSize(file.size) + 'B');
             }
             divFileLine.append(divFileTypeOrSize);
 
