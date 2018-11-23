@@ -19,6 +19,10 @@ var divDirList = 0;
 function init() {
     adbHelper = new ADBHelper.ADBHelper('adb');
 
+    $(window).on('beforeunload', function () {
+        adbHelper.stopAllPullFile();
+    });
+
     divDeviceList = $('#divDeviceList');
     divTransferList = $('#divTransferList');
     divDirList = $('#divDirList');

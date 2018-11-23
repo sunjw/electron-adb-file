@@ -294,6 +294,13 @@ class ADBHelper {
         }
     }
 
+    stopAllPullFile() {
+        for (const pullId of Object.keys(this.pullProcessList)) {
+            var pullCmd = this.pullProcessList[pullId];
+            pullCmd.stop();
+        }
+    }
+
 }
 
 // exports
