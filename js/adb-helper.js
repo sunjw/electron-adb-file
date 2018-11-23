@@ -263,6 +263,13 @@ class ADBHelper {
 
             if (err != 0) {
                 adbPullResult.code = exitCode;
+                adbPullResult.err = 'Pull [' + filePath + '] failed';
+                onPullFinishedCallback(adbPullResult);
+                return;
+            }
+
+            if (exitCode != 0) {
+                adbPullResult.code = -1;
                 adbPullResult.err = err.message;
                 onPullFinishedCallback(adbPullResult);
                 return;
