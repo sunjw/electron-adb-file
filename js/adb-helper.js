@@ -232,8 +232,7 @@ class ADBHelper {
     }
 
     pullFile(filePath, destPath, onPullProgressCallback, onPullFinishedCallback) {
-        const fixedAdbShellPath = fixAdbShellPath(filePath);
-        var cmd = new ChildProcessHelper.ChildProcessHelper(this.adbPath, ['pull', fixedAdbShellPath, destPath]);
+        var cmd = new ChildProcessHelper.ChildProcessHelper(this.adbPath, ['pull', filePath, destPath]);
 
         cmd.run((child, data) => {
             // On process output...
@@ -256,7 +255,21 @@ class ADBHelper {
             if (progressPercent != '') {
                 onPullProgressCallback(progressPercent);
             }
-        }, (child, exitCode, err) => {});
+        }, (child, exitCode, err) => {
+            // On process finished
+            var adbPullResult = {};
+            adbPullResult.code = 0;
+            adbPullResult.err = '';
+
+            if (err != 0) {
+                adbPullResult.code = exitCode;
+                adbPullResult.err = err.message;
+                onPullFinishedCallback(adbPullResult);
+                return;
+            }
+
+            onPullFinishedCallback(adbPullResult);
+        });
     }
 }
 

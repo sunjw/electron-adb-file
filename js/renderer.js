@@ -197,7 +197,13 @@ function pullFile(path) {
     const downloadDir = homeDir + 'Downloads/';
     adbHelper.pullFile(path, downloadDir, (progressPercent) => {
         divPullProgress.text(progressPercent);
-    }, () => {});
+    }, (adbPullResult) => {
+        if (adbPullResult.code == 0) {
+            divPullProgress.text('Done');
+        } else {
+            divPullProgress.text('Failed');
+        }
+    });
 }
 
 function handleCmdClick(cmdLink) {
