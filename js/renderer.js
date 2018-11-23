@@ -1,6 +1,10 @@
 const Utils = require('./utils.js');
 const ADBHelper = require('./adb-helper.js');
 
+const CMD_DELIMITER = '/';
+const CMD_SELECT_DEVICE = 'select-device';
+const CMD_LS_DIR = 'ls';
+
 var adbHelper = 0;
 
 var divDeviceList = 0;
@@ -43,8 +47,8 @@ function refreshDeviceList() {
                 var divDeviceLine = $('<div/>').addClass('deviceLine');
                 var divDeviceId = $('<div/>').addClass('deviceId');
                 if (deviceAvailable) {
-                    var selectDeviceCmd = ADBHelper.CMD_SELECT_DEVICE + ADBHelper.CMD_DELIMITER + device.id;
-                    var aDeviceLink = $('<a/>').text(device.id).attr('href', '#' + selectDeviceCmd).click(function () {
+                    var selectDeviceCmd = CMD_SELECT_DEVICE + CMD_DELIMITER + device.id;
+                    var aDeviceLink = $('<a/>').text(device.id).attr('href', selectDeviceCmd).click(function () {
                             return handleCmdClick($(this));
                         });
                     divDeviceId.append(aDeviceLink);
@@ -75,29 +79,42 @@ function refreshDirList() {
         var dirList = adbDirListResult.dirList;
         sortDirList(dirList);
         for (var file of dirList) {
-            var fileLine = $('<div/>').addClass('fileLine');
+            var divFileLine = $('<div/>').addClass('fileLine');
 
-            var fileName = $('<div/>').addClass('fileName').text(file.name);
-            fileLine.append(fileName);
-
-            var fileTypeOrSize = $('<div/>').addClass('fileTypeOrSize');
+            var divFileName = $('<div/>').addClass('fileName');
+            var fileName = file.name;
             if (ADBHelper.isFileDir(file)) {
-                fileTypeOrSize.text('Folder');
+                var lsDirCmd = CMD_LS_DIR + CMD_DELIMITER + fileName;
+                var aDirLink = $('<a/>').text(fileName).attr('href', lsDirCmd).click(function () {
+                        return handleCmdClick($(this));
+                    });
+                divFileName.append(aDirLink);
             } else {
-                fileTypeOrSize.text(file.size);
+                divFileName.text(fileName);
             }
-            fileLine.append(fileTypeOrSize);
+            divFileLine.append(divFileName);
 
-            var fileModified = $('<div/>').addClass('fileModified');
+            var divFileTypeOrSize = $('<div/>').addClass('fileTypeOrSize');
+            if (ADBHelper.isFileDir(file)) {
+                divFileTypeOrSize.text('Folder');
+            } else {
+                divFileTypeOrSize.text(file.size);
+            }
+            divFileLine.append(divFileTypeOrSize);
+
+            var divFileModified = $('<div/>').addClass('fileModified');
             if (!ADBHelper.isPermissionDenied(file)) {
-                fileModified.text(file.modified);
+                divFileModified.text(file.modified);
             } else {
-                fileModified.text('Permission denied');
+                divFileModified.text('Permission denied');
             }
-            fileLine.append(fileModified);
+            divFileLine.append(divFileModified);
 
-            divDirList.append(fileLine);
+            divDirList.append(divFileLine);
         }
+
+        // Scroll to top
+        $(window).scrollTop(0);
     });
 }
 
@@ -122,14 +139,25 @@ function setCurrentDir(path) {
 
 function handleCmdClick(cmdLink) {
     // CMD/PARAMETER
-    var cmd = cmdLink.attr('href').substr(1);
-    var delimiterIdx = cmd.indexOf(ADBHelper.CMD_DELIMITER);
+    var cmd = '';
+    if (cmdLink.is('[href]')) {
+        cmd = cmdLink.attr('href');
+    } else {
+        cmd = cmdLink.attr('rel');
+    }
+    Utils.log('handleCmdClick=[' + cmd + ']');
+    var delimiterIdx = cmd.indexOf(CMD_DELIMITER);
     var adbCmd = cmd.substr(0, delimiterIdx);
     var adbCmdParam = cmd.substr(delimiterIdx + 1);
     switch (adbCmd) {
-    case ADBHelper.CMD_SELECT_DEVICE:
+    case CMD_SELECT_DEVICE:
         const device = adbCmdParam;
         selectDeviceAndRefreshRootDir(device);
+        break;
+    case CMD_LS_DIR:
+        const path = adbHelper.getCurDir() + adbCmdParam + '/';
+        setCurrentDir(path);
+        refreshDirList();
         break;
     }
     return false;

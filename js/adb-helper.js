@@ -1,9 +1,6 @@
 const Utils = require('./utils.js');
 const ChildProcessHelper = require('./child_process-helper.js');
 
-const CMD_DELIMITER = '/';
-const CMD_SELECT_DEVICE = 'select-device';
-
 const MODE_PERMISSION_DENIED = 'Permission denied';
 
 function isFileDir(file) {
@@ -124,7 +121,7 @@ class ADBHelper {
             }
 
             var cmdOutput = outChunks.join('');
-            Utils.log('cmdOutput=[' + cmdOutput + ']');
+            //Utils.log('cmdOutput=[' + cmdOutput + ']');
 
             var lines = cmdOutput.split('\n');
             for (var line of lines) {
@@ -229,8 +226,6 @@ class ADBHelper {
 }
 
 // exports
-exports.CMD_DELIMITER = CMD_DELIMITER;
-exports.CMD_SELECT_DEVICE = CMD_SELECT_DEVICE;
 exports.isFileDir = isFileDir;
 exports.isFileLink = isFileLink;
 exports.isPermissionDenied = isPermissionDenied;
