@@ -37,6 +37,7 @@ class ADBHelper {
 
     getDevices(onDevicesCallback) {
         const headerString = 'List of devices attached';
+        const daemonString = 'daemon not running';
 
         var adbDevicesResult = {};
         adbDevicesResult.code = 0;
@@ -63,7 +64,7 @@ class ADBHelper {
 
             var lines = cmdOutput.split('\n');
             // Check first
-            if (lines[0] != headerString) {
+            if (lines[0] != headerString && lines[0].indexOf(daemonString) < 0) {
                 adbDevicesResult.code = -1;
                 adbDevicesResult.err = cmdOutput;
                 onDevicesCallback(adbDevicesResult);
@@ -77,6 +78,9 @@ class ADBHelper {
                 }
 
                 var[id, status] = line.split('\t');
+                if (status === undefined) {
+                    continue;
+                }
                 var device = {};
                 device.id = id;
                 device.status = status;
