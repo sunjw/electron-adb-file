@@ -94,13 +94,22 @@ function selectDeviceAndRefreshRootDir(device) {
 
             var fileName = $('<div/>').addClass('fileName').text(file.name);
             fileLine.append(fileName);
-            var fileType = $('<div/>').addClass('fileType');
+
+            var fileTypeOrSize = $('<div/>').addClass('fileTypeOrSize');
             if (ADBHelper.isFileDir(file)) {
-                fileType.text('Folder');
+                fileTypeOrSize.text('Folder');
             } else {
-                fileType.text('File');
+                fileTypeOrSize.text(file.size);
             }
-            fileLine.append(fileType);
+            fileLine.append(fileTypeOrSize);
+
+            var fileModified = $('<div/>').addClass('fileModified');
+            if (!ADBHelper.isPermissionDenied(file)) {
+                fileModified.text(file.modified);
+            } else {
+                fileModified.text('Permission denied');
+            }
+            fileLine.append(fileModified);
 
             divDirList.append(fileLine);
         }

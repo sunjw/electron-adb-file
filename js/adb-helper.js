@@ -4,6 +4,8 @@ const ChildProcessHelper = require('./child_process-helper.js');
 const CMD_DELIMITER = '/';
 const CMD_SELECT_DEVICE = 'select-device';
 
+const MODE_PERMISSION_DENIED = 'Permission denied';
+
 function isFileDir(file) {
     if (file.mode.startsWith('d')) {
         return true;
@@ -16,6 +18,10 @@ function isFileDir(file) {
 
 function isFileLink(file) {
     return file.mode.startsWith('l');
+}
+
+function isPermissionDenied(file) {
+    return (file.mode == MODE_PERMISSION_DENIED);
 }
 
 class ADBHelper {
@@ -144,7 +150,9 @@ class ADBHelper {
                     if (pathDelimIdx >= 0) {
                         fileName = fileName.substr(pathDelimIdx + 1);
                     }
-                    file.mode = 'Permission denied';
+                    file.mode = MODE_PERMISSION_DENIED;
+                    file.size = 0;
+                    file.modified = '';
                     file.name = fileName;
                     adbDirListResult.dirList.push(file);
                     continue;
@@ -169,6 +177,10 @@ class ADBHelper {
                 file.name = file.name.trim();
                 if (isFileLink(file)) {
                     file.name = file.name.split('->')[0].trim();
+                }
+
+                if (file.name == '.' || file.name == '..') {
+                    continue;
                 }
                 adbDirListResult.dirList.push(file);
             }
@@ -213,4 +225,5 @@ exports.CMD_DELIMITER = CMD_DELIMITER;
 exports.CMD_SELECT_DEVICE = CMD_SELECT_DEVICE;
 exports.isFileDir = isFileDir;
 exports.isFileLink = isFileLink;
+exports.isPermissionDenied = isPermissionDenied;
 exports.ADBHelper = ADBHelper;
