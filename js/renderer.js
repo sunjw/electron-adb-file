@@ -73,6 +73,7 @@ function refreshDirList() {
         }
 
         var dirList = adbDirListResult.dirList;
+        sortDirList(dirList);
         for (var file of dirList) {
             var fileLine = $('<div/>').addClass('fileLine');
 
@@ -97,6 +98,21 @@ function refreshDirList() {
 
             divDirList.append(fileLine);
         }
+    });
+}
+
+function sortDirList(dirList) {
+    dirList.sort((file1, file2) => {
+        var file1Dir = ADBHelper.isFileDir(file1);
+        var file2Dir = ADBHelper.isFileDir(file2);
+        if (file1Dir && !file2Dir) {
+            return -1;
+        }
+        if (!file1Dir && file2Dir) {
+            return 1;
+        }
+        // 1 and 2 are all dir/file
+        return file1.name.localeCompare(file2.name);
     });
 }
 
