@@ -173,10 +173,12 @@ class ADBHelper {
                 file.size = details[4];
                 file.modified = details[5] + ' ' + details[6];
                 file.name = '';
-                for (var i = 7; i < details.length; ++i) {
-                    file.name = file.name + details[i] + ' ';
+                var lineNamePart = line;
+                for (var i = 0; i < 7; ++i) {
+                    var detailPart = details[i];
+                    lineNamePart = lineNamePart.substr(lineNamePart.indexOf(detailPart) + detailPart.length);
                 }
-                file.name = file.name.trim();
+                file.name = lineNamePart.trim();
                 if (isFileLink(file)) {
                     file.name = file.name.split('->')[0].trim();
                 }
