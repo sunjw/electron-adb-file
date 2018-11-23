@@ -34,6 +34,12 @@ class ChildProcessHelper {
         });
     }
 
+    stop() {
+        if (this.childProcess != 0) {
+            this.childProcess.kill('SIGKILL');
+        }
+    }
+
     runSync() {
         const childCmdResult = ChildProcess.spawnSync(this.cmd, this.args);
         Utils.log('Sync [' + this.cmd + ' ' + (this.args.join(' ')) + '] exited with code: ' + childCmdResult.status);

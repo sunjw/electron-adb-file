@@ -8,6 +8,7 @@ const CMD_DELIMITER = '/';
 const CMD_SELECT_DEVICE = 'select-device';
 const CMD_LS_DIR = 'ls';
 const CMD_PULL = 'pull';
+const CMD_STOP_PULL = 'stop-pull';
 
 var adbHelper = 0;
 
@@ -188,6 +189,8 @@ function pullFile(path) {
     divPullLine.append(divFileName);
     var divPullProgress = $('<div/>').addClass('pullProgress').text('Pulling...');
     divPullLine.append(divPullProgress);
+    var divPullStop = $('<div/>').addClass('pullStop');
+    divPullLine.append(divPullStop);
     divTransferList.prepend(divPullLine);
 
     var homeDir = OS.homedir();
@@ -195,15 +198,25 @@ function pullFile(path) {
         homeDir = homeDir + '/';
     }
     const downloadDir = homeDir + 'Downloads/';
-    adbHelper.pullFile(path, downloadDir, (progressPercent) => {
-        divPullProgress.text(progressPercent);
-    }, (adbPullResult) => {
-        if (adbPullResult.code == 0) {
-            divPullProgress.text('Done');
-        } else {
-            divPullProgress.text('Failed');
-        }
-    });
+    const pullId = adbHelper.pullFile(path, downloadDir, (progressPercent) => {
+            divPullProgress.text(progressPercent);
+        }, (adbPullResult) => {
+            if (adbPullResult.code == 0) {
+                divPullProgress.text('Done');
+            } else {
+                divPullProgress.text('Failed');
+            }
+        });
+
+    var stopPullCmd = CMD_STOP_PULL + CMD_DELIMITER + pullId;
+    var aStopPullLink = $('<a/>').text('Stop').attr('href', stopPullCmd).click(function () {
+            return handleCmdClick($(this));
+        });
+    divPullStop.append(aStopPullLink);
+}
+
+function stopPullFile(pullId) {
+    adbHelper.stopPullFile(pullId);
 }
 
 function handleCmdClick(cmdLink) {
@@ -241,6 +254,10 @@ function handleCmdClick(cmdLink) {
     case CMD_PULL:
         const filePath = adbHelper.getCurDir() + adbCmdParam;
         pullFile(filePath);
+        break;
+    case CMD_STOP_PULL:
+        const pullId = adbCmdParam;
+        stopPullFile(pullId);
         break;
     }
     return false;

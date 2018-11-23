@@ -283,7 +283,17 @@ class ADBHelper {
 
             onPullFinishedCallback(adbPullResult);
         });
+
+        return pullRandId;
     }
+
+    stopPullFile(pullId) {
+        if (pullId in this.pullProcessList) {
+            var pullCmd = this.pullProcessList[pullId];
+            pullCmd.stop();
+        }
+    }
+
 }
 
 // exports
