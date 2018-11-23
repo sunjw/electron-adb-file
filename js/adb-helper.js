@@ -3,7 +3,7 @@ const ChildProcessHelper = require('./child_process-helper.js');
 
 const MODE_PERMISSION_DENIED = 'Permission denied';
 
-function fixShellPath(path) {
+function fixAdbShellPath(path) {
     return path.replace(new RegExp(' ', 'g'), '\\ ');
 }
 
@@ -123,8 +123,8 @@ class ADBHelper {
             return;
         }
 
-        const fixAdbShellPath = fixShellPath(this.curDir);
-        var cmd = new ChildProcessHelper.ChildProcessHelper(this.adbPath, ['shell', 'ls', '-al', fixAdbShellPath]);
+        const fixedAdbShellPath = fixAdbShellPath(this.curDir);
+        var cmd = new ChildProcessHelper.ChildProcessHelper(this.adbPath, ['shell', 'ls', '-al', fixedAdbShellPath]);
         var outChunks = [];
 
         cmd.run((child, data) => {
@@ -231,6 +231,33 @@ class ADBHelper {
         });
     }
 
+    pullFile(filePath, destPath, onPullProgressCallback, onPullFinishedCallback) {
+        const fixedAdbShellPath = fixAdbShellPath(filePath);
+        var cmd = new ChildProcessHelper.ChildProcessHelper(this.adbPath, ['pull', fixedAdbShellPath, destPath]);
+
+        cmd.run((child, data) => {
+            // On process output...
+            var progressOutput = data.toString();
+            //Utils.log(progressOutput);
+            var progressPercent = '';
+            var progressLines = progressOutput.split('\n');
+            var lineCount = progressLines.length;
+            for (var i = lineCount; i > 0; --i) {
+                var line = progressLines[i - 1];
+                var prefix = line.substr(0, 6);
+                if (prefix.startsWith('[') && prefix.endsWith(']')) {
+                    // Found
+                    Utils.log('pullFile, progress line=[' + line + ']');
+                    progressPercent = prefix.substr(1, 4);
+                    progressPercent = progressPercent.trim();
+                    break;
+                }
+            }
+            if (progressPercent != '') {
+                onPullProgressCallback(progressPercent);
+            }
+        }, (child, exitCode, err) => {});
+    }
 }
 
 // exports

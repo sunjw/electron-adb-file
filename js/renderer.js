@@ -1,27 +1,38 @@
+const OS = require('os');
+const Path = require('path');
+
 const Utils = require('./utils.js');
 const ADBHelper = require('./adb-helper.js');
 
 const CMD_DELIMITER = '/';
 const CMD_SELECT_DEVICE = 'select-device';
 const CMD_LS_DIR = 'ls';
+const CMD_PULL = 'pull';
 
 var adbHelper = 0;
 
 var divDeviceList = 0;
+var divTransferList = 0;
 var divDirList = 0;
 
 function init() {
     adbHelper = new ADBHelper.ADBHelper('adb');
 
     divDeviceList = $('#divDeviceList');
+    divTransferList = $('#divTransferList');
     divDirList = $('#divDirList');
 
     clearDeviceList();
+    clearTransferList();
     clearDirList();
 }
 
 function clearDeviceList() {
     divDeviceList.empty();
+}
+
+function clearTransferList() {
+    divTransferList.empty();
 }
 
 function clearDirList() {
@@ -63,6 +74,25 @@ function refreshDeviceList() {
                 divDeviceList.append(divDeviceLine);
             }
         }
+    });
+}
+
+function setCurrentDir(path) {
+    adbHelper.setCurDir(path);
+}
+
+function sortDirList(dirList) {
+    dirList.sort((file1, file2) => {
+        var file1Dir = ADBHelper.isFileDir(file1);
+        var file2Dir = ADBHelper.isFileDir(file2);
+        if (file1Dir && !file2Dir) {
+            return -1;
+        }
+        if (!file1Dir && file2Dir) {
+            return 1;
+        }
+        // 1 and 2 are all dir/file
+        return file1.name.localeCompare(file2.name);
     });
 }
 
@@ -109,13 +139,19 @@ function refreshDirList() {
             var divFileName = $('<div/>').addClass('fileName');
             var fileName = file.name;
             if (ADBHelper.isFileDir(file)) {
+                // Directory
                 var lsDirCmd = CMD_LS_DIR + CMD_DELIMITER + fileName;
                 var aDirLink = $('<a/>').text(fileName).attr('href', lsDirCmd).click(function () {
                         return handleCmdClick($(this));
                     });
                 divFileName.append(aDirLink);
             } else {
-                divFileName.text(fileName);
+                // File
+                var pullFileCmd = CMD_PULL + CMD_DELIMITER + fileName;
+                var aFileLink = $('<a/>').text(fileName).attr('href', pullFileCmd).click(function () {
+                        return handleCmdClick($(this));
+                    });
+                divFileName.append(aFileLink);
             }
             divFileLine.append(divFileName);
 
@@ -143,23 +179,25 @@ function refreshDirList() {
     });
 }
 
-function sortDirList(dirList) {
-    dirList.sort((file1, file2) => {
-        var file1Dir = ADBHelper.isFileDir(file1);
-        var file2Dir = ADBHelper.isFileDir(file2);
-        if (file1Dir && !file2Dir) {
-            return -1;
-        }
-        if (!file1Dir && file2Dir) {
-            return 1;
-        }
-        // 1 and 2 are all dir/file
-        return file1.name.localeCompare(file2.name);
-    });
-}
+function pullFile(path) {
+    Utils.log('pullFile=[' + path + ']');
 
-function setCurrentDir(path) {
-    adbHelper.setCurDir(path);
+    var fileName = Path.basename(path);
+    var divPullLine = $('<div/>').addClass('pullLine');
+    var divFileName = $('<div/>').addClass('fileName').text(fileName);
+    divPullLine.append(divFileName);
+    var divPullProgress = $('<div/>').addClass('pullProgress').text('Pulling...');
+    divPullLine.append(divPullProgress);
+    divTransferList.prepend(divPullLine);
+
+    var homeDir = OS.homedir();
+    if (!homeDir.endsWith('/')) {
+        homeDir = homeDir + '/';
+    }
+    const downloadDir = homeDir + 'Downloads/';
+    adbHelper.pullFile(path, downloadDir, (progressPercent) => {
+        divPullProgress.text(progressPercent);
+    }, () => {});
 }
 
 function handleCmdClick(cmdLink) {
@@ -193,6 +231,10 @@ function handleCmdClick(cmdLink) {
         }
         setCurrentDir(path);
         refreshDirList();
+        break;
+    case CMD_PULL:
+        const filePath = adbHelper.getCurDir() + adbCmdParam;
+        pullFile(filePath);
         break;
     }
     return false;
