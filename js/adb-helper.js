@@ -30,6 +30,7 @@ class ADBHelper {
         this.adbPath = adbPath;
         this.curDevice = '';
         this.curDir = '';
+        this.pullProcessList = {};
 
         //Utils.log('adb=[' + this.adbPath + ']');
     }
@@ -232,7 +233,10 @@ class ADBHelper {
     }
 
     pullFile(filePath, destPath, onPullProgressCallback, onPullFinishedCallback) {
+        const pullRandId = Utils.getRandomInt(1000);
         var cmd = new ChildProcessHelper.ChildProcessHelper(this.adbPath, ['pull', filePath, destPath]);
+        var pullProcessList = this.pullProcessList;
+        pullProcessList[pullRandId] = cmd;
 
         cmd.run((child, data) => {
             // On process output...
@@ -257,6 +261,8 @@ class ADBHelper {
             }
         }, (child, exitCode, err) => {
             // On process finished
+            delete pullProcessList[pullRandId];
+
             var adbPullResult = {};
             adbPullResult.code = 0;
             adbPullResult.err = '';

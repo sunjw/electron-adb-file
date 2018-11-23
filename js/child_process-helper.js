@@ -5,27 +5,28 @@ class ChildProcessHelper {
     constructor(cmd, args) {
         this.cmd = cmd;
         this.args = args;
+        this.childProcess = 0;
     }
 
     run(onStdOutCallback, onExitCallback = 0) {
-        const childCmd = ChildProcess.spawn(this.cmd, this.args);
+        this.childProcess = ChildProcess.spawn(this.cmd, this.args);
         var errToCallback = 0;
 
-        childCmd.stdout.on('data', (data) => {
+        this.childProcess.stdout.on('data', (data) => {
             onStdOutCallback(this, data);
         });
 
-        childCmd.stderr.on('data', (data) => {
+        this.childProcess.stderr.on('data', (data) => {
             onStdOutCallback(this, data);
         });
 
-        childCmd.on('error', (err) => {
+        this.childProcess.on('error', (err) => {
             // error happened before close
             errToCallback = err;
             Utils.log('Async [' + this.cmd + ' ' + (this.args.join(' ')) + '] exited with error: ' + err);
         });
 
-        childCmd.on('close', (code) => {
+        this.childProcess.on('close', (code) => {
             Utils.log('Async [' + this.cmd + ' ' + (this.args.join(' ')) + '] exited with code: ' + code);
             if (onExitCallback != 0) {
                 onExitCallback(this, code, errToCallback);

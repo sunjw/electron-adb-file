@@ -2,6 +2,10 @@ function log(logString) {
     console.log(logString);
 }
 
+function getRandomInt(max) {
+    return Math.floor(Math.random() * Math.floor(max));
+}
+
 function byteSizeToShortSize(size) {
     const shortSizeUnit = ['K', 'M', 'G'];
     var shortSize = size;
@@ -18,4 +22,5 @@ function byteSizeToShortSize(size) {
 
 // exports
 exports.log = log;
+exports.getRandomInt = getRandomInt;
 exports.byteSizeToShortSize = byteSizeToShortSize;
