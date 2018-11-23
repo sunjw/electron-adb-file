@@ -85,6 +85,10 @@ class ADBHelper {
         });
     }
 
+    getCurDevice() {
+        return this.curDevice;
+    }
+
     setCurDevice(device) {
         this.curDevice = device;
         Utils.log('setCurDevice=[' + this.curDevice + ']');
@@ -207,6 +211,10 @@ class ADBHelper {
 
             onDirListCallback(adbDirListResult);
         });
+    }
+
+    getCurDir() {
+        return this.curDir;
     }
 
     setCurDir(path) {
