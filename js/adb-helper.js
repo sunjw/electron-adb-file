@@ -105,7 +105,8 @@ class ADBHelper {
             return;
         }
 
-        var cmd = new ChildProcessHelper.ChildProcessHelper(this.adbPath, ['shell', 'ls', '-al', this.curDir]);
+        const fixAdbShellPath = this.curDir.replace(new RegExp(' ', 'g'), '\\ ');
+        var cmd = new ChildProcessHelper.ChildProcessHelper(this.adbPath, ['shell', 'ls', '-al', fixAdbShellPath]);
         var outChunks = [];
 
         cmd.run((child, data) => {
