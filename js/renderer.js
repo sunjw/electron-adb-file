@@ -76,6 +76,31 @@ function refreshDirList() {
             return;
         }
 
+        // Go up
+        var curDir = adbHelper.getCurDir();
+        curDir = curDir.substr(0, curDir.length - 1);
+        var pathDelimIdx = curDir.lastIndexOf('/');
+        if (pathDelimIdx >= 0) {
+            // Not root
+            var divFileLine = $('<div/>').addClass('fileLine');
+
+            var divFileName = $('<div/>').addClass('fileName');
+            var lsDirCmd = CMD_LS_DIR + CMD_DELIMITER + '..';
+            var aDirLink = $('<a/>').text('..').attr('href', lsDirCmd).click(function () {
+                    return handleCmdClick($(this));
+                });
+            divFileName.append(aDirLink);
+            divFileLine.append(divFileName);
+
+            var divFileTypeOrSize = $('<div/>').addClass('fileTypeOrSize');
+            divFileLine.append(divFileTypeOrSize);
+
+            var divFileModified = $('<div/>').addClass('fileModified');
+            divFileLine.append(divFileModified);
+
+            divDirList.append(divFileLine);
+        }
+
         var dirList = adbDirListResult.dirList;
         sortDirList(dirList);
         for (var file of dirList) {
@@ -155,7 +180,17 @@ function handleCmdClick(cmdLink) {
         selectDeviceAndRefreshRootDir(device);
         break;
     case CMD_LS_DIR:
-        const path = adbHelper.getCurDir() + adbCmdParam + '/';
+        var path = '';
+        if (adbCmdParam != '..') {
+            path = adbHelper.getCurDir() + adbCmdParam + '/';
+        } else {
+            // Go up
+            var curDir = adbHelper.getCurDir();
+            curDir = curDir.substr(0, curDir.length - 1);
+            var pathDelimIdx = curDir.lastIndexOf('/');
+            var upDirPath = curDir.substr(0, pathDelimIdx);
+            path = upDirPath + '/';
+        }
         setCurrentDir(path);
         refreshDirList();
         break;
