@@ -95,6 +95,20 @@ class ADBHelper {
         Utils.log('setCurDevice=[' + this.curDevice + ']');
     }
 
+    getCurDir() {
+        return this.curDir;
+    }
+
+    setCurDir(path) {
+        // Path must end with '/'
+        if (!path.endsWith('/')) {
+            Utils.log('setCurDir=[' + path + '], not end with \'/\'');
+            return;
+        }
+        this.curDir = path;
+        //Utils.log('setCurDir=[' + this.curDir + ']');
+    }
+
     getDirList(onDirListCallback) {
         var adbDirListResult = {};
         adbDirListResult.code = 0;
@@ -217,19 +231,6 @@ class ADBHelper {
         });
     }
 
-    getCurDir() {
-        return this.curDir;
-    }
-
-    setCurDir(path) {
-        // Path must end with '/'
-        if (!path.endsWith('/')) {
-            Utils.log('setCurDir=[' + path + '], not end with \'/\'');
-            return;
-        }
-        this.curDir = path;
-        //Utils.log('setCurDir=[' + this.curDir + ']');
-    }
 }
 
 // exports
