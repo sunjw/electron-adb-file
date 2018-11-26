@@ -28,6 +28,9 @@ body {
 .center {
     text-align: center;
 }
+.right {
+    text-align: right;
+}
 .floatLeft {
     float: left;
 }
@@ -35,6 +38,9 @@ body {
     float: right;
 }
 
+a {
+    text-decoration: none;
+}
 img {
     border: 0;
 }
@@ -75,10 +81,16 @@ ul {
     background-color: white;
     padding: 20px;
     border-radius: 6px;
-    
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+}
+#divDialogTitle {
+    margin-bottom: 10px;
 }
 #divDeviceList {
     width: 450px;
+}
+.divDialogButtonLine {
+    margin-top: 10px;
 }
 /* Dialog */
 

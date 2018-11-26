@@ -5,6 +5,7 @@ const Utils = require('./utils.js');
 const ADBHelper = require('./adb-helper.js');
 
 const CMD_DELIMITER = '/';
+const CMD_CLOSE_DIALOG = 'close-dialog';
 const CMD_SELECT_DEVICE = 'select-device';
 const CMD_LS_DIR = 'ls';
 const CMD_PULL = 'pull';
@@ -12,11 +13,11 @@ const CMD_STOP_PULL = 'stop-pull';
 
 var adbHelper = 0;
 
-var divDeviceList = 0;
-var divTransferList = 0;
 var divDirWrapper = 0;
 var divDirList = 0;
 var divDialogWrapper = 0;
+var divDeviceList = 0;
+var divTransferList = 0;
 var divDialogButtonLine = 0;
 var divDialogBackground = 0;
 
@@ -97,14 +98,18 @@ function fitDialogPosition(ignoreHidden = false) {
 }
 
 function showDeviceListDialog() {
+    divDeviceList.show();
+    divTransferList.hide();
     fitDialogPosition(true);
     showDialogBackground();
     divDialogWrapper.show();
 }
 
-function hideDeviceListDialog() {
-    hideDialogBackground();
+function hideDialog() {
     divDialogWrapper.hide();
+    hideDialogBackground();
+    divDeviceList.hide();
+    divTransferList.hide();
 }
 
 function refreshDeviceList() {
@@ -304,12 +309,22 @@ function handleCmdClick(cmdLink) {
     }
     Utils.log('handleCmdClick=[' + cmd + ']');
     var delimiterIdx = cmd.indexOf(CMD_DELIMITER);
-    var adbCmd = cmd.substr(0, delimiterIdx);
-    var adbCmdParam = cmd.substr(delimiterIdx + 1);
+    var adbCmd = '';
+    var adbCmdParam = '';
+    if (delimiterIdx >= 0) {
+        adbCmd = cmd.substr(0, delimiterIdx);
+        adbCmdParam = cmd.substr(delimiterIdx + 1);
+    } else {
+        adbCmd = cmd;
+    }
     switch (adbCmd) {
+    case CMD_CLOSE_DIALOG:
+        hideDialog();
+        break;
     case CMD_SELECT_DEVICE:
         const device = adbCmdParam;
         selectDeviceAndRefreshRootDir(device);
+        hideDialog();
         break;
     case CMD_LS_DIR:
         var path = '';
