@@ -106,14 +106,19 @@ ul {
 
 /* File list */
 #divDirList .fileLine {
-    height: 30px;
+    height: 60px;
+    line-height: 60px;
     overflow: hidden;
     white-space: nowrap;
+    border-bottom: 1px solid #e0e0e0;
 }
 #divDirList .fileLine:after {
     content: '';
     display: block;
     clear: both;
+}
+#divDirList .fileName,#divDirList .fileTypeOrSize,#divDirList .fileModified {
+    height: 58px;
 }
 #divDirList .fileName {
     float: left;
@@ -126,7 +131,15 @@ ul {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    border: 1px solid red;
+    margin-left: 80px;
+    padding-left: 20px;
+    cursor: pointer;
+}
+#divDirList .fileTypeOrSize {
+    width: 100px;
+}
+#divDirList .fileModified {
+    width: 180px;
 }
 /* File list */
 

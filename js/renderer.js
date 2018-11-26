@@ -122,7 +122,7 @@ function showDeviceListDialog() {
 
 function fitFileNameWidth() {
     var windowWidth = $(window).width();
-    var fileNameWidth = windowWidth - 500;
+    var fileNameWidth = windowWidth - 400;
     if (fileNameWidth < 0) {
         fileNameWidth = 0;
     }
@@ -192,6 +192,7 @@ function refreshDirList() {
     // setCurDir first!
     adbHelper.getDirList((adbDirListResult) => {
         clearDirList();
+        fitFileNameWidth();
 
         if (adbDirListResult.code != 0) {
             divDirList.text('Error: ' + adbDirListResult.code + ', ' + adbDirListResult.err);
