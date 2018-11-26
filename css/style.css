@@ -8,6 +8,7 @@
 
 :root {
     --color-android: #006ee8;
+    --file-name-width: 400px;
 }
 /* Defines */
 
@@ -58,7 +59,6 @@ ul {
 
 /* Dir */
 #divDirWrapper {
-    border: 1px solid red;
     overflow: auto;
 }
 /* Dir */
@@ -103,6 +103,32 @@ ul {
     margin-top: 10px;
 }
 /* Dialog */
+
+/* File list */
+#divDirList .fileLine {
+    height: 30px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+#divDirList .fileLine:after {
+    content: '';
+    display: block;
+    clear: both;
+}
+#divDirList .fileName {
+    float: left;
+}
+#divDirList .fileTypeOrSize,#divDirList .fileModified {
+    float: right;
+}
+#divDirList .fileName {
+    width: var(--file-name-width);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    border: 1px solid red;
+}
+/* File list */
 
 /* Footer */
 /* Footer */

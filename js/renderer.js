@@ -55,6 +55,7 @@ function init() {
 function onWindowResize() {
     fitDirWrapperHeight();
     fitDialogPosition();
+    fitFileNameWidth();
 }
 
 function clearDeviceList() {
@@ -117,6 +118,15 @@ function showDeviceListDialog() {
     divDeviceList.show();
     divTransferList.hide();
     showDialogBase('Devices');
+}
+
+function fitFileNameWidth() {
+    var windowWidth = $(window).width();
+    var fileNameWidth = windowWidth - 500;
+    if (fileNameWidth < 0) {
+        fileNameWidth = 0;
+    }
+    $(document.documentElement).css('--file-name-width', fileNameWidth + 'px');
 }
 
 function refreshDeviceList() {
@@ -243,7 +253,6 @@ function refreshDirList() {
             } else {
                 divFileTypeOrSize.text(Utils.byteSizeToShortSize(file.size) + 'B');
             }
-            divFileLine.append(divFileTypeOrSize);
 
             var divFileModified = $('<div/>').addClass('fileModified');
             if (!ADBHelper.isPermissionDenied(file)) {
@@ -251,7 +260,10 @@ function refreshDirList() {
             } else {
                 divFileModified.text('Permission denied');
             }
+
+            // Float right
             divFileLine.append(divFileModified);
+            divFileLine.append(divFileTypeOrSize);
 
             divDirList.append(divFileLine);
         }
