@@ -16,6 +16,8 @@ var divDeviceList = 0;
 var divTransferList = 0;
 var divDirWrapper = 0;
 var divDirList = 0;
+var divDialogWrapper = 0;
+var divDialogBackground = 0;
 
 function init() {
     adbHelper = new ADBHelper.ADBHelper('adb');
@@ -28,15 +30,21 @@ function init() {
     divTransferList = $('#divTransferList');
     divDirWrapper = $('#divDirWrapper');
     divDirList = $('#divDirList');
+    divDialogWrapper = $('#divDialogWrapper');
+    divDialogBackground = $('#divDialogBackground');
 
     clearDeviceList();
     clearTransferList();
     clearDirList();
 
-    fitDirWrapperHeight();
+    onWindowResize();
     $(window).resize(() => {
-        fitDirWrapperHeight();
+        onWindowResize();
     })
+}
+
+function onWindowResize() {
+    fitDirWrapperHeight();
 }
 
 function clearDeviceList() {
@@ -53,8 +61,20 @@ function clearDirList() {
 
 function fitDirWrapperHeight() {
     var windowHeight = $(window).height();
-    var divDirWrapperHeight = windowHeight - divDirWrapper.offset().top - 60;
+    var divDirWrapperHeight = windowHeight - divDirWrapper.offset().top - 5;
     divDirWrapper.css('height', divDirWrapperHeight + 'px');
+}
+
+function showDialogBackground() {
+    divDialogBackground.show();
+}
+
+function hideDialogBackground() {
+    divDialogBackground.hide();
+}
+
+function showDeviceListDialog() {
+    showDialogBackground();
 }
 
 function refreshDeviceList() {
@@ -292,4 +312,5 @@ $(function () {
     init();
 
     refreshDeviceList();
+    showDeviceListDialog();
 });

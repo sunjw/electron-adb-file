@@ -56,6 +56,22 @@ ul {
 }
 /* Dir */
 
+/* Dialog */
+#divDialogWrapper {
+    display: none;
+    z-index: 1005;
+}
+#divDialogBackground {
+    display: none;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+/* Dialog */
+
 /* Footer */
 /* Footer */
 
