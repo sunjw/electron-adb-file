@@ -44,8 +44,17 @@ ul {
 /* Common */
 
 /* Wrapper */
-
+#bodyWrapper {
+    width: 100%;
+}
 /* Wrapper */
+
+/* Dir */
+#divDirWrapper {
+    border: 1px solid red;
+    overflow: auto;
+}
+/* Dir */
 
 /* Footer */
 /* Footer */

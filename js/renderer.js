@@ -14,6 +14,7 @@ var adbHelper = 0;
 
 var divDeviceList = 0;
 var divTransferList = 0;
+var divDirWrapper = 0;
 var divDirList = 0;
 
 function init() {
@@ -25,11 +26,17 @@ function init() {
 
     divDeviceList = $('#divDeviceList');
     divTransferList = $('#divTransferList');
+    divDirWrapper = $('#divDirWrapper');
     divDirList = $('#divDirList');
 
     clearDeviceList();
     clearTransferList();
     clearDirList();
+
+    fitDirWrapperHeight();
+    $(window).resize(() => {
+        fitDirWrapperHeight();
+    })
 }
 
 function clearDeviceList() {
@@ -42,6 +49,12 @@ function clearTransferList() {
 
 function clearDirList() {
     divDirList.empty();
+}
+
+function fitDirWrapperHeight() {
+    var windowHeight = $(window).height();
+    var divDirWrapperHeight = windowHeight - divDirWrapper.offset().top - 60;
+    divDirWrapper.css('height', divDirWrapperHeight + 'px');
 }
 
 function refreshDeviceList() {
@@ -180,8 +193,14 @@ function refreshDirList() {
         }
 
         // Scroll to top
-        $(window).scrollTop(0);
+        divDirWrapper.scrollTop(0);
     });
+}
+
+function selectDeviceAndRefreshRootDir(device) {
+    adbHelper.setCurDevice(device);
+    setCurrentDir('/');
+    refreshDirList();
 }
 
 function pullFile(path) {
@@ -265,12 +284,6 @@ function handleCmdClick(cmdLink) {
         break;
     }
     return false;
-}
-
-function selectDeviceAndRefreshRootDir(device) {
-    adbHelper.setCurDevice(device);
-    setCurrentDir('/');
-    refreshDirList();
 }
 
 $(function () {
