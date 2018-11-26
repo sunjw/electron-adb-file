@@ -1,3 +1,17 @@
+/* Defines */
+@font-face {
+    font-family: 'Product Sans';
+    font-style: normal;
+    font-weight: 400;
+    src: url(../asserts/GoogleSans-Regular.ttf) format('truetype');
+}
+
+:root {
+    --color-1: #6aba60;
+    --color-2: #007acc;
+}
+/* Defines */
+
 /* Common */
 * {
     padding: 0;
@@ -5,7 +19,7 @@
 }
 body {
     line-height: 1.3em;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Product Sans', Arial, Helvetica, sans-serif;
     font-size: 16px;
 }
 .clear {
@@ -26,11 +40,6 @@ img {
 }
 ul {
     list-style-type: none;
-}
-
-:root {
-    --color-1: #6aba60;
-    --color-2: #007acc;
 }
 /* Common */
 
