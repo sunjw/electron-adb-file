@@ -64,7 +64,7 @@ ul {
     top: 0;
     bottom: 0;
     z-index: 1000;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.5);
 }
 #divDialogWrapper {
     display: none;
@@ -73,6 +73,9 @@ ul {
     left: 100px;
     z-index: 1005;
     background-color: white;
+    padding: 20px;
+    border-radius: 6px;
+    
 }
 #divDeviceList {
     width: 450px;

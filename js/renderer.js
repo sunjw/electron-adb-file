@@ -17,12 +17,13 @@ var divTransferList = 0;
 var divDirWrapper = 0;
 var divDirList = 0;
 var divDialogWrapper = 0;
+var divDialogButtonLine = 0;
 var divDialogBackground = 0;
 
 function init() {
     adbHelper = new ADBHelper.ADBHelper('adb');
 
-    $(window).on('beforeunload', function () {
+    $(window).on('beforeunload', () => {
         adbHelper.stopAllPullFile();
     });
 
@@ -31,6 +32,7 @@ function init() {
     divDirWrapper = $('#divDirWrapper');
     divDirList = $('#divDirList');
     divDialogWrapper = $('#divDialogWrapper');
+    divDialogButtonLine = $('#divDialogButtonLine');
     divDialogBackground = $('#divDialogBackground');
 
     clearDeviceList();
@@ -40,7 +42,11 @@ function init() {
     onWindowResize();
     $(window).resize(() => {
         onWindowResize();
-    })
+    });
+
+    divDialogButtonLine.children('a').click(() => {
+        return handleCmdClick($(this));
+    });
 }
 
 function onWindowResize() {
@@ -83,7 +89,7 @@ function fitDialogPosition(ignoreHidden = false) {
     }
 
     var windowWidth = $(window).width();
-    var divDialogWrapperLeft = (windowWidth - divDialogWrapper.width()) / 2;
+    var divDialogWrapperLeft = (windowWidth - divDialogWrapper.outerWidth()) / 2;
     if (divDialogWrapperLeft < 0) {
         divDialogWrapperLeft = 0;
     }
@@ -123,7 +129,7 @@ function refreshDeviceList() {
                 var divDeviceId = $('<div/>').addClass('deviceId');
                 if (deviceAvailable) {
                     var selectDeviceCmd = CMD_SELECT_DEVICE + CMD_DELIMITER + device.id;
-                    var aDeviceLink = $('<a/>').text(device.id).attr('href', selectDeviceCmd).click(function () {
+                    var aDeviceLink = $('<a/>').text(device.id).attr('href', selectDeviceCmd).click(() => {
                             return handleCmdClick($(this));
                         });
                     divDeviceId.append(aDeviceLink);
@@ -180,7 +186,7 @@ function refreshDirList() {
 
             var divFileName = $('<div/>').addClass('fileName');
             var lsDirCmd = CMD_LS_DIR + CMD_DELIMITER + '..';
-            var aDirLink = $('<a/>').text('..').attr('href', lsDirCmd).click(function () {
+            var aDirLink = $('<a/>').text('..').attr('href', lsDirCmd).click(() => {
                     return handleCmdClick($(this));
                 });
             divFileName.append(aDirLink);
@@ -205,14 +211,14 @@ function refreshDirList() {
             if (ADBHelper.isFileDir(file)) {
                 // Directory
                 var lsDirCmd = CMD_LS_DIR + CMD_DELIMITER + fileName;
-                var aDirLink = $('<a/>').text(fileName).attr('href', lsDirCmd).click(function () {
+                var aDirLink = $('<a/>').text(fileName).attr('href', lsDirCmd).click(() => {
                         return handleCmdClick($(this));
                     });
                 divFileName.append(aDirLink);
             } else {
                 // File
                 var pullFileCmd = CMD_PULL + CMD_DELIMITER + fileName;
-                var aFileLink = $('<a/>').text(fileName).attr('href', pullFileCmd).click(function () {
+                var aFileLink = $('<a/>').text(fileName).attr('href', pullFileCmd).click(() => {
                         return handleCmdClick($(this));
                     });
                 divFileName.append(aFileLink);
@@ -278,7 +284,7 @@ function pullFile(path) {
         });
 
     var stopPullCmd = CMD_STOP_PULL + CMD_DELIMITER + pullId;
-    var aStopPullLink = $('<a/>').text('Stop').attr('href', stopPullCmd).click(function () {
+    var aStopPullLink = $('<a/>').text('Stop').attr('href', stopPullCmd).click(() => {
             return handleCmdClick($(this));
         });
     divPullStop.append(aStopPullLink);
