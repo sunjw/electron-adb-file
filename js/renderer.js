@@ -16,6 +16,7 @@ var adbHelper = 0;
 var divDirWrapper = 0;
 var divDirList = 0;
 var divDialogWrapper = 0;
+var divDialogTitle = 0;
 var divDeviceList = 0;
 var divTransferList = 0;
 var divDialogButtonLine = 0;
@@ -28,11 +29,12 @@ function init() {
         adbHelper.stopAllPullFile();
     });
 
-    divDeviceList = $('#divDeviceList');
-    divTransferList = $('#divTransferList');
     divDirWrapper = $('#divDirWrapper');
     divDirList = $('#divDirList');
     divDialogWrapper = $('#divDialogWrapper');
+    divDialogTitle = $('#divDialogTitle');
+    divDeviceList = $('#divDeviceList');
+    divTransferList = $('#divTransferList');
     divDialogButtonLine = $('.divDialogButtonLine');
     divDialogBackground = $('#divDialogBackground');
 
@@ -97,19 +99,24 @@ function fitDialogPosition(ignoreHidden = false) {
     divDialogWrapper.css('left', divDialogWrapperLeft + 'px');
 }
 
-function showDeviceListDialog() {
-    divDeviceList.show();
-    divTransferList.hide();
-    fitDialogPosition(true);
-    showDialogBackground();
-    divDialogWrapper.show();
-}
-
 function hideDialog() {
     divDialogWrapper.hide();
     hideDialogBackground();
     divDeviceList.hide();
     divTransferList.hide();
+}
+
+function showDialogBase(title) {
+    divDialogTitle.text(title)
+    fitDialogPosition(true);
+    showDialogBackground();
+    divDialogWrapper.show();
+}
+
+function showDeviceListDialog() {
+    divDeviceList.show();
+    divTransferList.hide();
+    showDialogBase('Devices');
 }
 
 function refreshDeviceList() {
