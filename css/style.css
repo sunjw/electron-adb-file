@@ -1,0 +1,46 @@
+/* Common */
+* {
+    padding: 0;
+    margin: 0;
+}
+body {
+    line-height: 1.3em;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+}
+.clear {
+    clear: both;
+}
+.center {
+    text-align: center;
+}
+.floatLeft {
+    float: left;
+}
+.floatRight {
+    float: right;
+}
+
+img {
+    border: 0;
+}
+ul {
+    list-style-type: none;
+}
+
+:root {
+    --color-1: #6aba60;
+    --color-2: #007acc;
+}
+/* Common */
+
+/* Wrapper */
+
+/* Wrapper */
+
+/* Footer */
+/* Footer */
+
+/* Others */
+
+/* Others */
