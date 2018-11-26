@@ -95,6 +95,10 @@ class ADBHelper {
         return this.curDevice;
     }
 
+    getCurDeviceCmdBase() {
+        return ['-s', this.curDevice];
+    }
+
     setCurDevice(device) {
         this.curDevice = device;
         Utils.log('setCurDevice=[' + this.curDevice + ']');
@@ -129,7 +133,8 @@ class ADBHelper {
         }
 
         const fixedAdbShellPath = fixAdbShellPath(this.curDir);
-        var cmd = new ChildProcessHelper.ChildProcessHelper(this.adbPath, ['shell', 'ls', '-al', fixedAdbShellPath]);
+        var cmdArgs = this.getCurDeviceCmdBase().concat(['shell', 'ls', '-al', fixedAdbShellPath]);
+        var cmd = new ChildProcessHelper.ChildProcessHelper(this.adbPath, cmdArgs);
         var outChunks = [];
 
         cmd.run((child, data) => {
@@ -221,7 +226,8 @@ class ADBHelper {
                 //Utils.log('[' + file.name + '] is a link');
                 var tryPath = this.curDir + file.name + '/';
                 // Run some sync child_process in async callback
-                var cmdSync = new ChildProcessHelper.ChildProcessHelper(this.adbPath, ['shell', 'cd', tryPath]);
+                var cmdArgs = this.getCurDeviceCmdBase().concat(['shell', 'cd', tryPath]);
+                var cmdSync = new ChildProcessHelper.ChildProcessHelper(this.adbPath, cmdArgs);
                 var cmdResult = cmdSync.runSync();
                 if (cmdResult.stdout.length == 0 && cmdResult.stderr.length == 0) {
                     // We 'cd' this path succeed
@@ -238,7 +244,8 @@ class ADBHelper {
 
     pullFile(filePath, destPath, onPullProgressCallback, onPullFinishedCallback) {
         const pullRandId = Utils.getRandomInt(1000);
-        var cmd = new ChildProcessHelper.ChildProcessHelper(this.adbPath, ['pull', filePath, destPath]);
+        var cmdArgs = this.getCurDeviceCmdBase().concat(['pull', filePath, destPath]);
+        var cmd = new ChildProcessHelper.ChildProcessHelper(this.adbPath, cmdArgs);
         var pullProcessList = this.pullProcessList;
         pullProcessList[pullRandId] = cmd;
 
