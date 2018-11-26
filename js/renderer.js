@@ -58,6 +58,8 @@ function fitDirWrapperHeight() {
 }
 
 function refreshDeviceList() {
+    divDeviceList.text('Waiting for command running...');
+    // Run command
     adbHelper.getDevices((adbDevicesResult) => {
         clearDeviceList();
 
