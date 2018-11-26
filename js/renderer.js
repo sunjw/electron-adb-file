@@ -45,6 +45,7 @@ function init() {
 
 function onWindowResize() {
     fitDirWrapperHeight();
+    fitDialogPosition();
 }
 
 function clearDeviceList() {
@@ -62,6 +63,9 @@ function clearDirList() {
 function fitDirWrapperHeight() {
     var windowHeight = $(window).height();
     var divDirWrapperHeight = windowHeight - divDirWrapper.offset().top - 5;
+    if (divDirWrapperHeight < 20) {
+        divDirWrapperHeight = 20;
+    }
     divDirWrapper.css('height', divDirWrapperHeight + 'px');
 }
 
@@ -73,8 +77,28 @@ function hideDialogBackground() {
     divDialogBackground.hide();
 }
 
+function fitDialogPosition(ignoreHidden = false) {
+    if (!ignoreHidden && divDialogWrapper.is(":hidden")) {
+        return;
+    }
+
+    var windowWidth = $(window).width();
+    var divDialogWrapperLeft = (windowWidth - divDialogWrapper.width()) / 2;
+    if (divDialogWrapperLeft < 0) {
+        divDialogWrapperLeft = 0;
+    }
+    divDialogWrapper.css('left', divDialogWrapperLeft + 'px');
+}
+
 function showDeviceListDialog() {
+    fitDialogPosition(true);
     showDialogBackground();
+    divDialogWrapper.show();
+}
+
+function hideDeviceListDialog() {
+    hideDialogBackground();
+    divDialogWrapper.hide();
 }
 
 function refreshDeviceList() {

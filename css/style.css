@@ -57,10 +57,6 @@ ul {
 /* Dir */
 
 /* Dialog */
-#divDialogWrapper {
-    display: none;
-    z-index: 1005;
-}
 #divDialogBackground {
     display: none;
     width: 100%;
@@ -69,6 +65,17 @@ ul {
     bottom: 0;
     z-index: 1000;
     background-color: rgba(0, 0, 0, 0.7);
+}
+#divDialogWrapper {
+    display: none;
+    position: absolute;
+    top: 120px;
+    left: 100px;
+    z-index: 1005;
+    background-color: white;
+}
+#divDeviceList {
+    width: 450px;
 }
 /* Dialog */
 
