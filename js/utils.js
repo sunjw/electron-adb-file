@@ -2,6 +2,17 @@ function log(logString) {
     console.log(logString);
 }
 
+function cloneObject(obj) {
+    var clone = {};
+    for (var i in obj) {
+        if (obj[i] != null && typeof(obj[i]) == "object")
+            clone[i] = cloneObject(obj[i]);
+        else
+            clone[i] = obj[i];
+    }
+    return clone;
+}
+
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
@@ -22,5 +33,6 @@ function byteSizeToShortSize(size) {
 
 // exports
 exports.log = log;
+exports.cloneObject = cloneObject;
 exports.getRandomInt = getRandomInt;
 exports.byteSizeToShortSize = byteSizeToShortSize;

@@ -137,7 +137,6 @@ function refreshDeviceList() {
         } else {
             for (const device of devices) {
                 var deviceAvailable = (device.status == 'device');
-
                 var divDeviceLine = $('<div/>').addClass('deviceLine');
                 var divDeviceId = $('<div/>').addClass('deviceId');
                 if (deviceAvailable) {

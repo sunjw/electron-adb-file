@@ -79,15 +79,18 @@ ul {
     left: 100px;
     z-index: 1005;
     background-color: white;
-    padding: 20px;
-    border-radius: 6px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+    padding: 20px 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
 }
 #divDialogTitle {
-    margin-bottom: 16px;
+    margin-bottom: 20px;
 }
 #divDeviceList {
     width: 300px;
+}
+#divDeviceList .deviceLine {
+    margin-bottom: 10px;
 }
 #divDeviceList .deviceId {
     color: black;
