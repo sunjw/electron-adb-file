@@ -32,7 +32,7 @@ function init() {
     divDirWrapper = $('#divDirWrapper');
     divDirList = $('#divDirList');
     divDialogWrapper = $('#divDialogWrapper');
-    divDialogButtonLine = $('#divDialogButtonLine');
+    divDialogButtonLine = $('.divDialogButtonLine');
     divDialogBackground = $('#divDialogBackground');
 
     clearDeviceList();
@@ -44,9 +44,9 @@ function init() {
         onWindowResize();
     });
 
-    /*divDialogButtonLine.children('a').click(function() {
-    return handleCmdClick($(this));
-    });*/
+    divDialogButtonLine.children('a').click(function () {
+        return handleCmdClick($(this));
+    });
 }
 
 function onWindowResize() {
