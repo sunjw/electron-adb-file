@@ -7,8 +7,7 @@
 }
 
 :root {
-    --color-1: #6aba60;
-    --color-2: #007acc;
+    --color-android: #006ee8;
 }
 /* Defines */
 
@@ -39,6 +38,7 @@ body {
 }
 
 a {
+    color: var(--color-android);
     text-decoration: none;
 }
 img {
@@ -88,6 +88,12 @@ ul {
 }
 #divDeviceList {
     width: 300px;
+}
+#divDeviceList .deviceId {
+    color: black;
+}
+#divDeviceList .tips,#divDeviceList .deviceStatus {
+    color: #666666;
 }
 .divDialogButtonLine {
     margin-top: 10px;

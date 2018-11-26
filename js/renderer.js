@@ -120,19 +120,20 @@ function showDeviceListDialog() {
 }
 
 function refreshDeviceList() {
-    divDeviceList.text('Waiting for command running...');
+    var divTips = $('<div/>').addClass('tips').text('Waiting for command running...');
+    divDeviceList.append(divTips.text('Waiting for command running...'));
     // Run command
     adbHelper.getDevices((adbDevicesResult) => {
         clearDeviceList();
 
         if (adbDevicesResult.code != 0) {
-            divDeviceList.text('Error: ' + adbDevicesResult.code + ', ' + adbDevicesResult.err);
+            divDeviceList.append(divTips.text('Error: ' + adbDevicesResult.code + ', ' + adbDevicesResult.err));
             return;
         }
 
         var devices = adbDevicesResult.devices;
         if (devices.length == 0) {
-            divDeviceList.text('No device found');
+            divDeviceList.append(divTips.text('No device found.'));
         } else {
             for (const device of devices) {
                 var deviceAvailable = (device.status == 'device');
@@ -150,7 +151,7 @@ function refreshDeviceList() {
                 }
                 divDeviceLine.append(divDeviceId);
 
-                var divDeviceStatus = $('<div/>').addClass('deviceStatus').text(device.status);
+                var divDeviceStatus = $('<div/>').addClass('deviceStatus').text('Status: ' + device.status);
                 divDeviceLine.append(divDeviceStatus);
 
                 divDeviceList.append(divDeviceLine);
