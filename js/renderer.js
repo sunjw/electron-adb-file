@@ -84,6 +84,23 @@ function initButtons() {
     });
 }
 
+function updateTransferButton() {
+    var count = 0;
+    var pullLines = divTransferList.children('.pullLine');
+    for (var pullLine of pullLines) {
+        pullLine = $(pullLine);
+        var pullProgress = pullLine.children('.pullProgress');
+        if (!pullProgress.hasClass('finished')) {
+            ++count;
+        }
+    }
+    var btnTransferText = 'Transfer...';
+    if (count > 0) {
+        btnTransferText = 'Transfer(' + count + ')...';
+    }
+    aBtnTransfer.text(btnTransferText);
+}
+
 function initTransferList() {
     divTransferList.empty();
     var divNoTransfer = $('<div/>').attr('id', 'divNoTransfer').addClass('tips').text('No transfer.');
@@ -348,6 +365,8 @@ function pullFile(path) {
                 divPullProgress.text('Pull: failed');
                 divPullStop.empty();
             }
+            divPullProgress.addClass('finished');
+            updateTransferButton();
         });
 
     // Stop button
@@ -356,6 +375,9 @@ function pullFile(path) {
             return handleCmdClick($(this));
         });
     divPullStop.append(aStopPullLink);
+
+    // Update Transfer button
+    updateTransferButton();
 }
 
 function stopPullFile(pullId) {
