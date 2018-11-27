@@ -1,3 +1,7 @@
+const {
+    shell
+} = require('electron');
+
 const OS = require('os');
 const Path = require('path');
 
@@ -11,6 +15,7 @@ const CMD_SHOW_TRANSFER = 'show-transfer';
 const CMD_LS_DIR = 'ls';
 const CMD_PULL = 'pull';
 const CMD_STOP_PULL = 'stop-pull';
+const CMD_SHOW_PULL = 'show-pull';
 
 var adbHelper = 0;
 
@@ -328,15 +333,24 @@ function pullFile(path) {
     }
     const downloadDir = homeDir + 'Downloads/';
     const pullId = adbHelper.pullFile(path, downloadDir, (progressPercent) => {
-            divPullProgress.text(progressPercent);
+            divPullProgress.text('Pull: ' + progressPercent);
         }, (adbPullResult) => {
             if (adbPullResult.code == 0) {
-                divPullProgress.text('Done');
+                divPullProgress.text('Pull: done');
+                var pullPath = downloadDir + fileName;
+                var showPullCmd = CMD_SHOW_PULL + CMD_DELIMITER + pullPath;
+                var aShowPullLink = $('<a/>').text('Show').attr('href', showPullCmd).click(function () {
+                        return handleCmdClick($(this));
+                    });
+                divPullStop.empty();
+                divPullStop.append(aShowPullLink);
             } else {
-                divPullProgress.text('Failed');
+                divPullProgress.text('Pull: failed');
+                divPullStop.empty();
             }
         });
 
+    // Stop button
     var stopPullCmd = CMD_STOP_PULL + CMD_DELIMITER + pullId;
     var aStopPullLink = $('<a/>').text('Stop').attr('href', stopPullCmd).click(function () {
             return handleCmdClick($(this));
@@ -402,6 +416,10 @@ function handleCmdClick(cmdLink) {
     case CMD_STOP_PULL:
         const pullId = adbCmdParam;
         stopPullFile(pullId);
+        break;
+    case CMD_SHOW_PULL:
+        const pullFilePath = adbCmdParam;
+        shell.showItemInFolder(pullFilePath);
         break;
     }
     return false;

@@ -122,6 +122,9 @@ ul {
 #divDialogTitle {
     margin-bottom: 20px;
 }
+.divDialogButtonLine {
+    margin-top: 10px;
+}
 #divDeviceList,#divTransferList {
     max-height: 200px;
     overflow: auto;
@@ -141,8 +144,19 @@ ul {
 #divTransferList {
     width: 500px;
 }
-.divDialogButtonLine {
-    margin-top: 10px;
+#divTransferList .fileName,#divTransferList .pullProgress {
+    width: 360px;
+}
+#divTransferList .pullProgress {
+    color: #666666;
+}
+#divTransferList .pullLine {
+    position: relative;
+}
+#divTransferList .pullStop {
+    position: absolute;
+    right: 2px;
+    top: 12px;
 }
 /* Dialog */
 
