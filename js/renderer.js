@@ -192,14 +192,13 @@ function refreshDirList() {
     // setCurDir first!
     adbHelper.getDirList((adbDirListResult) => {
         clearDirList();
-        fitFileNameWidth();
 
         if (adbDirListResult.code != 0) {
             divDirList.text('Error: ' + adbDirListResult.code + ', ' + adbDirListResult.err);
             return;
         }
 
-        // Go up
+        // Up ..
         var curDir = adbHelper.getCurDir();
         curDir = curDir.substr(0, curDir.length - 1);
         var pathDelimIdx = curDir.lastIndexOf('/');
@@ -238,6 +237,7 @@ function refreshDirList() {
                         return handleCmdClick($(this));
                     });
                 divFileName.append(aDirLink);
+                divFileName.addClass('fileDir');
             } else {
                 // File
                 var pullFileCmd = CMD_PULL + CMD_DELIMITER + fileName;
@@ -245,6 +245,7 @@ function refreshDirList() {
                         return handleCmdClick($(this));
                     });
                 divFileName.append(aFileLink);
+                divFileName.addClass('fileNormal');
             }
             divFileLine.append(divFileName);
 

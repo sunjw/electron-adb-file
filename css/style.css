@@ -131,9 +131,13 @@ ul {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    margin-left: 80px;
-    padding-left: 20px;
+    padding-left: 60px;
+    background: url('../asserts/generic_96.png') 10px 10px no-repeat;
+    background-size: 36px 36px;
     cursor: pointer;
+}
+#divDirList .fileDir {
+    background-image: url('../asserts/folder_96.png');
 }
 #divDirList .fileTypeOrSize {
     width: 100px;
