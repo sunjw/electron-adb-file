@@ -119,21 +119,24 @@ ul {
 }
 #divDirList .fileName,#divDirList .fileTypeOrSize,#divDirList .fileModified {
     height: 58px;
-}
-#divDirList .fileName {
     float: left;
 }
-#divDirList .fileTypeOrSize,#divDirList .fileModified {
+#divDirList .fileRightPart {
     float: right;
+}
+#divDirList .fileRightPart:after {
+    content: '';
+    display: block;
+    clear: both;
 }
 #divDirList .fileName {
     width: var(--file-name-width);
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    padding-left: 60px;
-    background: url('../asserts/generic_96.png') 10px 10px no-repeat;
-    background-size: 36px 36px;
+    padding-left: 70px;
+    background: url('../asserts/generic_96.png') 16px 10px no-repeat;
+    background-size: 40px 40px;
     cursor: pointer;
 }
 #divDirList .fileDir {

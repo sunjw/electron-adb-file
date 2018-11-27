@@ -263,9 +263,11 @@ function refreshDirList() {
                 divFileModified.text('Permission denied');
             }
 
-            // Float right
-            divFileLine.append(divFileModified);
-            divFileLine.append(divFileTypeOrSize);
+            var divFileRightPart = $('<div/>').addClass('fileRightPart');
+            divFileRightPart.append(divFileTypeOrSize);
+            divFileRightPart.append(divFileModified);
+
+            divFileLine.append(divFileRightPart);
 
             divDirList.append(divFileLine);
         }
