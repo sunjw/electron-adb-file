@@ -31,8 +31,20 @@ function byteSizeToShortSize(size) {
     return shortSize;
 }
 
+function getParentDir(path) {
+    var curPath = path;
+    if (curPath.endsWith('/')) {
+        curPath = curPath.substr(0, curPath.length - 1);
+    }
+    var pathDelimIdx = curPath.lastIndexOf('/');
+    var parentDirPath = curPath.substr(0, pathDelimIdx);
+    parentDirPath = parentDirPath + '/';
+    return parentDirPath;
+}
+
 // exports
 exports.log = log;
 exports.cloneObject = cloneObject;
 exports.getRandomInt = getRandomInt;
 exports.byteSizeToShortSize = byteSizeToShortSize;
+exports.getParentDir = getParentDir;

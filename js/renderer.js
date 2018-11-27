@@ -13,6 +13,9 @@ const CMD_STOP_PULL = 'stop-pull';
 
 var adbHelper = 0;
 
+var aBtnUp = 0;
+var aBtnSdcard = 0;
+var aBtnTransfer = 0;
 var divDirWrapper = 0;
 var divDirList = 0;
 var divDialogWrapper = 0;
@@ -29,6 +32,9 @@ function init() {
         adbHelper.stopAllPullFile();
     });
 
+    aBtnUp = $('#divToolbarWrapper #aBtnUp');
+    aBtnSdcard = $('#divToolbarWrapper #aBtnSdcard');
+    aBtnTransfer = $('#divToolbarWrapper #aBtnTransfer');
     divDirWrapper = $('#divDirWrapper');
     divDirList = $('#divDirList');
     divDialogWrapper = $('#divDialogWrapper');
@@ -37,6 +43,8 @@ function init() {
     divTransferList = $('#divTransferList');
     divDialogButtonLine = $('.divDialogButtonLine');
     divDialogBackground = $('#divDialogBackground');
+
+    initButtons();
 
     clearDeviceList();
     clearTransferList();
@@ -56,6 +64,18 @@ function onWindowResize() {
     fitDirWrapperHeight();
     fitDialogPosition();
     fitFileNameWidth();
+}
+
+function initButtons() {
+    aBtnUp.addClass('disabled').click(function () {
+        return handleCmdClick($(this));
+    });
+    aBtnSdcard.addClass('disabled').click(function () {
+        return handleCmdClick($(this));
+    });
+    aBtnTransfer.addClass('disabled').click(function () {
+        return handleCmdClick($(this));
+    });
 }
 
 function clearDeviceList() {
@@ -204,23 +224,11 @@ function refreshDirList() {
         var pathDelimIdx = curDir.lastIndexOf('/');
         if (pathDelimIdx >= 0) {
             // Not root
-            var divFileLine = $('<div/>').addClass('fileLine');
-
-            var divFileName = $('<div/>').addClass('fileName');
-            var lsDirCmd = CMD_LS_DIR + CMD_DELIMITER + '..';
-            var aDirLink = $('<a/>').text('..').attr('href', lsDirCmd).click(function () {
-                    return handleCmdClick($(this));
-                });
-            divFileName.append(aDirLink);
-            divFileLine.append(divFileName);
-
-            var divFileTypeOrSize = $('<div/>').addClass('fileTypeOrSize');
-            divFileLine.append(divFileTypeOrSize);
-
-            var divFileModified = $('<div/>').addClass('fileModified');
-            divFileLine.append(divFileModified);
-
-            divDirList.append(divFileLine);
+            var parentDir = Utils.getParentDir(curDir);
+            var lsUpDirCmd = CMD_LS_DIR + CMD_DELIMITER + parentDir;
+            aBtnUp.attr('href', lsUpDirCmd).removeClass('disabled');
+        } else {
+            aBtnUp.attr('href', '').addClass('disabled');
         }
 
         var dirList = adbDirListResult.dirList;
@@ -279,8 +287,13 @@ function refreshDirList() {
 
 function selectDeviceAndRefreshRootDir(device) {
     adbHelper.setCurDevice(device);
+
     setCurrentDir('/');
     refreshDirList();
+
+    // Enable buttons
+    var lsSdcardCmd = CMD_LS_DIR + CMD_DELIMITER + '/sdcard/';
+    aBtnSdcard.attr('href', lsSdcardCmd).removeClass('disabled');
 }
 
 function pullFile(path) {
@@ -324,6 +337,11 @@ function stopPullFile(pullId) {
 
 function handleCmdClick(cmdLink) {
     // CMD/PARAMETER
+    if (cmdLink.hasClass('disabled')) {
+        // Disabled button
+        return false;
+    }
+
     var cmd = '';
     if (cmdLink.is('[href]')) {
         cmd = cmdLink.attr('href');
@@ -351,15 +369,12 @@ function handleCmdClick(cmdLink) {
         break;
     case CMD_LS_DIR:
         var path = '';
-        if (adbCmdParam != '..') {
+        if (!adbCmdParam.startsWith('/')) {
+            // Relative path
             path = adbHelper.getCurDir() + adbCmdParam + '/';
         } else {
-            // Go up
-            var curDir = adbHelper.getCurDir();
-            curDir = curDir.substr(0, curDir.length - 1);
-            var pathDelimIdx = curDir.lastIndexOf('/');
-            var upDirPath = curDir.substr(0, pathDelimIdx);
-            path = upDirPath + '/';
+            // Absolute path
+            path = adbCmdParam;
         }
         setCurrentDir(path);
         refreshDirList();

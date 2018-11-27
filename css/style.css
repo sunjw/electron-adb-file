@@ -83,6 +83,10 @@ ul {
 #divToolbarWrapper .toolbarButton {
     float: left;
 }
+#divToolbarWrapper .disabled {
+    color: #666666;
+    cursor: default;
+}
 #divToolbarWrapper #divToolbarLeftPart .toolbarButton {
     margin-right: 10px;
 }
