@@ -57,6 +57,40 @@ ul {
 }
 /* Wrapper */
 
+/* Toolbar */
+#divToolbarWrapper {
+    border-bottom: 1px solid #e0e0e0;
+}
+#divToolbarWrapper .divToolbarLine {
+    padding: 0 20px;
+    height: 45px;
+    line-height: 45px;
+}
+#divToolbarWrapper #divToolbarFunc {
+    border-bottom: 1px solid var(--color-android);
+}
+#divToolbarWrapper #divToolbarLeftPart:after,#divToolbarWrapper #divToolbarRightPart:after {
+    content: '';
+    display: block;
+    clear: both;
+}
+#divToolbarWrapper #divToolbarLeftPart {
+    float: left;
+}
+#divToolbarWrapper #divToolbarRightPart {
+    float: right;
+}
+#divToolbarWrapper .toolbarButton {
+    float: left;
+}
+#divToolbarWrapper #divToolbarLeftPart .toolbarButton {
+    margin-right: 10px;
+}
+#divToolbarWrapper #divToolbarRightPart .toolbarButton {
+    margin-left: 10px;
+}
+/* Toolbar */
+
 /* Dialog */
 #divDialogBackground {
     display: none;
@@ -143,7 +177,7 @@ ul {
     width: 100px;
 }
 #divDirList .fileModified {
-    width: 180px;
+    width: 160px;
 }
 /* File list */
 
