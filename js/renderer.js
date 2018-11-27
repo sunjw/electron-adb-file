@@ -46,9 +46,9 @@ function init() {
     divDialogBackground = $('#divDialogBackground');
 
     initButtons();
+    initTransferList();
 
     clearDeviceList();
-    clearTransferList();
     clearDirList();
 
     onWindowResize();
@@ -79,16 +79,18 @@ function initButtons() {
     });
 }
 
-function clearDeviceList() {
-    divDeviceList.empty();
+function initTransferList() {
+    divTransferList.empty();
+    var divNoTransfer = $('<div/>').attr('id', 'divNoTransfer').addClass('tips').text('No transfer.');
+    var divPull = $('<div/>').attr('id', 'divPull');
+    var divPush = $('<div/>').attr('id', 'divPush');
+    divTransferList.append(divNoTransfer);
+    divTransferList.append(divPull);
+    divTransferList.append(divPush);
 }
 
-function clearTransferList() {
-    divTransferList.empty();
-    var divTips = $('<div/>').addClass('tips').text('No transfer.');
-    var divTips = $('<div/>').addClass('tips').text('No transfer.');
-    var divTips = $('<div/>').addClass('tips').text('No transfer.');
-    divTransferList.append(divTips);
+function clearDeviceList() {
+    divDeviceList.empty();
 }
 
 function clearDirList() {
@@ -320,7 +322,8 @@ function pullFile(path) {
     divPullLine.append(divPullProgress);
     var divPullStop = $('<div/>').addClass('pullStop');
     divPullLine.append(divPullStop);
-    divTransferList.prepend(divPullLine);
+    divTransferList.children('#divPull').prepend(divPullLine);
+    divTransferList.children('#divNoTransfer').hide();
 
     var homeDir = OS.homedir();
     if (!homeDir.endsWith('/')) {
