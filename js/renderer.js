@@ -82,11 +82,7 @@ function initButtons() {
 function initTransferList() {
     divTransferList.empty();
     var divNoTransfer = $('<div/>').attr('id', 'divNoTransfer').addClass('tips').text('No transfer.');
-    var divPull = $('<div/>').attr('id', 'divPull');
-    var divPush = $('<div/>').attr('id', 'divPush');
     divTransferList.append(divNoTransfer);
-    divTransferList.append(divPull);
-    divTransferList.append(divPush);
 }
 
 function clearDeviceList() {
@@ -322,8 +318,9 @@ function pullFile(path) {
     divPullLine.append(divPullProgress);
     var divPullStop = $('<div/>').addClass('pullStop');
     divPullLine.append(divPullStop);
-    divTransferList.children('#divPull').prepend(divPullLine);
-    divTransferList.children('#divNoTransfer').hide();
+    var divNoTransfer = divTransferList.children('#divNoTransfer');
+    divNoTransfer.hide();
+    divNoTransfer.after(divPullLine);
 
     var homeDir = OS.homedir();
     if (!homeDir.endsWith('/')) {
