@@ -218,13 +218,11 @@ ul {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    bottom: 30px;
+    bottom: 40px;
     z-index: 1005;
-    background-color: white;
+    background-color: #666666;
     padding: 10px 20px;
-    border: 1px solid #e0e0e0;
     border-radius: 20px;
-    box-shadow: 0 0 30px rgba(0,0,0,0.6);
-    color: #666666;
+    color: white;
 }
 /* Others */
