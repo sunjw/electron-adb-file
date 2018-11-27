@@ -19,7 +19,7 @@
 }
 body {
     line-height: 1.4em;
-    font-family: 'Product Sans', Arial, Helvetica, sans-serif;
+    font-family: 'Product Sans',Arial,Helvetica,sans-serif;
     font-size: 16px;
     cursor: default;
 }
@@ -116,8 +116,15 @@ ul {
     border-radius: 10px;
     box-shadow: 0 0 30px rgba(0,0,0,0.6);
 }
+#divDialogWrapper .tips {
+    color: #666666;
+}
 #divDialogTitle {
     margin-bottom: 20px;
+}
+#divDeviceList,#divTransferList {
+    max-height: 200px;
+    overflow: auto;
 }
 #divDeviceList {
     width: 300px;
@@ -128,8 +135,11 @@ ul {
 #divDeviceList .deviceId {
     color: black;
 }
-#divDeviceList .tips,#divDeviceList .deviceStatus {
+#divDeviceList .deviceStatus {
     color: #666666;
+}
+#divTransferList {
+    width: 500px;
 }
 .divDialogButtonLine {
     margin-top: 10px;

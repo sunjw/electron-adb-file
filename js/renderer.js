@@ -7,6 +7,7 @@ const ADBHelper = require('./adb-helper.js');
 const CMD_DELIMITER = '/';
 const CMD_CLOSE_DIALOG = 'close-dialog';
 const CMD_SELECT_DEVICE = 'select-device';
+const CMD_SHOW_TRANSFER = 'show-transfer';
 const CMD_LS_DIR = 'ls';
 const CMD_PULL = 'pull';
 const CMD_STOP_PULL = 'stop-pull';
@@ -84,6 +85,10 @@ function clearDeviceList() {
 
 function clearTransferList() {
     divTransferList.empty();
+    var divTips = $('<div/>').addClass('tips').text('No transfer.');
+    var divTips = $('<div/>').addClass('tips').text('No transfer.');
+    var divTips = $('<div/>').addClass('tips').text('No transfer.');
+    divTransferList.append(divTips);
 }
 
 function clearDirList() {
@@ -138,6 +143,12 @@ function showDeviceListDialog() {
     divDeviceList.show();
     divTransferList.hide();
     showDialogBase('Devices');
+}
+
+function showTransferListDialog() {
+    divDeviceList.hide();
+    divTransferList.show();
+    showDialogBase('Transfer List');
 }
 
 function fitFileNameWidth() {
@@ -293,7 +304,9 @@ function selectDeviceAndRefreshRootDir(device) {
 
     // Enable buttons
     var lsSdcardCmd = CMD_LS_DIR + CMD_DELIMITER + '/sdcard/';
+    var showTransferCmd = CMD_SHOW_TRANSFER;
     aBtnSdcard.attr('href', lsSdcardCmd).removeClass('disabled');
+    aBtnTransfer.attr('href', showTransferCmd).removeClass('disabled');
 }
 
 function pullFile(path) {
@@ -366,6 +379,9 @@ function handleCmdClick(cmdLink) {
         const device = adbCmdParam;
         selectDeviceAndRefreshRootDir(device);
         hideDialog();
+        break;
+    case CMD_SHOW_TRANSFER:
+        showTransferListDialog();
         break;
     case CMD_LS_DIR:
         var path = '';
