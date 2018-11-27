@@ -30,6 +30,9 @@ var divDeviceList = 0;
 var divTransferList = 0;
 var divDialogButtonLine = 0;
 var divDialogBackground = 0;
+var divToast = 0;
+
+var toastTimeoutId = 0;
 
 function init() {
     adbHelper = new ADBHelper.ADBHelper('adb');
@@ -49,6 +52,7 @@ function init() {
     divTransferList = $('#divTransferList');
     divDialogButtonLine = $('.divDialogButtonLine');
     divDialogBackground = $('#divDialogBackground');
+    divToast = $('#divToast');
 
     initButtons();
     initTransferList();
@@ -178,6 +182,19 @@ function fitFileNameWidth() {
         fileNameWidth = 0;
     }
     $(document.documentElement).css('--file-name-width', fileNameWidth + 'px');
+}
+
+function showToast(message) {
+    divToast.html(message);
+    divToast.fadeIn('slow');
+    clearTimeout(toastTimeoutId);
+    toastTimeoutId = setTimeout(() => {
+            hideToast();
+        }, 5000);
+}
+
+function hideToast() {
+    divToast.fadeOut('slow');
 }
 
 function refreshDeviceList() {
@@ -367,6 +384,7 @@ function pullFile(path) {
             }
             divPullProgress.addClass('finished');
             updateTransferButton();
+            showToast('Pull "' + fileName + '" finished');
         });
 
     // Stop button
