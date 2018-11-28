@@ -197,7 +197,7 @@ ul {
     white-space: nowrap;
     text-overflow: ellipsis;
     padding-left: 70px;
-    background: url('../asserts/generic_96.png') 16px 10px no-repeat;
+    background: url('../asserts/generic_outline_96.png') 16px 10px no-repeat;
     background-size: 40px 40px;
     cursor: pointer;
 }
