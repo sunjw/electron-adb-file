@@ -247,7 +247,9 @@ class ADBHelper {
         var cmdArgs = this.getCurDeviceCmdBase().concat(['pull', filePath, destPath]);
         var cmd = new ChildProcessHelper.ChildProcessHelper(this.adbPath, cmdArgs);
         var pullProcessList = this.pullProcessList;
-        pullProcessList[pullRandId] = cmd;
+        pullProcessList[pullRandId] = {};
+        pullProcessList[pullRandId].cmd = cmd;
+        pullProcessList[pullRandId].percent = 0;
 
         cmd.run((child, data) => {
             // On process output...
@@ -268,6 +270,8 @@ class ADBHelper {
                 }
             }
             if (progressPercent != '') {
+                var percentInt = parseInt(progressPercent.substr(0, progressPercent.length - 1));
+                pullProcessList[pullRandId].percent = percentInt;
                 onPullProgressCallback(progressPercent);
             }
         }, (child, exitCode, err) => {
@@ -300,14 +304,14 @@ class ADBHelper {
 
     stopPullFile(pullId) {
         if (pullId in this.pullProcessList) {
-            var pullCmd = this.pullProcessList[pullId];
+            var pullCmd = this.pullProcessList[pullId].cmd;
             pullCmd.stop();
         }
     }
 
     stopAllPullFile() {
         for (const pullId of Object.keys(this.pullProcessList)) {
-            var pullCmd = this.pullProcessList[pullId];
+            var pullCmd = this.pullProcessList[pullId].cmd;
             pullCmd.stop();
         }
     }
