@@ -27,6 +27,12 @@ function createWindow () {
     // when you should delete the corresponding element.
     mainWindow = null
   })
+
+  // Send Message
+  mainWindow.webContents.on('did-finish-load', () => {
+    // Set user's downloads directory path to renderer.
+    mainWindow.webContents.send('set-downloads-path', app.getPath('downloads'))
+ })
 }
 
 // This method will be called when Electron has finished

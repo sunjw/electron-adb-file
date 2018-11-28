@@ -1,8 +1,8 @@
 const {
+    ipcRenderer,
     shell
 } = require('electron');
 
-const OS = require('os');
 const Path = require('path');
 
 const Utils = require('./utils.js');
@@ -21,6 +21,8 @@ const CMD_SHOW_PULL = 'show-pull';
 
 var adbHelper = 0;
 
+var downloadsDirPath = 0;
+
 var aBtnUp = 0;
 var aBtnRefresh = 0;
 var aBtnSdcard = 0;
@@ -37,6 +39,14 @@ var divDialogBackground = 0;
 var divToast = 0;
 
 var toastTimeoutId = 0;
+
+ipcRenderer.on('set-downloads-path', (event, arg) => {
+    Utils.log('set-downloads-path=[' + arg + ']');
+    downloadsDirPath = arg;
+    if (!downloadsDirPath.endsWith('/')) {
+        downloadsDirPath = downloadsDirPath + '/';
+    }
+});
 
 function init() {
     adbHelper = new ADBHelper.ADBHelper('adb');
@@ -450,11 +460,7 @@ function pullFile(path) {
     divNoTransfer.hide();
     divNoTransfer.after(divPullLine);
 
-    var homeDir = OS.homedir();
-    if (!homeDir.endsWith('/')) {
-        homeDir = homeDir + '/';
-    }
-    const downloadDir = homeDir + 'Downloads/';
+    const downloadDir = downloadsDirPath;
     const pullId = adbHelper.pullFile(path, downloadDir, (progressPercent) => {
             divPullProgress.text('Pull: ' + progressPercent);
         }, (adbPullResult) => {
