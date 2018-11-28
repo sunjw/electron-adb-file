@@ -128,17 +128,32 @@ function fitToolbarPath() {
 
 function updateTransferButton() {
     var count = 0;
+    var minProgress = 100;
     var pullLines = divTransferList.children('.pullLine');
     for (var pullLine of pullLines) {
         pullLine = $(pullLine);
         var pullProgress = pullLine.children('.pullProgress');
         if (!pullProgress.hasClass('finished')) {
             ++count;
+            var pullProgressText = pullProgress.text().trim();
+            if (pullProgressText.startsWith('Pull: ') && pullProgressText.endsWith('%')) {
+                var curProgress = pullProgressText.substr(6);
+                curProgress = curProgress.trim().substr(0, curProgress.length - 1);
+                curProgress = parseInt(curProgress);
+                if (curProgress < minProgress) {
+                    minProgress = curProgress;
+                }
+            }
         }
     }
-    var btnTransferText = 'Transfer...';
+    var btnTransferText = 'Transfer';
     if (count > 0) {
-        btnTransferText = 'Transfer(' + count + ')...';
+        if (minProgress == 0 || minProgress == 100) {
+            minProgress = '...';
+        } else {
+            minProgress = minProgress + '%';
+        }
+        btnTransferText = 'Transfer(' + minProgress + ')';
     }
     aBtnTransfer.text(btnTransferText);
 }
@@ -463,6 +478,7 @@ function pullFile(path) {
     const downloadDir = downloadsDirPath;
     const pullId = adbHelper.pullFile(path, downloadDir, (progressPercent) => {
             divPullProgress.text('Pull: ' + progressPercent);
+            updateTransferButton();
         }, (adbPullResult) => {
             if (adbPullResult.code == 0) {
                 divPullProgress.text('Pull: done');
