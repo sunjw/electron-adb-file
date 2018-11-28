@@ -226,6 +226,7 @@ function hideToast() {
 }
 
 function refreshDeviceList() {
+    clearDeviceList();
     var divTips = $('<div/>').addClass('tips').text('Waiting for command running...');
     divDeviceList.append(divTips.text('Waiting for command running...'));
     // Run command
