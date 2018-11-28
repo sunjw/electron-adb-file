@@ -69,15 +69,15 @@ ul {
 #divToolbarWrapper #divToolbarFunc {
     border-bottom: 1px solid var(--color-android);
 }
-#divToolbarWrapper #divToolbarLeftPart:after,#divToolbarWrapper #divToolbarRightPart:after {
+#divToolbarWrapper #divToolbarFuncLeftPart:after,#divToolbarWrapper #divToolbarFuncRightPart:after {
     content: '';
     display: block;
     clear: both;
 }
-#divToolbarWrapper #divToolbarLeftPart {
+#divToolbarWrapper #divToolbarFuncLeftPart {
     float: left;
 }
-#divToolbarWrapper #divToolbarRightPart {
+#divToolbarWrapper #divToolbarFuncRightPart {
     float: right;
 }
 #divToolbarWrapper .toolbarButton {
@@ -87,10 +87,10 @@ ul {
     color: #666666;
     cursor: default;
 }
-#divToolbarWrapper #divToolbarLeftPart .toolbarButton {
+#divToolbarWrapper #divToolbarFuncLeftPart .toolbarButton {
     margin-right: 10px;
 }
-#divToolbarWrapper #divToolbarRightPart .toolbarButton {
+#divToolbarWrapper #divToolbarFuncRightPart .toolbarButton {
     margin-left: 10px;
 }
 /* Toolbar */

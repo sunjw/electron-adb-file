@@ -23,6 +23,7 @@ var adbHelper = 0;
 var aBtnUp = 0;
 var aBtnSdcard = 0;
 var aBtnTransfer = 0;
+var divToolbarPath = 0;
 var divDirWrapper = 0;
 var divDirList = 0;
 var divDialogWrapper = 0;
@@ -45,6 +46,7 @@ function init() {
     aBtnUp = $('#divToolbarWrapper #aBtnUp');
     aBtnSdcard = $('#divToolbarWrapper #aBtnSdcard');
     aBtnTransfer = $('#divToolbarWrapper #aBtnTransfer');
+    divToolbarPath = $('#divToolbarPath');
     divDirWrapper = $('#divDirWrapper');
     divDirList = $('#divDirList');
     divDialogWrapper = $('#divDialogWrapper');
@@ -55,7 +57,7 @@ function init() {
     divDialogBackground = $('#divDialogBackground');
     divToast = $('#divToast');
 
-    initButtons();
+    initToolbar();
     initTransferList();
 
     clearDeviceList();
@@ -77,7 +79,7 @@ function onWindowResize() {
     fitFileNameWidth();
 }
 
-function initButtons() {
+function initToolbar() {
     aBtnUp.addClass('disabled').click(function () {
         return handleCmdClick($(this));
     });
