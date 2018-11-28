@@ -96,10 +96,16 @@ function initToolbar() {
 function fitToolbarPath() {
     var divToolbarPathDevice = divToolbarPath.children('#divToolbarPathDevice');
     var divToolbarPathWrapper = divToolbarPath.children('#divToolbarPathWrapper');
+    var divToolbarPathContainer = divToolbarPath.find('#divToolbarPathContainer');
     var divToolbarPathWidth = divToolbarPath.width();
     var divToolbarPathDeviceWidth = divToolbarPathDevice.outerWidth();
     var divToolbarPathWrapperWidth = divToolbarPathWidth - divToolbarPathDeviceWidth - 5;
+    var divToolbarPathContainerLeft = 0;
+    if (divToolbarPathContainer.outerWidth() > divToolbarPathWrapperWidth) {
+        divToolbarPathContainerLeft = divToolbarPathWrapperWidth - divToolbarPathContainer.outerWidth();
+    }
     divToolbarPathWrapper.css('width', divToolbarPathWrapperWidth + 'px');
+    divToolbarPathContainer.css('left', divToolbarPathContainerLeft + 'px');
 }
 
 function updateTransferButton() {
@@ -359,19 +365,25 @@ function refreshDirList() {
     divToolbarPathContainer.empty();
     var pathDirs = curDir.split('/');
     var pathPostfix = '/';
-    for (var pathDir of pathDirs) {
+    for (var i = 0; i < pathDirs.length; ++i) {
+        var pathDir = pathDirs[i].trim();
         pathDir = pathDir.trim();
         if (pathDir == '') {
             continue;
         }
         var pathDirHtml = pathDir + ' / ';
         pathDirHtml = Utils.stringReplaceAll(pathDirHtml, ' ', '&nbsp;');
-        pathPostfix = pathPostfix + pathDir + '/';
-        var lsPathCmd = CMD_LS_DIR + CMD_DELIMITER + pathPostfix;
-        var aPathDirLink = $('<a/>').html(pathDirHtml).addClass('toolbarButton').attr('href', lsPathCmd).click(function () {
-                return handleCmdClick($(this));
-            });
-        divToolbarPathContainer.append(aPathDirLink);
+        if (i < pathDirs.length - 1) {
+            pathPostfix = pathPostfix + pathDir + '/';
+            var lsPathCmd = CMD_LS_DIR + CMD_DELIMITER + pathPostfix;
+            var aPathDirLink = $('<a/>').html(pathDirHtml).addClass('toolbarButton').attr('href', lsPathCmd).click(function () {
+                    return handleCmdClick($(this));
+                });
+            divToolbarPathContainer.append(aPathDirLink);
+        } else {
+            // Last one
+            divToolbarPathContainer.append($('<span/>').html(pathDirHtml));
+        }
     }
 }
 
