@@ -22,6 +22,7 @@ const CMD_SHOW_PULL = 'show-pull';
 var adbHelper = 0;
 
 var aBtnUp = 0;
+var aBtnRefresh = 0;
 var aBtnSdcard = 0;
 var aBtnTransfer = 0;
 var divToolbarPath = 0;
@@ -45,6 +46,7 @@ function init() {
     });
 
     aBtnUp = $('#divToolbarWrapper #aBtnUp');
+    aBtnRefresh = $('#divToolbarWrapper #aBtnRefresh');
     aBtnSdcard = $('#divToolbarWrapper #aBtnSdcard');
     aBtnTransfer = $('#divToolbarWrapper #aBtnTransfer');
     divToolbarPath = $('#divToolbarPath');
@@ -83,6 +85,9 @@ function onWindowResize() {
 
 function initToolbar() {
     aBtnUp.addClass('disabled').click(function () {
+        return handleCmdClick($(this));
+    });
+    aBtnRefresh.addClass('disabled').click(function () {
         return handleCmdClick($(this));
     });
     aBtnSdcard.addClass('disabled').click(function () {
@@ -360,7 +365,10 @@ function refreshDirList() {
         var lsUpDirCmd = CMD_LS_DIR + CMD_DELIMITER + parentDir;
         aBtnUp.attr('href', lsUpDirCmd).removeClass('disabled');
     } else {
+        // Root
         aBtnUp.attr('href', '').addClass('disabled');
+        var lsRootCmd = CMD_LS_DIR + CMD_DELIMITER + '/';
+        aBtnRefresh.attr('href', lsRootCmd);
     }
 
     // Path bar
@@ -376,9 +384,9 @@ function refreshDirList() {
         }
         var pathDirHtml = pathDir + ' / ';
         pathDirHtml = Utils.stringReplaceAll(pathDirHtml, ' ', '&nbsp;');
+        pathPostfix = pathPostfix + pathDir + '/';
+        var lsPathCmd = CMD_LS_DIR + CMD_DELIMITER + pathPostfix;
         if (i < pathDirs.length - 1) {
-            pathPostfix = pathPostfix + pathDir + '/';
-            var lsPathCmd = CMD_LS_DIR + CMD_DELIMITER + pathPostfix;
             var aPathDirLink = $('<a/>').html(pathDirHtml).addClass('toolbarButton').attr('href', lsPathCmd).click(function () {
                     return handleCmdClick($(this));
                 });
@@ -386,6 +394,7 @@ function refreshDirList() {
         } else {
             // Last one
             divToolbarPathContainer.append($('<span/>').html(pathDirHtml));
+            aBtnRefresh.attr('href', lsPathCmd);
         }
     }
 
@@ -399,10 +408,12 @@ function selectDeviceAndRefreshRootDir(device) {
     refreshDirList();
 
     // Enable buttons
+    var lsRootCmd = CMD_LS_DIR + CMD_DELIMITER + '/';
     var lsSdcardCmd = CMD_LS_DIR + CMD_DELIMITER + '/sdcard/';
     var showTransferCmd = CMD_SHOW_TRANSFER;
     aBtnSdcard.attr('href', lsSdcardCmd).removeClass('disabled');
     aBtnTransfer.attr('href', showTransferCmd).removeClass('disabled');
+    aBtnRefresh.removeClass('disabled');
 
     // Path bar
     var divToolbarPathDevice = divToolbarPath.children('#divToolbarPathDevice');
@@ -410,7 +421,6 @@ function selectDeviceAndRefreshRootDir(device) {
     var aDeviceLink = $('<a/>').text(device).addClass('toolbarButton').attr('href', CMD_SHOW_DEVICE).click(function () {
             return handleCmdClick($(this));
         });
-    var lsRootCmd = CMD_LS_DIR + CMD_DELIMITER + '/';
     var aDeviceRootLink = $('<a/>').html('/&nbsp;').addClass('toolbarButton').attr('href', lsRootCmd).click(function () {
             return handleCmdClick($(this));
         });
