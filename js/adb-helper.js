@@ -302,6 +302,21 @@ class ADBHelper {
         return pullRandId;
     }
 
+    getPullFileCount() {
+        return Object.keys(this.pullProcessList).length;
+    }
+
+    getPullFileMinProgress() {
+        var minProgress = 100;
+        for (const pullId of Object.keys(this.pullProcessList)) {
+            var pullProgress = this.pullProcessList[pullId].percent;
+            if (pullProgress < minProgress) {
+                minProgress = pullProgress;
+            }
+        }
+        return minProgress;
+    }
+
     stopPullFile(pullId) {
         if (pullId in this.pullProcessList) {
             var pullCmd = this.pullProcessList[pullId].cmd;

@@ -127,25 +127,8 @@ function fitToolbarPath() {
 }
 
 function updateTransferButton() {
-    var count = 0;
-    var minProgress = 100;
-    var pullLines = divTransferList.children('.pullLine');
-    for (var pullLine of pullLines) {
-        pullLine = $(pullLine);
-        var pullProgress = pullLine.children('.pullProgress');
-        if (!pullProgress.hasClass('finished')) {
-            ++count;
-            var pullProgressText = pullProgress.text().trim();
-            if (pullProgressText.startsWith('Pull: ') && pullProgressText.endsWith('%')) {
-                var curProgress = pullProgressText.substr(6);
-                curProgress = curProgress.trim().substr(0, curProgress.length - 1);
-                curProgress = parseInt(curProgress);
-                if (curProgress < minProgress) {
-                    minProgress = curProgress;
-                }
-            }
-        }
-    }
+    var count = adbHelper.getPullFileCount();
+    var minProgress = adbHelper.getPullFileMinProgress();
     var btnTransferText = 'Transfer';
     if (count > 0) {
         if (minProgress == 0 || minProgress == 100) {
