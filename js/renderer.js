@@ -74,9 +74,10 @@ function init() {
 }
 
 function onWindowResize() {
+    fitToolbarPath();
     fitDirWrapperHeight();
-    fitDialogPosition();
     fitFileNameWidth();
+    fitDialogPosition();
 }
 
 function initToolbar() {
@@ -89,6 +90,15 @@ function initToolbar() {
     aBtnTransfer.addClass('disabled').click(function () {
         return handleCmdClick($(this));
     });
+}
+
+function fitToolbarPath() {
+    var divToolbarPathDevice = divToolbarPath.children('#divToolbarPathDevice');
+    var divToolbarPathWrapper = divToolbarPath.children('#divToolbarPathWrapper');
+    var divToolbarPathWidth = divToolbarPath.width();
+    var divToolbarPathDeviceWidth = divToolbarPathDevice.outerWidth();
+    var divToolbarPathWrapperWidth = divToolbarPathWidth - divToolbarPathDeviceWidth - 5;
+    divToolbarPathWrapper.css('width', divToolbarPathWrapperWidth + 'px');
 }
 
 function updateTransferButton() {

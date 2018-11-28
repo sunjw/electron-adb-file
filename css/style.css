@@ -66,6 +66,13 @@ ul {
     height: 45px;
     line-height: 45px;
 }
+#divToolbarWrapper .toolbarButton {
+    float: left;
+}
+#divToolbarWrapper .disabled {
+    color: #666666;
+    cursor: default;
+}
 #divToolbarWrapper #divToolbarFunc {
     border-bottom: 1px solid var(--color-android);
 }
@@ -80,18 +87,23 @@ ul {
 #divToolbarWrapper #divToolbarFuncRightPart {
     float: right;
 }
-#divToolbarWrapper .toolbarButton {
-    float: left;
-}
-#divToolbarWrapper .disabled {
-    color: #666666;
-    cursor: default;
-}
 #divToolbarWrapper #divToolbarFuncLeftPart .toolbarButton {
     margin-right: 10px;
 }
 #divToolbarWrapper #divToolbarFuncRightPart .toolbarButton {
     margin-left: 10px;
+}
+#divToolbarWrapper #divToolbarPathDevice,#divToolbarWrapper #divToolbarPathWrapper {
+    float: left;
+    height: 42px;
+    border: 1px solid red;
+}
+#divToolbarWrapper #divToolbarPathWrapper {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    direction: rtl;
+    text-align: left;
 }
 /* Toolbar */
 
