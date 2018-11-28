@@ -10,6 +10,7 @@ const ADBHelper = require('./adb-helper.js');
 
 const CMD_DELIMITER = '/';
 const CMD_CLOSE_DIALOG = 'close-dialog';
+const CMD_SHOW_DEVICE = 'show-device';
 const CMD_SELECT_DEVICE = 'select-device';
 const CMD_SHOW_TRANSFER = 'show-transfer';
 const CMD_CLICK_FILENAME = 'click-filename';
@@ -199,7 +200,7 @@ function fitFileNameWidth() {
 
 function showToast(message) {
     divToast.html(message);
-    divToast.fadeIn('slow');
+    divToast.show();
     clearTimeout(toastTimeoutId);
     toastTimeoutId = setTimeout(() => {
             hideToast();
@@ -207,7 +208,7 @@ function showToast(message) {
 }
 
 function hideToast() {
-    divToast.fadeOut('slow');
+    divToast.hide();
 }
 
 function refreshDeviceList() {
@@ -250,6 +251,11 @@ function refreshDeviceList() {
     });
 }
 
+function refreshDeviceAndShowDeviceDialog() {
+    refreshDeviceList();
+    showDeviceListDialog();
+}
+
 function setCurrentDir(path) {
     adbHelper.setCurDir(path);
 }
@@ -279,19 +285,6 @@ function refreshDirList() {
             return;
         }
 
-        // Up ..
-        var curDir = adbHelper.getCurDir();
-        curDir = curDir.substr(0, curDir.length - 1);
-        var pathDelimIdx = curDir.lastIndexOf('/');
-        if (pathDelimIdx >= 0) {
-            // Not root
-            var parentDir = Utils.getParentDir(curDir);
-            var lsUpDirCmd = CMD_LS_DIR + CMD_DELIMITER + parentDir;
-            aBtnUp.attr('href', lsUpDirCmd).removeClass('disabled');
-        } else {
-            aBtnUp.attr('href', '').addClass('disabled');
-        }
-
         var dirList = adbDirListResult.dirList;
         sortDirList(dirList);
         for (var file of dirList) {
@@ -301,10 +294,11 @@ function refreshDirList() {
                     return handleCmdClick($(this));
                 });
             var fileName = file.name;
+            var fileNameHtml = Utils.stringReplaceAll(fileName, ' ', '&nbsp;');
             if (ADBHelper.isFileDir(file)) {
                 // Directory
                 var lsDirCmd = CMD_LS_DIR + CMD_DELIMITER + fileName;
-                var aDirLink = $('<a/>').text(fileName).attr('href', lsDirCmd).click(function () {
+                var aDirLink = $('<a/>').html(fileNameHtml).attr('href', lsDirCmd).click(function () {
                         return handleCmdClick($(this));
                     });
                 divFileName.append(aDirLink);
@@ -312,7 +306,7 @@ function refreshDirList() {
             } else {
                 // File
                 var pullFileCmd = CMD_PULL + CMD_DELIMITER + fileName;
-                var aFileLink = $('<a/>').text(fileName).attr('href', pullFileCmd).click(function () {
+                var aFileLink = $('<a/>').html(fileNameHtml).attr('href', pullFileCmd).click(function () {
                         return handleCmdClick($(this));
                     });
                 divFileName.append(aFileLink);
@@ -346,6 +340,23 @@ function refreshDirList() {
         // Scroll to top
         divDirWrapper.scrollTop(0);
     });
+
+    // Up
+    var curDir = adbHelper.getCurDir();
+    curDir = curDir.substr(0, curDir.length - 1);
+    var pathDelimIdx = curDir.lastIndexOf('/');
+    if (pathDelimIdx >= 0) {
+        // Not root
+        var parentDir = Utils.getParentDir(curDir);
+        var lsUpDirCmd = CMD_LS_DIR + CMD_DELIMITER + parentDir;
+        aBtnUp.attr('href', lsUpDirCmd).removeClass('disabled');
+    } else {
+        aBtnUp.attr('href', '').addClass('disabled');
+    }
+
+    // Path bar
+    var divToolbarPathWrapper = divToolbarPath.children('#divToolbarPathWrapper');
+
 }
 
 function selectDeviceAndRefreshRootDir(device) {
@@ -359,14 +370,33 @@ function selectDeviceAndRefreshRootDir(device) {
     var showTransferCmd = CMD_SHOW_TRANSFER;
     aBtnSdcard.attr('href', lsSdcardCmd).removeClass('disabled');
     aBtnTransfer.attr('href', showTransferCmd).removeClass('disabled');
+
+    // Path bar
+    var divToolbarPathDevice = divToolbarPath.children('#divToolbarPathDevice');
+
+    var aDeviceLink = $('<a/>').text(device).addClass('toolbarButton').attr('href', CMD_SHOW_DEVICE).click(function () {
+            return handleCmdClick($(this));
+        });
+    var lsRootCmd = CMD_LS_DIR + CMD_DELIMITER + '/';
+    var aDeviceRootLink = $('<a/>').text('/').addClass('toolbarButton').attr('href', lsRootCmd).click(function () {
+            return handleCmdClick($(this));
+        });
+
+    divToolbarPathDevice.empty();
+    divToolbarPathDevice.append(aDeviceLink);
+    divToolbarPathDevice.append(': ');
+    divToolbarPathDevice.append(aDeviceRootLink);
+
+    fitToolbarPath();
 }
 
 function pullFile(path) {
     Utils.log('pullFile=[' + path + ']');
 
     var fileName = Path.basename(path);
+    var fileNameHtml = Utils.stringReplaceAll(fileName, ' ', '&nbsp;');
     var divPullLine = $('<div/>').addClass('pullLine');
-    var divFileName = $('<div/>').addClass('fileName').text(fileName);
+    var divFileName = $('<div/>').addClass('fileName').html(fileNameHtml);
     divPullLine.append(divFileName);
     var divPullProgress = $('<div/>').addClass('pullProgress').text('Pulling...');
     divPullLine.append(divPullProgress);
@@ -399,13 +429,12 @@ function pullFile(path) {
             }
             divPullProgress.addClass('finished');
             updateTransferButton();
-            var toastMessage = 'Pull "';
+            fileNameHtml = fileName;
             if (fileName.length > 40) {
-                toastMessage = toastMessage + fileName.substr(0, 30) + '...';
-            } else {
-                toastMessage = toastMessage + fileName;
+                fileNameHtml = fileName.substr(0, 30) + '...';
             }
-            toastMessage = toastMessage + '" finished.';
+            fileNameHtml = Utils.stringReplaceAll(fileNameHtml, ' ', '&nbsp;');
+            var toastMessage = 'Pull "' + fileNameHtml + '" finished.';
             showToast(toastMessage);
         });
 
@@ -451,6 +480,9 @@ function handleCmdClick(cmdLink) {
     case CMD_CLOSE_DIALOG:
         hideDialog();
         break;
+    case CMD_SHOW_DEVICE:
+        refreshDeviceAndShowDeviceDialog();
+        break;
     case CMD_SELECT_DEVICE:
         const device = adbCmdParam;
         selectDeviceAndRefreshRootDir(device);
@@ -495,6 +527,5 @@ function handleCmdClick(cmdLink) {
 $(function () {
     init();
 
-    refreshDeviceList();
-    showDeviceListDialog();
+    refreshDeviceAndShowDeviceDialog();
 });

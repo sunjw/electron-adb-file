@@ -4,7 +4,7 @@ const ChildProcessHelper = require('./child_process-helper.js');
 const MODE_PERMISSION_DENIED = 'Permission denied';
 
 function fixAdbShellPath(path) {
-    return path.replace(new RegExp(' ', 'g'), '\\ ');
+    return Utils.stringReplaceAll(path, ' ', '\\ ');
 }
 
 function isFileDir(file) {

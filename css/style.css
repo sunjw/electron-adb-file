@@ -66,15 +66,15 @@ ul {
     height: 45px;
     line-height: 45px;
 }
-#divToolbarWrapper .toolbarButton {
-    float: left;
-}
 #divToolbarWrapper .disabled {
     color: #666666;
     cursor: default;
 }
 #divToolbarWrapper #divToolbarFunc {
     border-bottom: 1px solid var(--color-android);
+}
+#divToolbarWrapper #divToolbarFunc .toolbarButton {
+    float: left;
 }
 #divToolbarWrapper #divToolbarFuncLeftPart:after,#divToolbarWrapper #divToolbarFuncRightPart:after {
     content: '';
@@ -92,6 +92,12 @@ ul {
 }
 #divToolbarWrapper #divToolbarFuncRightPart .toolbarButton {
     margin-left: 10px;
+}
+#divToolbarWrapper #divToolbarPath {
+    color: #666666;
+}
+#divToolbarWrapper #divToolbarPath .toolbarButton {
+    color: #666666;
 }
 #divToolbarWrapper #divToolbarPathDevice,#divToolbarWrapper #divToolbarPathWrapper {
     float: left;

@@ -13,6 +13,10 @@ function cloneObject(obj) {
     return clone;
 }
 
+function stringReplaceAll(string, target, replace) {
+    return string.replace(new RegExp(target, 'g'), replace);
+}
+
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
@@ -45,6 +49,7 @@ function getParentDir(path) {
 // exports
 exports.log = log;
 exports.cloneObject = cloneObject;
+exports.stringReplaceAll = stringReplaceAll;
 exports.getRandomInt = getRandomInt;
 exports.byteSizeToShortSize = byteSizeToShortSize;
 exports.getParentDir = getParentDir;
