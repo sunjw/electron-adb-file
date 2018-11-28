@@ -12,6 +12,7 @@ const CMD_DELIMITER = '/';
 const CMD_CLOSE_DIALOG = 'close-dialog';
 const CMD_SELECT_DEVICE = 'select-device';
 const CMD_SHOW_TRANSFER = 'show-transfer';
+const CMD_CLICK_FILENAME = 'click-filename';
 const CMD_LS_DIR = 'ls';
 const CMD_PULL = 'pull';
 const CMD_STOP_PULL = 'stop-pull';
@@ -284,7 +285,9 @@ function refreshDirList() {
         for (var file of dirList) {
             var divFileLine = $('<div/>').addClass('fileLine');
 
-            var divFileName = $('<div/>').addClass('fileName');
+            var divFileName = $('<div/>').addClass('fileName').attr('rel', CMD_CLICK_FILENAME).click(function () {
+                    return handleCmdClick($(this));
+                });
             var fileName = file.name;
             if (ADBHelper.isFileDir(file)) {
                 // Directory
@@ -443,6 +446,11 @@ function handleCmdClick(cmdLink) {
         break;
     case CMD_SHOW_TRANSFER:
         showTransferListDialog();
+        break;
+    case CMD_CLICK_FILENAME:
+        // Actually click link
+        const aFileLink = cmdLink.children('a');
+        aFileLink.click();
         break;
     case CMD_LS_DIR:
         var path = '';
