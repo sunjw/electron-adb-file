@@ -107,9 +107,12 @@ ul {
 #divToolbarWrapper #divToolbarPathWrapper {
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
-    direction: rtl;
-    text-align: left;
+    position: relative;
+}
+#divToolbarWrapper #divToolbarPathWrapper #divToolbarPathContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 /* Toolbar */
 

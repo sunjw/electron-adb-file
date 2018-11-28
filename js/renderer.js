@@ -191,7 +191,7 @@ function showTransferListDialog() {
 
 function fitFileNameWidth() {
     var windowWidth = $(window).width();
-    var fileNameWidth = windowWidth - 400;
+    var fileNameWidth = windowWidth - 350;
     if (fileNameWidth < 0) {
         fileNameWidth = 0;
     }
@@ -355,8 +355,24 @@ function refreshDirList() {
     }
 
     // Path bar
-    var divToolbarPathWrapper = divToolbarPath.children('#divToolbarPathWrapper');
-
+    var divToolbarPathContainer = divToolbarPath.find('#divToolbarPathContainer');
+    divToolbarPathContainer.empty();
+    var pathDirs = curDir.split('/');
+    var pathPostfix = '/';
+    for (var pathDir of pathDirs) {
+        pathDir = pathDir.trim();
+        if (pathDir == '') {
+            continue;
+        }
+        var pathDirHtml = pathDir + ' / ';
+        pathDirHtml = Utils.stringReplaceAll(pathDirHtml, ' ', '&nbsp;');
+        pathPostfix = pathPostfix + pathDir + '/';
+        var lsPathCmd = CMD_LS_DIR + CMD_DELIMITER + pathPostfix;
+        var aPathDirLink = $('<a/>').html(pathDirHtml).addClass('toolbarButton').attr('href', lsPathCmd).click(function () {
+                return handleCmdClick($(this));
+            });
+        divToolbarPathContainer.append(aPathDirLink);
+    }
 }
 
 function selectDeviceAndRefreshRootDir(device) {
