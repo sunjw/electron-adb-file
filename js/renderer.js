@@ -103,6 +103,9 @@ function fitToolbarPath() {
     var divToolbarPathContainerLeft = 0;
     if (divToolbarPathContainer.outerWidth() > divToolbarPathWrapperWidth) {
         divToolbarPathContainerLeft = divToolbarPathWrapperWidth - divToolbarPathContainer.outerWidth();
+        divToolbarPathWrapper.addClass('overflow');
+    } else {
+        divToolbarPathWrapper.removeClass('overflow');
     }
     divToolbarPathWrapper.css('width', divToolbarPathWrapperWidth + 'px');
     divToolbarPathContainer.css('left', divToolbarPathContainerLeft + 'px');
@@ -385,6 +388,8 @@ function refreshDirList() {
             divToolbarPathContainer.append($('<span/>').html(pathDirHtml));
         }
     }
+
+    fitToolbarPath();
 }
 
 function selectDeviceAndRefreshRootDir(device) {
@@ -406,7 +411,7 @@ function selectDeviceAndRefreshRootDir(device) {
             return handleCmdClick($(this));
         });
     var lsRootCmd = CMD_LS_DIR + CMD_DELIMITER + '/';
-    var aDeviceRootLink = $('<a/>').text('/').addClass('toolbarButton').attr('href', lsRootCmd).click(function () {
+    var aDeviceRootLink = $('<a/>').html('/&nbsp;').addClass('toolbarButton').attr('href', lsRootCmd).click(function () {
             return handleCmdClick($(this));
         });
 

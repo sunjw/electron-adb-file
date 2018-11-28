@@ -102,12 +102,22 @@ ul {
 #divToolbarWrapper #divToolbarPathDevice,#divToolbarWrapper #divToolbarPathWrapper {
     float: left;
     height: 42px;
-    border: 1px solid red;
 }
 #divToolbarWrapper #divToolbarPathWrapper {
     white-space: nowrap;
     overflow: hidden;
     position: relative;
+}
+#divToolbarWrapper #divToolbarPathWrapper #divToolbarPathEllipsis {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 500;
+    background-color: white;
+}
+#divToolbarWrapper #divToolbarPathWrapper.overflow #divToolbarPathEllipsis {
+    display: block;
 }
 #divToolbarWrapper #divToolbarPathWrapper #divToolbarPathContainer {
     position: absolute;
