@@ -384,7 +384,13 @@ function pullFile(path) {
             }
             divPullProgress.addClass('finished');
             updateTransferButton();
-            var toastMessage = 'Pull "' + fileName + '" finished.';
+            var toastMessage = 'Pull "';
+            if (fileName.length > 40) {
+                toastMessage = toastMessage + fileName.substr(0, 30) + '...';
+            } else {
+                toastMessage = toastMessage + fileName;
+            }
+            toastMessage = toastMessage + '" finished.';
             showToast(toastMessage);
         });
 
