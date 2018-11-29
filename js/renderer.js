@@ -1,5 +1,6 @@
 const {
     ipcRenderer,
+    remote,
     shell
 } = require('electron');
 
@@ -51,9 +52,20 @@ ipcRenderer.on('set-downloads-path', (event, arg) => {
 function init() {
     adbHelper = new ADBHelper.ADBHelper('adb');
 
-    $(window).on('beforeunload', function () {
-        adbHelper.stopAllPullFile();
-    });
+    window.onbeforeunload = function (event) {
+        var pullCount = adbHelper.getPullFileCount();
+        if (pullCount > 0) {
+            var dialog = remote.dialog;
+            var choice = dialog.showMessageBox(
+                    remote.getCurrentWindow(), {
+                    type: 'info',
+                    buttons: ['OK'],
+                    title: 'Cannot exit',
+                    message: 'Still transferring, cannot exit!'
+                });
+            return false;
+        }
+    };
 
     aBtnUp = $('#divToolbarWrapper #aBtnUp');
     aBtnRefresh = $('#divToolbarWrapper #aBtnRefresh');
