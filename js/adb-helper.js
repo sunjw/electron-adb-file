@@ -3,10 +3,6 @@ const ChildProcessHelper = require('./child_process-helper.js');
 
 const MODE_PERMISSION_DENIED = 'Permission denied';
 
-function fixAdbShellPath(path) {
-    return Utils.stringReplaceAll(path, ' ', '\\ ');
-}
-
 function isFileDir(file) {
     if (file.mode.startsWith('d')) {
         return true;
@@ -132,7 +128,7 @@ class ADBHelper {
             return;
         }
 
-        const fixedAdbShellPath = fixAdbShellPath(this.curDir);
+        const fixedAdbShellPath = Utils.escapeShellPath(this.curDir);
         var cmdArgs = this.getCurDeviceCmdBase().concat(['shell', 'ls', '-al', fixedAdbShellPath]);
         var cmd = new ChildProcessHelper.ChildProcessHelper(this.adbPath, cmdArgs);
         var outChunks = [];

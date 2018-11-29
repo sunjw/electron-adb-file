@@ -329,7 +329,7 @@ function refreshDirList() {
                     return handleCmdClick($(this));
                 });
             var fileName = file.name;
-            var fileNameHtml = Utils.stringReplaceAll(fileName, ' ', '&nbsp;');
+            var fileNameHtml = Utils.escapeHtmlPath(fileName);
             if (ADBHelper.isFileDir(file)) {
                 // Directory
                 var lsDirCmd = CMD_LS_DIR + CMD_DELIMITER + fileName;
@@ -404,7 +404,7 @@ function refreshDirList() {
             continue;
         }
         var pathDirHtml = pathDir + ' / ';
-        pathDirHtml = Utils.stringReplaceAll(pathDirHtml, ' ', '&nbsp;');
+        pathDirHtml = Utils.escapeHtmlPath(pathDirHtml);
         pathPostfix = pathPostfix + pathDir + '/';
         var lsPathCmd = CMD_LS_DIR + CMD_DELIMITER + pathPostfix;
         if (i < pathDirs.length - 1) {
@@ -458,7 +458,7 @@ function pullFile(path) {
     Utils.log('pullFile=[' + path + ']');
 
     var fileName = Path.basename(path);
-    var fileNameHtml = Utils.stringReplaceAll(fileName, ' ', '&nbsp;');
+    var fileNameHtml = Utils.escapeHtmlPath(fileName);
     var divPullLine = $('<div/>').addClass('pullLine');
     var divFileName = $('<div/>').addClass('fileName').html(fileNameHtml);
     divPullLine.append(divFileName);
@@ -494,7 +494,7 @@ function pullFile(path) {
             if (fileName.length > 40) {
                 fileNameHtml = fileName.substr(0, 30) + '...';
             }
-            fileNameHtml = Utils.stringReplaceAll(fileNameHtml, ' ', '&nbsp;');
+            fileNameHtml = Utils.escapeHtmlPath(fileNameHtml);
             var toastMessage = 'Pull "' + fileNameHtml + '" finished.';
             showToast(toastMessage);
         });

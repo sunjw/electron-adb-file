@@ -17,6 +17,29 @@ function stringReplaceAll(string, target, replace) {
     return string.replace(new RegExp(target, 'g'), replace);
 }
 
+function escapeShellPath(path) {
+    const needEscape = [' ', '&', '*', '$', '?', '|', '"', '\'', ';', '<', '>', '#'];
+    var pathEscape = path;
+    for (var escape of needEscape) {
+        var escapeReg = escape;
+        if (escapeReg == '*' || escapeReg == '$' ||
+            escapeReg == '?' || escapeReg == '|') {
+            escapeReg = '\\' + escapeReg;
+        }
+        pathEscape = stringReplaceAll(pathEscape, escapeReg, '\\' + escape);
+    }
+    return pathEscape;
+}
+
+function escapeHtmlPath(path) {
+    var pathEscape = path;
+    pathEscape = stringReplaceAll(pathEscape, '&', '&amp;');
+    pathEscape = stringReplaceAll(pathEscape, '<', '&lt;');
+    pathEscape = stringReplaceAll(pathEscape, '>', '&gt;');
+    pathEscape = stringReplaceAll(pathEscape, ' ', '&nbsp;');
+    return pathEscape;
+}
+
 function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
@@ -50,6 +73,8 @@ function getParentDir(path) {
 exports.log = log;
 exports.cloneObject = cloneObject;
 exports.stringReplaceAll = stringReplaceAll;
+exports.escapeShellPath = escapeShellPath;
+exports.escapeHtmlPath = escapeHtmlPath;
 exports.getRandomInt = getRandomInt;
 exports.byteSizeToShortSize = byteSizeToShortSize;
 exports.getParentDir = getParentDir;
