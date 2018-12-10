@@ -16,8 +16,8 @@ const CMD_SELECT_DEVICE = 'select-device';
 const CMD_SHOW_TRANSFER = 'show-transfer';
 const CMD_CLICK_FILENAME = 'click-filename';
 const CMD_LS_DIR = 'ls';
+const CMD_STOP_TRANSFER = 'stop-transfer';
 const CMD_PULL = 'pull';
-const CMD_STOP_PULL = 'stop-pull';
 const CMD_SHOW_PULL = 'show-pull';
 
 var adbHelper = 0;
@@ -488,60 +488,67 @@ function selectDeviceAndRefreshRootDir(device) {
     fitToolbarPath();
 }
 
-function pullFile(path) {
-    Utils.log('pullFile=[' + path + ']');
-
+function transferFile(mode, path) {
+    Utils.log('transferFile, mode=[' + mode + '], path=[' + path + ']');
+    var modeText = (mode == 'pull') ? 'Pull' : 'Push';
     var fileName = Path.basename(path);
     var fileNameHtml = Utils.escapeHtmlPath(fileName);
-    var divPullLine = $('<div/>').addClass('pullLine');
+    var divTransferLine = $('<div/>').addClass('transferLine');
     var divFileName = $('<div/>').addClass('fileName').html(fileNameHtml);
-    divPullLine.append(divFileName);
-    var divPullProgress = $('<div/>').addClass('pullProgress').text('Pulling...');
-    divPullLine.append(divPullProgress);
-    var divPullStop = $('<div/>').addClass('pullStop');
-    divPullLine.append(divPullStop);
+    divTransferLine.append(divFileName);
+    var divTransferProgress = $('<div/>').addClass('transferProgress').text(modeText + 'ing...');
+    divTransferLine.append(divTransferProgress);
+    var divTransferStop = $('<div/>').addClass('transferStop');
+    divTransferLine.append(divTransferStop);
     var divNoTransfer = divTransferList.children('#divNoTransfer');
     divNoTransfer.hide();
-    divNoTransfer.after(divPullLine);
+    divNoTransfer.after(divTransferLine);
 
-    const downloadDir = downloadsDirPath;
-    const pullId = adbHelper.pullFile(path, downloadDir, (progressPercent) => {
-            divPullProgress.text('Pull: ' + progressPercent);
+    const destPath = (mode == 'pull') ? downloadsDirPath : '';
+    const transferId = adbHelper.pullFile(path, destPath, (progressPercent) => {
+            divTransferProgress.text(modeText + ': ' + progressPercent);
             updateTransferButton();
-        }, (adbPullResult) => {
-            if (adbPullResult.code == 0) {
-                divPullProgress.text('Pull: done');
-                var pullPath = downloadDir + fileName;
-                var showPullCmd = CMD_SHOW_PULL + CMD_DELIMITER + pullPath;
-                var aShowPullLink = $('<a/>').text('Show').attr('href', showPullCmd).click(function () {
-                        return handleCmdClick($(this));
-                    });
-                divPullStop.empty();
-                divPullStop.append(aShowPullLink);
+        }, (adbTransferResult) => {
+            if (adbTransferResult.code == 0) {
+                divTransferProgress.text(modeText + ': done');
+                divTransferStop.empty();
+                if (mode == 'pull') {
+                    var pullPath = destPath + fileName;
+                    var showPullCmd = CMD_SHOW_PULL + CMD_DELIMITER + pullPath;
+                    var aShowPullLink = $('<a/>').text('Show').attr('href', showPullCmd).click(function () {
+                            return handleCmdClick($(this));
+                        });
+                    divTransferStop.append(aShowPullLink);
+                }
             } else {
-                divPullProgress.text('Pull: failed');
-                divPullStop.empty();
+                divTransferProgress.text(modeText + ': failed');
+                divTransferStop.empty();
             }
-            divPullProgress.addClass('finished');
+            divTransferProgress.addClass('finished');
             updateTransferButton();
             fileNameHtml = fileName;
             if (fileName.length > 40) {
                 fileNameHtml = fileName.substr(0, 30) + '...';
             }
             fileNameHtml = Utils.escapeHtmlPath(fileNameHtml);
-            var toastMessage = 'Pull "' + fileNameHtml + '" finished.';
+            var toastMessage = modeText + ' "' + fileNameHtml + '" finished.';
             showToast(toastMessage);
         });
 
     // Stop button
-    var stopPullCmd = CMD_STOP_PULL + CMD_DELIMITER + pullId;
-    var aStopPullLink = $('<a/>').text('Stop').attr('href', stopPullCmd).click(function () {
+    var stopTransferCmd = CMD_STOP_TRANSFER + CMD_DELIMITER + transferId;
+    var aStopTransferLink = $('<a/>').text('Stop').attr('href', stopTransferCmd).click(function () {
             return handleCmdClick($(this));
         });
-    divPullStop.append(aStopPullLink);
+    divTransferStop.append(aStopTransferLink);
 
     // Update Transfer button
     updateTransferButton();
+}
+
+function pullFile(path) {
+    Utils.log('pullFile=[' + path + ']');
+    transferFile('pull', path);
 }
 
 function stopPullFile(pullId) {
@@ -610,13 +617,13 @@ function handleCmdClick(cmdLink) {
         setCurrentDir(path);
         refreshDirList();
         break;
+    case CMD_STOP_TRANSFER:
+        const pullId = adbCmdParam;
+        stopPullFile(pullId);
+        break;
     case CMD_PULL:
         const filePath = adbHelper.getCurDir() + adbCmdParam;
         pullFile(filePath);
-        break;
-    case CMD_STOP_PULL:
-        const pullId = adbCmdParam;
-        stopPullFile(pullId);
         break;
     case CMD_SHOW_PULL:
         const pullFilePath = adbCmdParam;

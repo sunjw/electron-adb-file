@@ -175,19 +175,19 @@ ul {
 #divTransferList {
     width: 500px;
 }
-#divTransferList .fileName,#divTransferList .pullProgress {
+#divTransferList .fileName,#divTransferList .transferProgress {
     width: 360px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
-#divTransferList .pullProgress {
+#divTransferList .transferProgress {
     color: #666666;
 }
-#divTransferList .pullLine {
+#divTransferList .transferLine {
     position: relative;
 }
-#divTransferList .pullStop {
+#divTransferList .transferStop {
     position: absolute;
     right: 4px;
     top: 2px;
