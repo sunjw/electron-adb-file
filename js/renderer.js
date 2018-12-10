@@ -85,6 +85,7 @@ function init() {
     initToolbar();
     initTransferList();
     initDialog();
+    initDirList();
 
     clearDeviceList();
     clearDirList();
@@ -141,6 +142,12 @@ function fitToolbarPath() {
     divToolbarPathContainer.css('left', divToolbarPathContainerLeft + 'px');
 }
 
+function initTransferList() {
+    divTransferList.empty();
+    var divNoTransfer = $('<div/>').attr('id', 'divNoTransfer').addClass('tips').text('No transfer.');
+    divTransferList.append(divNoTransfer);
+}
+
 function updateTransferButton() {
     var count = adbHelper.getPullFileCount();
     var minProgress = adbHelper.getPullFileMinProgress();
@@ -156,14 +163,32 @@ function updateTransferButton() {
     aBtnTransfer.text(btnTransferText);
 }
 
-function initTransferList() {
-    divTransferList.empty();
-    var divNoTransfer = $('<div/>').attr('id', 'divNoTransfer').addClass('tips').text('No transfer.');
-    divTransferList.append(divNoTransfer);
-}
-
 function clearDeviceList() {
     divDeviceList.empty();
+}
+
+function initDirList() {
+    var divDirWrapperDom = divDirWrapper[0];
+    divDirWrapperDom.ondragover = function () {
+        divDirWrapper.addClass('dropFile');
+        return false;
+    };
+    divDirWrapperDom.ondragleave = function () {
+        divDirWrapper.removeClass('dropFile');
+        return false;
+    };
+    divDirWrapperDom.ondragend = function () {
+        divDirWrapper.removeClass('dropFile');
+        return false;
+    };
+    divDirWrapperDom.ondrop = function (e) {
+        divDirWrapper.removeClass('dropFile');
+        e.preventDefault();
+        for (var f of e.dataTransfer.files) {
+            pushFile(f.path);
+        }
+        return false;
+    };
 }
 
 function clearDirList() {
@@ -521,6 +546,13 @@ function pullFile(path) {
 
 function stopPullFile(pullId) {
     adbHelper.stopPullFile(pullId);
+}
+
+function pushFile(path) {
+    Utils.log('pushFile=[' + path + ']');
+
+    var curDirPath = adbHelper.getCurDir();
+    Utils.log('Push [' + path + '] to [' + curDirPath + ']');
 }
 
 function handleCmdClick(cmdLink) {

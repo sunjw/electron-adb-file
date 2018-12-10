@@ -26,7 +26,7 @@ class ADBHelper {
         this.adbPath = adbPath;
         this.curDevice = '';
         this.curDir = '';
-        this.pullProcessList = {};
+        this.transferProcessList = {};
 
         //Utils.log('adb=[' + this.adbPath + ']');
     }
@@ -238,14 +238,21 @@ class ADBHelper {
         });
     }
 
-    pullFile(filePath, destPath, onPullProgressCallback, onPullFinishedCallback) {
-        const pullRandId = Utils.getRandomInt(1000);
-        var cmdArgs = this.getCurDeviceCmdBase().concat(['pull', filePath, destPath]);
+    _transferFile(transferMode, filePath, destPath, onProgressCallback, onFinishedCallback) {
+        const transferRandId = Utils.getRandomInt(1000);
+        var transferCmd = '';
+        switch (transferMode) {
+        case 'pull':
+            transferCmd = 'pull';
+            break;
+        }
+        var cmdArgs = this.getCurDeviceCmdBase().concat([transferCmd, filePath, destPath]);
         var cmd = new ChildProcessHelper.ChildProcessHelper(this.adbPath, cmdArgs);
-        var pullProcessList = this.pullProcessList;
-        pullProcessList[pullRandId] = {};
-        pullProcessList[pullRandId].cmd = cmd;
-        pullProcessList[pullRandId].percent = 0;
+        var transferProcessList = this.transferProcessList;
+        transferProcessList[transferRandId] = {};
+        transferProcessList[transferRandId].cmd = cmd;
+        transferProcessList[transferRandId].mode = transferMode;
+        transferProcessList[transferRandId].percent = 0;
 
         cmd.run((child, data) => {
             // On process output...
@@ -259,7 +266,7 @@ class ADBHelper {
                 var prefix = line.substr(0, 6);
                 if (prefix.startsWith('[') && prefix.endsWith(']')) {
                     // Found
-                    Utils.log('pullFile, progress line=[' + line + ']');
+                    Utils.log('transferFile, mode=[' + transferMode + '], progress line=[' + line + ']');
                     progressPercent = prefix.substr(1, 4);
                     progressPercent = progressPercent.trim();
                     break;
@@ -267,45 +274,49 @@ class ADBHelper {
             }
             if (progressPercent != '') {
                 var percentInt = parseInt(progressPercent.substr(0, progressPercent.length - 1));
-                pullProcessList[pullRandId].percent = percentInt;
-                onPullProgressCallback(progressPercent);
+                transferProcessList[transferRandId].percent = percentInt;
+                onProgressCallback(progressPercent);
             }
         }, (child, exitCode, err) => {
             // On process finished
-            delete pullProcessList[pullRandId];
+            delete transferProcessList[transferRandId];
 
-            var adbPullResult = {};
-            adbPullResult.code = 0;
-            adbPullResult.err = '';
+            var adbTransferResult = {};
+            adbTransferResult.code = 0;
+            adbTransferResult.err = '';
 
             if (err != 0) {
-                adbPullResult.code = exitCode;
-                adbPullResult.err = 'Pull [' + filePath + '] failed';
-                onPullFinishedCallback(adbPullResult);
+                adbTransferResult.code = exitCode;
+                adbTransferResult.err = 'Pull [' + filePath + '] failed';
+                onFinishedCallback(adbTransferResult);
                 return;
             }
 
             if (exitCode != 0) {
-                adbPullResult.code = -1;
-                adbPullResult.err = err.message;
-                onPullFinishedCallback(adbPullResult);
+                adbTransferResult.code = -1;
+                adbTransferResult.err = err.message;
+                onFinishedCallback(adbTransferResult);
                 return;
             }
 
-            onPullFinishedCallback(adbPullResult);
+            onFinishedCallback(adbTransferResult);
         });
 
-        return pullRandId;
+        return transferRandId;
+    }
+
+    pullFile(filePath, destPath, onPullProgressCallback, onPullFinishedCallback) {
+        return this._transferFile('pull', filePath, destPath, onPullProgressCallback, onPullFinishedCallback);
     }
 
     getPullFileCount() {
-        return Object.keys(this.pullProcessList).length;
+        return Object.keys(this.transferProcessList).length;
     }
 
     getPullFileMinProgress() {
         var minProgress = 100;
-        for (const pullId of Object.keys(this.pullProcessList)) {
-            var pullProgress = this.pullProcessList[pullId].percent;
+        for (const pullId of Object.keys(this.transferProcessList)) {
+            var pullProgress = this.transferProcessList[pullId].percent;
             if (pullProgress < minProgress) {
                 minProgress = pullProgress;
             }
@@ -314,15 +325,15 @@ class ADBHelper {
     }
 
     stopPullFile(pullId) {
-        if (pullId in this.pullProcessList) {
-            var pullCmd = this.pullProcessList[pullId].cmd;
+        if (pullId in this.transferProcessList) {
+            var pullCmd = this.transferProcessList[pullId].cmd;
             pullCmd.stop();
         }
     }
 
     stopAllPullFile() {
-        for (const pullId of Object.keys(this.pullProcessList)) {
-            var pullCmd = this.pullProcessList[pullId].cmd;
+        for (const pullId of Object.keys(this.transferProcessList)) {
+            var pullCmd = this.transferProcessList[pullId].cmd;
             pullCmd.stop();
         }
     }

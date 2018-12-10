@@ -198,6 +198,9 @@ ul {
 #divDirWrapper {
     overflow: auto;
 }
+#divDirWrapper.dropFile {
+    border: 1px solid red;
+}
 #divDirList .fileLine {
     height: 60px;
     line-height: 60px;
