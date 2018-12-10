@@ -504,7 +504,7 @@ function transferFile(mode, path) {
     divNoTransfer.hide();
     divNoTransfer.after(divTransferLine);
 
-    const destPath = (mode == 'pull') ? downloadsDirPath : '';
+    const destPath = (mode == 'pull') ? downloadsDirPath : adbHelper.getCurDir();
     const transferId = adbHelper.transferFile(mode, path, destPath, (progressPercent) => {
             divTransferProgress.text(modeText + ': ' + progressPercent);
             updateTransferButton();
@@ -557,9 +557,7 @@ function pullFile(path) {
 
 function pushFile(path) {
     Utils.log('pushFile=[' + path + ']');
-
-    var curDirPath = adbHelper.getCurDir();
-    Utils.log('Push [' + path + '] to [' + curDirPath + ']');
+    transferFile('push', path);
 }
 
 function handleCmdClick(cmdLink) {
