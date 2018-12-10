@@ -53,8 +53,8 @@ function init() {
     adbHelper = new ADBHelper.ADBHelper('adb');
 
     window.onbeforeunload = function (event) {
-        var pullCount = adbHelper.getPullFileCount();
-        if (pullCount > 0) {
+        var transferCount = adbHelper.getTransferFileCount();
+        if (transferCount > 0) {
             var dialog = remote.dialog;
             var choice = dialog.showMessageBox(
                     remote.getCurrentWindow(), {
@@ -149,8 +149,8 @@ function initTransferList() {
 }
 
 function updateTransferButton() {
-    var count = adbHelper.getPullFileCount();
-    var minProgress = adbHelper.getPullFileMinProgress();
+    var count = adbHelper.getTransferFileCount();
+    var minProgress = adbHelper.getTransferFileMinProgress();
     var btnTransferText = 'Transfer';
     if (count > 0) {
         if (minProgress == 0 || minProgress == 100) {
@@ -545,7 +545,7 @@ function pullFile(path) {
 }
 
 function stopPullFile(pullId) {
-    adbHelper.stopPullFile(pullId);
+    adbHelper.stopTransferFile(pullId);
 }
 
 function pushFile(path) {

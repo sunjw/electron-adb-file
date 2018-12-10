@@ -305,37 +305,37 @@ class ADBHelper {
         return transferRandId;
     }
 
-    pullFile(filePath, destPath, onPullProgressCallback, onPullFinishedCallback) {
-        return this._transferFile('pull', filePath, destPath, onPullProgressCallback, onPullFinishedCallback);
-    }
-
-    getPullFileCount() {
+    getTransferFileCount() {
         return Object.keys(this.transferProcessList).length;
     }
 
-    getPullFileMinProgress() {
+    getTransferFileMinProgress() {
         var minProgress = 100;
-        for (const pullId of Object.keys(this.transferProcessList)) {
-            var pullProgress = this.transferProcessList[pullId].percent;
-            if (pullProgress < minProgress) {
-                minProgress = pullProgress;
+        for (const transferId of Object.keys(this.transferProcessList)) {
+            var transferProgress = this.transferProcessList[transferId].percent;
+            if (transferProgress < minProgress) {
+                minProgress = transferProgress;
             }
         }
         return minProgress;
     }
 
-    stopPullFile(pullId) {
-        if (pullId in this.transferProcessList) {
-            var pullCmd = this.transferProcessList[pullId].cmd;
-            pullCmd.stop();
+    stopTransferFile(transferId) {
+        if (transferId in this.transferProcessList) {
+            var transferCmd = this.transferProcessList[transferId].cmd;
+            transferCmd.stop();
         }
     }
 
-    stopAllPullFile() {
-        for (const pullId of Object.keys(this.transferProcessList)) {
-            var pullCmd = this.transferProcessList[pullId].cmd;
-            pullCmd.stop();
+    stopAllTransferFile() {
+        for (const transferId of Object.keys(this.transferProcessList)) {
+            var transferCmd = this.transferProcessList[transferId].cmd;
+            transferCmd.stop();
         }
+    }
+
+    pullFile(filePath, destPath, onPullProgressCallback, onPullFinishedCallback) {
+        return this._transferFile('pull', filePath, destPath, onPullProgressCallback, onPullFinishedCallback);
     }
 
 }
