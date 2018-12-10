@@ -505,7 +505,7 @@ function transferFile(mode, path) {
     divNoTransfer.after(divTransferLine);
 
     const destPath = (mode == 'pull') ? downloadsDirPath : '';
-    const transferId = adbHelper.pullFile(path, destPath, (progressPercent) => {
+    const transferId = adbHelper.transferFile(mode, path, destPath, (progressPercent) => {
             divTransferProgress.text(modeText + ': ' + progressPercent);
             updateTransferButton();
         }, (adbTransferResult) => {
@@ -546,13 +546,13 @@ function transferFile(mode, path) {
     updateTransferButton();
 }
 
+function stopTransferFile(pullId) {
+    adbHelper.stopTransferFile(pullId);
+}
+
 function pullFile(path) {
     Utils.log('pullFile=[' + path + ']');
     transferFile('pull', path);
-}
-
-function stopPullFile(pullId) {
-    adbHelper.stopTransferFile(pullId);
 }
 
 function pushFile(path) {
@@ -618,8 +618,8 @@ function handleCmdClick(cmdLink) {
         refreshDirList();
         break;
     case CMD_STOP_TRANSFER:
-        const pullId = adbCmdParam;
-        stopPullFile(pullId);
+        const transferId = adbCmdParam;
+        stopTransferFile(transferId);
         break;
     case CMD_PULL:
         const filePath = adbHelper.getCurDir() + adbCmdParam;

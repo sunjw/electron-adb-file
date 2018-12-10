@@ -238,7 +238,7 @@ class ADBHelper {
         });
     }
 
-    _transferFile(transferMode, filePath, destPath, onProgressCallback, onFinishedCallback) {
+    transferFile(transferMode, filePath, destPath, onProgressCallback, onFinishedCallback) {
         const transferRandId = Utils.getRandomInt(1000);
         var transferCmd = '';
         switch (transferMode) {
@@ -335,14 +335,6 @@ class ADBHelper {
             var transferCmd = this.transferProcessList[transferId].cmd;
             transferCmd.stop();
         }
-    }
-
-    pullFile(filePath, destPath, onProgressCallback, onFinishedCallback) {
-        return this._transferFile('pull', filePath, destPath, onProgressCallback, onFinishedCallback);
-    }
-
-    pushFile(filePath, destPath, onProgressCallback, onFinishedCallback) {
-        return this._transferFile('push', filePath, destPath, onProgressCallback, onFinishedCallback);
     }
 }
 
