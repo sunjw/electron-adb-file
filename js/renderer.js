@@ -169,15 +169,17 @@ function clearDeviceList() {
 
 function initDirList() {
     var divDirWrapperDom = divDirWrapper[0];
-    divDirWrapperDom.ondragover = function () {
+    var divDirUploadBackgroundDom = divDirWrapper.children('#divDirUploadBackground')[0];
+    divDirWrapperDom.ondragover = function (e) {
+        e.stopPropagation();
         divDirWrapper.addClass('dropFile');
         return false;
     };
-    divDirWrapperDom.ondragleave = function () {
+    divDirUploadBackgroundDom.ondragleave = function () {
         divDirWrapper.removeClass('dropFile');
         return false;
     };
-    divDirWrapperDom.ondragend = function () {
+    divDirUploadBackgroundDom.ondragend = function () {
         divDirWrapper.removeClass('dropFile');
         return false;
     };
@@ -197,11 +199,15 @@ function clearDirList() {
 
 function fitDirWrapperHeight() {
     var windowHeight = $(window).height();
-    var divDirWrapperHeight = windowHeight - divDirWrapper.offset().top - 5;
+    var divDirWrapperTop = divDirWrapper.offset().top;
+    var divDirWrapperHeight = windowHeight - divDirWrapperTop - 5;
     if (divDirWrapperHeight < 20) {
         divDirWrapperHeight = 20;
     }
     divDirWrapper.css('height', divDirWrapperHeight + 'px');
+    divDirUploadBackground = divDirWrapper.children('#divDirUploadBackground');
+    divDirUploadBackground.css('top', divDirWrapperTop + 'px');
+    divDirUploadBackground.css('height', divDirWrapperHeight + 'px');
 }
 
 function initDialog() {

@@ -198,8 +198,22 @@ ul {
 #divDirWrapper {
     overflow: auto;
 }
-#divDirWrapper.dropFile {
-    border: 1px solid red;
+#divDirWrapper.dropFile #divDirUploadBackground {
+    display: block;
+}
+#divDirWrapper #divDirUploadBackground {
+    display: none;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 500;
+    content: '';
+    background-color: rgba(0,0,0,0.2);
+    padding-top: 20px;
+    color: white;
+    text-align: center;
+    font-size: 32px;
 }
 #divDirList .fileLine {
     height: 60px;
