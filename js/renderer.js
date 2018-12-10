@@ -115,6 +115,12 @@ function initToolbar() {
     aBtnTransfer.addClass('disabled').click(function () {
         return handleCmdClick($(this));
     });
+    var divToolbarPathDevice = divToolbarPath.children('#divToolbarPathDevice');
+    var aDeviceLink = $('<a/>').text('No device selected').addClass('toolbarButton').attr('href', CMD_SHOW_DEVICE).click(function () {
+            return handleCmdClick($(this));
+        });
+    divToolbarPathDevice.empty();
+    divToolbarPathDevice.append(aDeviceLink);
 }
 
 function fitToolbarPath() {
