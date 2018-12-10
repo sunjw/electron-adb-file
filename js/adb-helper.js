@@ -245,6 +245,9 @@ class ADBHelper {
         case 'pull':
             transferCmd = 'pull';
             break;
+        case 'push':
+            transferCmd = 'push';
+            break;
         }
         var cmdArgs = this.getCurDeviceCmdBase().concat([transferCmd, filePath, destPath]);
         var cmd = new ChildProcessHelper.ChildProcessHelper(this.adbPath, cmdArgs);
@@ -287,7 +290,7 @@ class ADBHelper {
 
             if (err != 0) {
                 adbTransferResult.code = exitCode;
-                adbTransferResult.err = 'Pull [' + filePath + '] failed';
+                adbTransferResult.err = 'transferFile, mode=[' + transferMode + '], [' + filePath + '] failed';
                 onFinishedCallback(adbTransferResult);
                 return;
             }
@@ -334,10 +337,13 @@ class ADBHelper {
         }
     }
 
-    pullFile(filePath, destPath, onPullProgressCallback, onPullFinishedCallback) {
-        return this._transferFile('pull', filePath, destPath, onPullProgressCallback, onPullFinishedCallback);
+    pullFile(filePath, destPath, onProgressCallback, onFinishedCallback) {
+        return this._transferFile('pull', filePath, destPath, onProgressCallback, onFinishedCallback);
     }
 
+    pushFile(filePath, destPath, onProgressCallback, onFinishedCallback) {
+        return this._transferFile('push', filePath, destPath, onProgressCallback, onFinishedCallback);
+    }
 }
 
 // exports
