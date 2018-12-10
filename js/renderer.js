@@ -84,6 +84,7 @@ function init() {
 
     initToolbar();
     initTransferList();
+    initDialog();
 
     clearDeviceList();
     clearDirList();
@@ -91,10 +92,6 @@ function init() {
     onWindowResize();
     $(window).resize(function () {
         onWindowResize();
-    });
-
-    divDialogButtonLine.children('a').click(function () {
-        return handleCmdClick($(this));
     });
 }
 
@@ -174,6 +171,12 @@ function fitDirWrapperHeight() {
         divDirWrapperHeight = 20;
     }
     divDirWrapper.css('height', divDirWrapperHeight + 'px');
+}
+
+function initDialog() {
+    divDialogButtonLine.children('a').click(function () {
+        return handleCmdClick($(this));
+    });
 }
 
 function showDialogBackground() {
