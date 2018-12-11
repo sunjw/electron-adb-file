@@ -1,9 +1,10 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow} = require('electron')
+const {app, BrowserWindow, dialog, ipcMain} = require('electron')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
+let transferCount = 0
 
 function createWindow () {
   // Create the browser window.
@@ -22,6 +23,21 @@ function createWindow () {
   // Open the DevTools.
   //mainWindow.webContents.openDevTools()
 
+  mainWindow.on('close', (e) => {
+    // Do your control here
+    if (transferCount > 0) {
+      dialog.showMessageBox(
+        mainWindow, {
+          type: 'info',
+          buttons: ['OK'],
+          title: 'Cannot exit',
+          message: 'Still transferring, cannot exit!'
+        }
+      )
+      e.preventDefault()
+    }
+  })
+
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
     // Dereference the window object, usually you would store windows
@@ -36,6 +52,10 @@ function createWindow () {
     mainWindow.webContents.send('set-downloads-path', app.getPath('downloads'))
  })
 }
+
+ipcMain.on('set-transfer-count', (event, arg) => {
+  transferCount = arg
+})
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

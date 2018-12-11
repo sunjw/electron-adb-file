@@ -1,6 +1,5 @@
 const {
     ipcRenderer,
-    remote,
     shell
 } = require('electron');
 
@@ -53,21 +52,6 @@ ipcRenderer.on('set-downloads-path', (event, arg) => {
 
 function init() {
     adbHelper = new ADBHelper.ADBHelper('adb');
-
-    window.onbeforeunload = function (event) {
-        var transferCount = adbHelper.getTransferFileCount();
-        if (transferCount > 0) {
-            var dialog = remote.dialog;
-            var choice = dialog.showMessageBox(
-                    remote.getCurrentWindow(), {
-                    type: 'info',
-                    buttons: ['OK'],
-                    title: 'Cannot exit',
-                    message: 'Still transferring, cannot exit!'
-                });
-            return false;
-        }
-    };
 
     aBtnUp = $('#divToolbarWrapper #aBtnUp');
     aBtnRefresh = $('#divToolbarWrapper #aBtnRefresh');
@@ -163,6 +147,7 @@ function updateTransferButton() {
         btnTransferText = 'Transfer(' + minProgress + ')';
     }
     aBtnTransfer.text(btnTransferText);
+    ipcRenderer.send('set-transfer-count', count);
 }
 
 function clearDeviceList() {
