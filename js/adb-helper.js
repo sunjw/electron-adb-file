@@ -60,7 +60,8 @@ class ADBHelper {
 
             var lines = cmdOutput.split('\n');
             // Check first
-            if (lines[0] != headerString && lines[0].indexOf(daemonString) < 0) {
+            var firstLine = lines[0].trim();
+            if (firstLine != headerString && firstLine.indexOf(daemonString) < 0) {
                 adbDevicesResult.code = -1;
                 adbDevicesResult.err = cmdOutput;
                 onDevicesCallback(adbDevicesResult);
