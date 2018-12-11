@@ -6,6 +6,8 @@ const {
 
 const Path = require('path');
 
+const fixPath = require('fix-path')();
+
 const Utils = require('./utils.js');
 const ADBHelper = require('./adb-helper.js');
 
