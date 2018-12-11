@@ -22,6 +22,7 @@ cp LICENSE dist/$app_name/Contents/Resources/app/
 
 cd dist/$app_name/Contents/Resources/app/
 npm rebuild
+rm -rf node_modules/electron/dist
 cd ../../../../../
 
 cd dist
