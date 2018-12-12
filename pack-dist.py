@@ -73,7 +73,7 @@ def remove_dir(path):
 def main():
     app_name = 'electron-adb-file.app'
     app_dir_path_relative = 'Contents/Resources/app'
-    app_path_relative = '%s/%s' % (app_name, app_dir_path_relative)
+    app_path_relative = os.path.join(app_name, app_dir_path_relative)
 
     cwd = os.getcwd()
 
@@ -90,7 +90,8 @@ def main():
     # Copy new app.
     app_dirs = ['asserts', 'css', 'js', 'node_modules']
     for app_dir in app_dirs:
-        dest_app_dir = 'dist/%s/%s' % (app_path_relative, app_dir)
+        dest_app_dir = os.path.join('dist', app_path_relative)
+        dest_app_dir = os.path.join(dest_app_dir, app_dir)
         os.mkdir(dest_app_dir)
         copy_dir(app_dir, dest_app_dir)
 
@@ -98,10 +99,12 @@ def main():
                 'package.json', 'package-lock.json', 
                 'README.md', 'LICENSE']
     for app_file in app_files:
-        copy_file(app_file, 'dist/%s/%s' % (app_path_relative, app_file))
+        dest_app_file = os.path.join('dist', app_path_relative)
+        dest_app_file = os.path.join(dest_app_file, app_file)
+        copy_file(app_file, dest_app_file)
 
     # Rebuild and clean.
-    os.chdir('dist/%s' % (app_path_relative))
+    os.chdir(os.path.join('dist', app_path_relative))
     run_cmd('npm rebuild')
     remove_dir('node_modules/electron/dist')
     os.chdir(cwd)
