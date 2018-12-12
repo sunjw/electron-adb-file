@@ -73,6 +73,9 @@ def remove_dir(path):
 def main():
     app_name = 'electron-adb-file.app'
     app_dir_path_relative = 'Contents/Resources/app'
+    if is_windows_sys():
+        app_name = 'electron-adb-file'
+        app_dir_path_relative = 'resources\\app'
     app_path_relative = os.path.join(app_name, app_dir_path_relative)
 
     cwd = os.getcwd()
@@ -82,7 +85,10 @@ def main():
 
     # Extract old package and remove old app.
     os.chdir('dist')
-    run_cmd('tar -xvf %s.tar.gz' % (app_name))
+    if is_windows_sys():
+        run_cmd('7z -tzip x %s.zip' % (app_name))
+    else:
+        run_cmd('tar -xvf %s.tar.gz' % (app_name))
     remove_dir(app_path_relative)
     os.mkdir(app_path_relative)
     os.chdir(cwd)
@@ -106,13 +112,20 @@ def main():
     # Rebuild and clean.
     os.chdir(os.path.join('dist', app_path_relative))
     run_cmd('npm rebuild')
-    remove_dir('node_modules/electron/dist')
+    if is_windows_sys():
+        remove_dir('node_modules\\electron\\dist')
+    else:
+        remove_dir('node_modules/electron/dist')
     os.chdir(cwd)
 
-    # Package.
+    # Package and clean up.
     os.chdir('dist')
-    remove_file('%s.tar.gz' % (app_name))
-    run_cmd('tar -czvf %s.tar.gz %s' % (app_name, app_name))
+    if is_windows_sys():
+        remove_file('%s.zip' % (app_name))
+        run_cmd('7z -tzip a -r %s.zip %s' % (app_name, app_name))
+    else:
+        remove_file('%s.tar.gz' % (app_name))
+        run_cmd('tar -czvf %s.tar.gz %s' % (app_name, app_name))
     remove_dir(app_name)
 
 if __name__ == '__main__':
