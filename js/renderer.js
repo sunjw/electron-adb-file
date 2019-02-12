@@ -136,15 +136,18 @@ function initTransferList() {
 
 function updateTransferButton() {
     var count = adbHelper.getTransferFileCount();
+    var transferProgress = 0;
     var minProgress = adbHelper.getTransferFileMinProgress();
     var btnTransferText = 'Transfer';
     if (count > 0) {
+        transferProgress = minProgress;
         if (minProgress == 0 || minProgress == 100) {
             minProgress = '...';
         } else {
             minProgress = minProgress + '%';
         }
         btnTransferText = 'Transfer(' + minProgress + ')';
+        ipcRenderer.send('set-transfer-progress', transferProgress);
     }
     aBtnTransfer.text(btnTransferText);
     ipcRenderer.send('set-transfer-count', count);

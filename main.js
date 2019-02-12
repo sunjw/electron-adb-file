@@ -57,6 +57,11 @@ ipcMain.on('set-transfer-count', (event, arg) => {
   transferCount = arg
 })
 
+ipcMain.on('set-transfer-progress', (event, arg) => {
+  var transferProgress = arg / 100
+  mainWindow.setProgressBar(transferProgress);
+})
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
