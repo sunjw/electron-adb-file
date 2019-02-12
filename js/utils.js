@@ -18,12 +18,14 @@ function stringReplaceAll(string, target, replace) {
 }
 
 function escapeShellPath(path) {
-    const needEscape = [' ', '&', '*', '$', '?', '|', '"', '\'', ';', '<', '>', '#'];
+    const needEscape = [' ', '&', '*', '$', '?', '|', '"', '\'',
+        ';', '<', '>', '#', '(', ')'];
     var pathEscape = path;
     for (var escape of needEscape) {
         var escapeReg = escape;
         if (escapeReg == '*' || escapeReg == '$' ||
-            escapeReg == '?' || escapeReg == '|') {
+            escapeReg == '?' || escapeReg == '|' ||
+            escapeReg == '(' || escapeReg == ')') {
             escapeReg = '\\' + escapeReg;
         }
         pathEscape = stringReplaceAll(pathEscape, escapeReg, '\\' + escape);
