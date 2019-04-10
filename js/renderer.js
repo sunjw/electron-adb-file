@@ -14,6 +14,7 @@ const CMD_DELIMITER = '/';
 const CMD_CLOSE_DIALOG = 'close-dialog';
 const CMD_SHOW_DEVICE = 'show-device';
 const CMD_SELECT_DEVICE = 'select-device';
+const CMD_SHOW_HIDDEN = 'show-hidden';
 const CMD_SHOW_TRANSFER = 'show-transfer';
 const CMD_CLICK_FILENAME = 'click-filename';
 const CMD_LS_DIR = 'ls';
@@ -27,6 +28,7 @@ var downloadsDirPath = 0;
 
 var aBtnUp = 0;
 var aBtnRefresh = 0;
+var aBtnHiddenFile = 0;
 var aBtnSdcard = 0;
 var aBtnTransfer = 0;
 var divToolbarPath = 0;
@@ -42,6 +44,8 @@ var divToast = 0;
 
 var toastTimeoutId = 0;
 
+var showHiddenFlag = false;
+
 ipcRenderer.on('set-downloads-path', (event, arg) => {
     Utils.log('set-downloads-path=[' + arg + ']');
     downloadsDirPath = arg;
@@ -55,6 +59,7 @@ function init() {
 
     aBtnUp = $('#divToolbarWrapper #aBtnUp');
     aBtnRefresh = $('#divToolbarWrapper #aBtnRefresh');
+    aBtnHiddenFile = $('#divToolbarWrapper #aBtnHiddenFile');
     aBtnSdcard = $('#divToolbarWrapper #aBtnSdcard');
     aBtnTransfer = $('#divToolbarWrapper #aBtnTransfer');
     divToolbarPath = $('#divToolbarPath');
@@ -94,6 +99,9 @@ function initToolbar() {
         return handleCmdClick($(this));
     });
     aBtnRefresh.addClass('disabled').click(function () {
+        return handleCmdClick($(this));
+    });
+    aBtnHiddenFile.addClass('disabled').click(function () {
         return handleCmdClick($(this));
     });
     aBtnSdcard.addClass('disabled').click(function () {
@@ -247,6 +255,12 @@ function showDeviceListDialog() {
     showDialogBase('Devices');
 }
 
+function showHidden() {
+    showHiddenFlag = !showHiddenFlag;
+    aBtnHiddenFile.html(showHiddenFlag ? 'Hide Hidden' : 'Show Hidden');
+    aBtnRefresh.click();
+}
+
 function showTransferListDialog() {
     divDeviceList.hide();
     divTransferList.show();
@@ -353,13 +367,16 @@ function refreshDirList() {
         var dirList = adbDirListResult.dirList;
         sortDirList(dirList);
         for (var file of dirList) {
+            var fileName = file.name;
+            if (!showHiddenFlag && fileName.startsWith('.')) {
+                continue;
+            }
+            var fileNameHtml = Utils.escapeHtmlPath(fileName);
             var divFileLine = $('<div/>').addClass('fileLine');
 
             var divFileName = $('<div/>').addClass('fileName').attr('rel', CMD_CLICK_FILENAME).click(function () {
                     return handleCmdClick($(this));
                 });
-            var fileName = file.name;
-            var fileNameHtml = Utils.escapeHtmlPath(fileName);
             if (ADBHelper.isFileDir(file)) {
                 // Directory
                 var lsDirCmd = CMD_LS_DIR + CMD_DELIMITER + fileName;
@@ -461,7 +478,9 @@ function selectDeviceAndRefreshRootDir(device) {
     // Enable buttons
     var lsRootCmd = CMD_LS_DIR + CMD_DELIMITER + '/';
     var lsSdcardCmd = CMD_LS_DIR + CMD_DELIMITER + '/sdcard/';
+    var showHiddenCmd = CMD_SHOW_HIDDEN;
     var showTransferCmd = CMD_SHOW_TRANSFER;
+    aBtnHiddenFile.attr('href', showHiddenCmd).removeClass('disabled');
     aBtnSdcard.attr('href', lsSdcardCmd).removeClass('disabled');
     aBtnTransfer.attr('href', showTransferCmd).removeClass('disabled');
     aBtnRefresh.removeClass('disabled');
@@ -590,6 +609,9 @@ function handleCmdClick(cmdLink) {
         const device = adbCmdParam;
         selectDeviceAndRefreshRootDir(device);
         hideDialog();
+        break;
+    case CMD_SHOW_HIDDEN:
+        showHidden();
         break;
     case CMD_SHOW_TRANSFER:
         showTransferListDialog();
