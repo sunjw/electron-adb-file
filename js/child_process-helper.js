@@ -1,5 +1,6 @@
 const Utils = require('./utils.js');
 const ChildProcess = require('child_process');
+const PTY = require('node-pty');
 
 class ChildProcessHelper {
     constructor(cmd, args) {
@@ -30,6 +31,21 @@ class ChildProcessHelper {
             Utils.log('Async [' + this.cmd + ' ' + (this.args.join(' ')) + '] exited with code: ' + code);
             if (onExitCallback != 0) {
                 onExitCallback(this, code, errToCallback);
+            }
+        });
+    }
+
+    runUnbuffer(onStdOutCallback, onExitCallback = 0) {
+        this.childProcess = PTY.spawn(this.cmd, this.args);
+
+        this.childProcess.on('data', (data) => {
+            onStdOutCallback(this, data);
+        });
+
+        this.childProcess.on('exit', (code) => {
+            Utils.log('Async [' + this.cmd + ' ' + (this.args.join(' ')) + '] exited with code: ' + code);
+            if (onExitCallback != 0) {
+                onExitCallback(this, code, 0);
             }
         });
     }

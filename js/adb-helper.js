@@ -258,15 +258,15 @@ class ADBHelper {
         transferProcessList[transferRandId].mode = transferMode;
         transferProcessList[transferRandId].percent = 0;
 
-        cmd.run((child, data) => {
+        cmd.runUnbuffer((child, data) => {
             // On process output...
             var progressOutput = data.toString();
             //Utils.log(progressOutput);
             var progressPercent = '';
-            var progressLines = progressOutput.split('\n');
+            var progressLines = progressOutput.split('[K');
             var lineCount = progressLines.length;
             for (var i = lineCount; i > 0; --i) {
-                var line = progressLines[i - 1];
+                var line = progressLines[i - 1].trim();
                 var prefix = line.substr(0, 6);
                 if (prefix.startsWith('[') && prefix.endsWith(']')) {
                     // Found
