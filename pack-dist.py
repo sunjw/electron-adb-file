@@ -112,6 +112,7 @@ def main():
     # Rebuild and clean.
     os.chdir(os.path.join('dist', app_path_relative))
     run_cmd('npm rebuild')
+    run_cmd('npm run rebuild-node-pty')
     if is_windows_sys():
         remove_dir('node_modules\\electron\\dist')
     else:
