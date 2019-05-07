@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "fix-path": "^2.1.0",
-    "jquery": "^3.3.0",
+    "jquery": "^3.4.1",
     "node-pty": "^0.8.1"
   }
 }
