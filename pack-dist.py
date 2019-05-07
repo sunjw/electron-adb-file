@@ -113,10 +113,12 @@ def main():
     os.chdir(os.path.join('dist', app_path_relative))
     run_cmd('npm rebuild')
     run_cmd('npm run rebuild-node-pty')
+    remove_dir('./node_modules/electron/dist')
     if is_windows_sys():
-        remove_dir('node_modules\\electron\\dist')
+        remove_dir('./node_modules/node-pty/build/Release/obj')
+        remove_dir('./node_modules/node-pty/build/Release/deps/winpty/src/Release/obj')
     else:
-        remove_dir('node_modules/electron/dist')
+        remove_dir('./node_modules/node-pty/build/Release/obj.target')
     os.chdir(cwd)
 
     # Package and clean up.
