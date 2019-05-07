@@ -4,7 +4,8 @@
   "description": "An ADB file tool built on Electron",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "rebuild-node-pty": "electron-rebuild -f -w node-pty"
   },
   "repository": "https://github.com/sunjw/electron-adb-file",
   "keywords": [
@@ -17,7 +18,8 @@
   "author": "Sun Junwen",
   "license": "GPL-2.0",
   "devDependencies": {
-    "electron": "^3.0.0"
+    "electron": "^3.0.0",
+    "electron-rebuild": "^1.8.4"
   },
   "dependencies": {
     "fix-path": "^2.1.0",
