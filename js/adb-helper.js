@@ -258,12 +258,20 @@ class ADBHelper {
         transferProcessList[transferRandId].mode = transferMode;
         transferProcessList[transferRandId].percent = 0;
 
-        cmd.runUnbuffer((child, data) => {
+        var runFunction = 'runUnbuffer';
+        var cmdNewline = '[K';
+        if (Utils.isWindows()) {
+            // Windows PTY is broken...
+            runFunction = 'run';
+            cmdNewline = '\n';
+        }
+
+        cmd[runFunction]((child, data) => {
             // On process output...
             var progressOutput = data.toString();
             //Utils.log(progressOutput);
             var progressPercent = '';
-            var progressLines = progressOutput.split('[K');
+            var progressLines = progressOutput.split(cmdNewline);
             var lineCount = progressLines.length;
             for (var i = lineCount; i > 0; --i) {
                 var line = progressLines[i - 1].trim();

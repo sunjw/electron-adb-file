@@ -71,6 +71,10 @@ function getParentDir(path) {
     return parentDirPath;
 }
 
+function isWindows() {
+    return (process.platform == 'win32');
+}
+
 // exports
 exports.log = log;
 exports.cloneObject = cloneObject;
@@ -80,3 +84,4 @@ exports.escapeHtmlPath = escapeHtmlPath;
 exports.getRandomInt = getRandomInt;
 exports.byteSizeToShortSize = byteSizeToShortSize;
 exports.getParentDir = getParentDir;
+exports.isWindows = isWindows;
