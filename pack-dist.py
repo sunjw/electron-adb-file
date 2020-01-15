@@ -8,11 +8,11 @@ from subprocess import Popen, PIPE, STDOUT
 
 # Log to stdout
 def log(message):
-    print "%s" % (message)
+    print("%s" % (message))
 
 # Log to stderr
 def log_err(message):
-    print >> sys.stderr, message
+    print(message, file=sys.stderr)
 
 def run_cmd(cmd):
     log("Run: \n%s" % (cmd))
