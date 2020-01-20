@@ -1,19 +1,36 @@
 // Modules to control application life and create native browser window
 const {app, BrowserWindow, dialog, ipcMain} = require('electron')
 
+const windowStateKeeper = require('electron-window-state')
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 let transferCount = 0
 
 function createWindow () {
+  // Load the previous state with fallback to defaults
+  let mainWindowState = windowStateKeeper({
+    defaultWidth: 900,
+    defaultHeight: 600
+  })
+
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 900,
-    height: 600,
+    x: mainWindowState.x,
+    y: mainWindowState.y,
+    width: mainWindowState.width,
+    height: mainWindowState.height,
     minWidth: 700,
     minHeight: 500
   })
+
+  if (mainWindowState.isMaximized) {
+    mainWindow.maximize()
+  }
+  if (mainWindowState.isFullScreen) {
+    mainWindow.setFullScreen(true)
+  }
 
   mainWindow.setMenu(null)
 
@@ -51,6 +68,11 @@ function createWindow () {
     // Set user's downloads directory path to renderer.
     mainWindow.webContents.send('set-downloads-path', app.getPath('downloads'))
  })
+
+   // Let us register listeners on the window, so we can update the state
+  // automatically (the listeners will be removed when the window is closed)
+  // and restore the maximized or full screen state
+  mainWindowState.manage(mainWindow)
 }
 
 ipcMain.on('set-transfer-count', (event, arg) => {
