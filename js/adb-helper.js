@@ -408,7 +408,7 @@ class ADBHelper {
 
                 transferProcess.totalSize = fileSize;
                 var basename = Path.basename(filePath);
-                var fullDestPath = Path.join(destPath, basename);
+                var fullDestPath = destPath + basename;
                 var pullTransfer = sync.pushFile(filePath, fullDestPath);
                 pullTransfer.on('progress', (stats) => {
                     var progressPercent = Math.floor((stats.bytesTransferred * 100) / transferProcess.totalSize);
