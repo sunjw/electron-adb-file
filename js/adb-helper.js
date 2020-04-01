@@ -374,7 +374,6 @@ class ADBHelper {
                 pullTransfer.on('error', (err) => {
                     adbTransferResult.code = err.name;
                     adbTransferResult.err = 'transferFile, mode=[' + transferProcess.mode + '], [' + filePath + '] failed';
-                    onFinishedCallback(adbTransferResult);
                 });
 
                 var basename = Path.basename(filePath);
