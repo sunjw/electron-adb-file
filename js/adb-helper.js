@@ -1,3 +1,5 @@
+var adbkit = require('adbkit');
+
 const Utils = require('./utils.js');
 const ChildProcessHelper = require('./child_process-helper.js');
 
@@ -27,6 +29,12 @@ class ADBHelper {
         this.curDevice = '';
         this.curDir = '';
         this.transferProcessList = {};
+
+        this.adbkitClient = null;
+        this.usingAdbkit = Utils.isWindows();
+        if (this.usingAdbkit) {
+            this.adbkitClient = adbkit.createClient();
+        }
 
         //Utils.log('adb=[' + this.adbPath + ']');
     }
