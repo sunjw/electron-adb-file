@@ -255,12 +255,18 @@ class ADBHelper {
         transferProcessList[transferRandId].mode = transferMode;
         transferProcessList[transferRandId].percent = 0;
 
-        var cmd = this.nativeTransferFile(transferProcessList[transferRandId],
-                filePath, destPath, onProgressCallback, (adbTransferResult) => {
+        var onFinishedCallbackWrapper = function (adbTransferResult) {
             delete transferProcessList[transferRandId];
             onFinishedCallback(adbTransferResult);
-        });
-        transferProcessList[transferRandId].cmd = cmd;
+        };
+
+        if (!this.usingAdbkit) {
+            var cmd = this.nativeTransferFile(transferProcessList[transferRandId],
+                    filePath, destPath, onProgressCallback, onFinishedCallbackWrapper);
+            transferProcessList[transferRandId].cmd = cmd;
+        } else {
+            alert("!");
+        }
 
         return transferRandId;
     }
