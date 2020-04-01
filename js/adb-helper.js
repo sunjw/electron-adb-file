@@ -363,7 +363,7 @@ class ADBHelper {
             if (transferProcess.mode == 'pull') {
                 var pullTransfer = sync.pull(filePath);
                 pullTransfer.on('progress', (stats) => {
-                    var progressBytes = stats.bytesTransferred + 'B';
+                    var progressBytes = Utils.byteSizeToShortSize(stats.bytesTransferred) + 'B';
                     transferProcess.percent = progressBytes;
                     onProgressCallback(progressBytes);
                 });
@@ -400,15 +400,25 @@ class ADBHelper {
 
     stopTransferFile(transferId) {
         if (transferId in this.transferProcessList) {
-            var transferCmd = this.transferProcessList[transferId].cmd;
-            transferCmd.stop();
+            if (!this.usingAdbkit) {
+                var transferCmd = this.transferProcessList[transferId].cmd;
+                transferCmd.stop();
+            } else {
+                var transferSync = this.transferProcessList[transferId].sync;
+                transferSync.end();
+            }
         }
     }
 
     stopAllTransferFile() {
         for (const transferId of Object.keys(this.transferProcessList)) {
-            var transferCmd = this.transferProcessList[transferId].cmd;
-            transferCmd.stop();
+            if (!this.usingAdbkit) {
+                var transferCmd = this.transferProcessList[transferId].cmd;
+                transferCmd.stop();
+            } else {
+                var transferSync = this.transferProcessList[transferId].sync;
+                transferSync.end();
+            }
         }
     }
 }
