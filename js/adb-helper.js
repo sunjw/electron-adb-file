@@ -250,8 +250,24 @@ class ADBHelper {
 
     transferFile(transferMode, filePath, destPath, onProgressCallback, onFinishedCallback) {
         const transferRandId = Utils.getRandomInt(1000);
+        var transferProcessList = this.transferProcessList;
+        transferProcessList[transferRandId] = {};
+        transferProcessList[transferRandId].mode = transferMode;
+        transferProcessList[transferRandId].percent = 0;
+
+        var cmd = this.nativeTransferFile(transferProcessList[transferRandId],
+                filePath, destPath, onProgressCallback, (adbTransferResult) => {
+            delete transferProcessList[transferRandId];
+            onFinishedCallback(adbTransferResult);
+        });
+        transferProcessList[transferRandId].cmd = cmd;
+
+        return transferRandId;
+    }
+
+    nativeTransferFile(transferProcess, filePath, destPath, onProgressCallback, onFinishedCallback) {
         var transferCmd = '';
-        switch (transferMode) {
+        switch (transferProcess.mode) {
         case 'pull':
             transferCmd = 'pull';
             break;
@@ -261,11 +277,6 @@ class ADBHelper {
         }
         var cmdArgs = this.getCurDeviceCmdBase().concat([transferCmd, filePath, destPath]);
         var cmd = new ChildProcessHelper.ChildProcessHelper(this.adbPath, cmdArgs);
-        var transferProcessList = this.transferProcessList;
-        transferProcessList[transferRandId] = {};
-        transferProcessList[transferRandId].cmd = cmd;
-        transferProcessList[transferRandId].mode = transferMode;
-        transferProcessList[transferRandId].percent = 0;
 
         var runFunction = 'runUnbuffer';
         var cmdNewline = '[K';
@@ -287,7 +298,7 @@ class ADBHelper {
                 var prefix = line.substr(0, 6);
                 if (prefix.startsWith('[') && prefix.endsWith(']')) {
                     // Found
-                    Utils.log('transferFile, mode=[' + transferMode + '], progress line=[' + line + ']');
+                    Utils.log('transferFile, mode=[' + transferCmd + '], progress line=[' + line + ']');
                     progressPercent = prefix.substr(1, 4);
                     progressPercent = progressPercent.trim();
                     break;
@@ -295,20 +306,18 @@ class ADBHelper {
             }
             if (progressPercent != '') {
                 var percentInt = parseInt(progressPercent.substr(0, progressPercent.length - 1));
-                transferProcessList[transferRandId].percent = percentInt;
+                transferProcess.percent = percentInt;
                 onProgressCallback(progressPercent);
             }
         }, (child, exitCode, err) => {
             // On process finished
-            delete transferProcessList[transferRandId];
-
             var adbTransferResult = {};
             adbTransferResult.code = 0;
             adbTransferResult.err = '';
 
             if (err != 0) {
                 adbTransferResult.code = exitCode;
-                adbTransferResult.err = 'transferFile, mode=[' + transferMode + '], [' + filePath + '] failed';
+                adbTransferResult.err = 'transferFile, mode=[' + transferCmd + '], [' + filePath + '] failed';
                 onFinishedCallback(adbTransferResult);
                 return;
             }
@@ -323,7 +332,7 @@ class ADBHelper {
             onFinishedCallback(adbTransferResult);
         });
 
-        return transferRandId;
+        return cmd;
     }
 
     getTransferFileCount() {
