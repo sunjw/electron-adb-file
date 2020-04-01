@@ -34,6 +34,7 @@ class ADBHelper {
         this.usingAdbkit = Utils.isWindows();
         if (this.usingAdbkit) {
             this.adbkitClient = adbkit.createClient();
+            Utils.log('usingAdbkit...');
         }
 
         //Utils.log('adb=[' + this.adbPath + ']');
