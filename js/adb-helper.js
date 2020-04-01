@@ -1,4 +1,7 @@
-var adbkit = require('adbkit');
+const Fs = require('fs');
+const Path = require('path');
+
+const Adbkit = require('adbkit');
 
 const Utils = require('./utils.js');
 const ChildProcessHelper = require('./child_process-helper.js');
@@ -33,7 +36,7 @@ class ADBHelper {
         this.adbkitClient = null;
         this.usingAdbkit = Utils.isWindows();
         if (this.usingAdbkit) {
-            this.adbkitClient = adbkit.createClient();
+            this.adbkitClient = Adbkit.createClient();
             Utils.log('usingAdbkit...');
         }
 
@@ -265,7 +268,8 @@ class ADBHelper {
                     filePath, destPath, onProgressCallback, onFinishedCallbackWrapper);
             transferProcessList[transferRandId].cmd = cmd;
         } else {
-            alert("!");
+            this.adbkitTransferFile(transferProcessList[transferRandId],
+                filePath, destPath, onProgressCallback, onFinishedCallbackWrapper);
         }
 
         return transferRandId;
@@ -304,7 +308,7 @@ class ADBHelper {
                 var prefix = line.substr(0, 6);
                 if (prefix.startsWith('[') && prefix.endsWith(']')) {
                     // Found
-                    Utils.log('transferFile, mode=[' + transferCmd + '], progress line=[' + line + ']');
+                    Utils.log('transferFile, mode=[' + transferProcess.mode + '], progress line=[' + line + ']');
                     progressPercent = prefix.substr(1, 4);
                     progressPercent = progressPercent.trim();
                     break;
@@ -323,7 +327,7 @@ class ADBHelper {
 
             if (err != 0) {
                 adbTransferResult.code = exitCode;
-                adbTransferResult.err = 'transferFile, mode=[' + transferCmd + '], [' + filePath + '] failed';
+                adbTransferResult.err = 'transferFile, mode=[' + transferProcess.mode + '], [' + filePath + '] failed';
                 onFinishedCallback(adbTransferResult);
                 return;
             }
@@ -339,6 +343,44 @@ class ADBHelper {
         });
 
         return cmd;
+    }
+
+    adbkitTransferFile(transferProcess, filePath, destPath, onProgressCallback, onFinishedCallback) {
+        this.adbkitClient.syncService(this.curDevice, (err, sync) => {
+            var adbTransferResult = {};
+            adbTransferResult.code = 0;
+            adbTransferResult.err = '';
+
+            if (err != null) {
+                adbTransferResult.code = err.name;
+                adbTransferResult.err = 'transferFile, mode=[' + transferProcess.mode + '], [' + filePath + '] failed';
+                onFinishedCallback(adbTransferResult);
+                return;
+            }
+
+            transferProcess.sync = sync;
+
+            if (transferProcess.mode == 'pull') {
+                var pullTransfer = sync.pull(filePath);
+                pullTransfer.on('progress', (stats) => {
+                    var progressBytes = stats.bytesTransferred + 'B';
+                    transferProcess.percent = progressBytes;
+                    onProgressCallback(progressBytes);
+                });
+                pullTransfer.on('end', () => {
+                    onFinishedCallback(adbTransferResult);
+                });
+                pullTransfer.on('error', (err) => {
+                    adbTransferResult.code = err.name;
+                    adbTransferResult.err = 'transferFile, mode=[' + transferProcess.mode + '], [' + filePath + '] failed';
+                    onFinishedCallback(adbTransferResult);
+                });
+
+                var basename = Path.basename(filePath);
+                var fullDestPath = Path.join(destPath, basename);
+                pullTransfer.pipe(Fs.createWriteStream(fullDestPath));
+            }
+        });
     }
 
     getTransferFileCount() {
