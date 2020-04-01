@@ -151,7 +151,7 @@ function updateTransferButton() {
         transferProgress = minProgress;
         if (minProgress == 0 || minProgress == 100) {
             minProgress = '...';
-        } else if (!minProgress.endsWith('B')) {
+        } else {
             minProgress = minProgress + '%';
         }
         btnTransferText = 'Transfer(' + minProgress + ')';

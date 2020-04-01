@@ -2,6 +2,7 @@ const Fs = require('fs');
 const Path = require('path');
 
 const Adbkit = require('adbkit');
+const Promise = require("bluebird");
 
 const Utils = require('./utils.js');
 const ChildProcessHelper = require('./child_process-helper.js');
@@ -346,7 +347,7 @@ class ADBHelper {
     }
 
     adbkitTransferFile(transferProcess, filePath, destPath, onProgressCallback, onFinishedCallback) {
-        this.adbkitClient.syncService(this.curDevice, (err, sync) => {
+        this.adbkitClient.syncService(this.curDevice, async(err, sync) => {
             var adbTransferResult = {};
             adbTransferResult.code = 0;
             adbTransferResult.err = '';
@@ -361,12 +362,28 @@ class ADBHelper {
             transferProcess.sync = sync;
 
             if (transferProcess.mode == 'pull') {
+                var fileSize = 0;
+                var statPromise = sync.stat(filePath, (err, stats) => {
+                    if (err != null) {
+                        adbTransferResult.code = err.name;
+                        adbTransferResult.err = 'transferFile, mode=[' + transferProcess.mode + '], [' + filePath + '] failed';
+                    } else {
+                        fileSize = stats.size;
+                    }
+                });
+                await Promise.join(statPromise);
+
+                if (adbTransferResult.code != 0 || fileSize == 0) {
+                    onFinishedCallback(adbTransferResult);
+                    return;
+                }
+
+                transferProcess.totalSize = fileSize;
                 var pullTransfer = sync.pull(filePath);
                 pullTransfer.on('progress', (stats) => {
-                    var progressBytes = Utils.byteSizeToShortSize(stats.bytesTransferred) + 'B';
-                    transferProcess.percent = progressBytes;
-                    transferProcess.rawTransferred = stats.bytesTransferred;
-                    onProgressCallback(progressBytes);
+                    var progressPercent = Math.floor((stats.bytesTransferred * 100) / transferProcess.totalSize);
+                    transferProcess.percent = progressPercent;
+                    onProgressCallback(progressPercent + '%');
                 });
                 pullTransfer.on('end', () => {
                     onFinishedCallback(adbTransferResult);
@@ -389,22 +406,11 @@ class ADBHelper {
 
     getTransferFileMinProgress() {
         var minProgress = 100;
-        if (!this.usingAdbkit) {
-            for (const transferId of Object.keys(this.transferProcessList)) {
-                var transferProgress = this.transferProcessList[transferId].percent;
-                if (transferProgress < minProgress) {
-                    minProgress = transferProgress;
-                }
+        for (const transferId of Object.keys(this.transferProcessList)) {
+            var transferProgress = this.transferProcessList[transferId].percent;
+            if (transferProgress < minProgress) {
+                minProgress = transferProgress;
             }
-        } else {
-            minProgress = 0;
-            for (const transferId of Object.keys(this.transferProcessList)) {
-                var transferByte = this.transferProcessList[transferId].rawTransferred;
-                if (minProgress == 0 || transferByte < minProgress) {
-                    minProgress = transferByte;
-                }
-            }
-            minProgress = Utils.byteSizeToShortSize(minProgress) + 'B';
         }
 
         return minProgress;
