@@ -112,8 +112,8 @@ function initToolbar() {
     });
     var divToolbarPathDevice = divToolbarPath.children('#divToolbarPathDevice');
     var aDeviceLink = $('<a/>').text('No device selected').addClass('toolbarButton').attr('href', CMD_SHOW_DEVICE).click(function () {
-            return handleCmdClick($(this));
-        });
+        return handleCmdClick($(this));
+    });
     divToolbarPathDevice.empty();
     divToolbarPathDevice.append(aDeviceLink);
 }
@@ -151,11 +151,13 @@ function updateTransferButton() {
         transferProgress = minProgress;
         if (minProgress == 0 || minProgress == 100) {
             minProgress = '...';
-        } else {
+        } else if (!minProgress.endsWith('B')) {
             minProgress = minProgress + '%';
         }
         btnTransferText = 'Transfer(' + minProgress + ')';
-        ipcRenderer.send('set-transfer-progress', transferProgress);
+        if (!minProgress.endsWith('B')) {
+            ipcRenderer.send('set-transfer-progress', transferProgress);
+        }
     }
     aBtnTransfer.text(btnTransferText);
     ipcRenderer.send('set-transfer-count', count);
@@ -281,8 +283,8 @@ function showToast(message) {
     divToast.show();
     clearTimeout(toastTimeoutId);
     toastTimeoutId = setTimeout(() => {
-            hideToast();
-        }, 5000);
+        hideToast();
+    }, 5000);
 }
 
 function hideToast() {
@@ -313,8 +315,8 @@ function refreshDeviceList() {
                 if (deviceAvailable) {
                     var selectDeviceCmd = CMD_SELECT_DEVICE + CMD_DELIMITER + device.id;
                     var aDeviceLink = $('<a/>').text(device.id).attr('href', selectDeviceCmd).click(function () {
-                            return handleCmdClick($(this));
-                        });
+                        return handleCmdClick($(this));
+                    });
                     divDeviceId.append(aDeviceLink);
                 } else {
                     divDeviceId.text(device.id);
@@ -375,22 +377,22 @@ function refreshDirList() {
             var divFileLine = $('<div/>').addClass('fileLine');
 
             var divFileName = $('<div/>').addClass('fileName').attr('rel', CMD_CLICK_FILENAME).click(function () {
-                    return handleCmdClick($(this));
-                });
+                return handleCmdClick($(this));
+            });
             if (ADBHelper.isFileDir(file)) {
                 // Directory
                 var lsDirCmd = CMD_LS_DIR + CMD_DELIMITER + fileName;
                 var aDirLink = $('<a/>').html(fileNameHtml).attr('href', lsDirCmd).click(function () {
-                        return handleCmdClick($(this));
-                    });
+                    return handleCmdClick($(this));
+                });
                 divFileName.append(aDirLink);
                 divFileName.addClass('fileDir');
             } else {
                 // File
                 var pullFileCmd = CMD_PULL + CMD_DELIMITER + fileName;
                 var aFileLink = $('<a/>').html(fileNameHtml).attr('href', pullFileCmd).click(function () {
-                        return handleCmdClick($(this));
-                    });
+                    return handleCmdClick($(this));
+                });
                 divFileName.append(aFileLink);
                 divFileName.addClass('fileNormal');
             }
@@ -456,8 +458,8 @@ function refreshDirList() {
         var lsPathCmd = CMD_LS_DIR + CMD_DELIMITER + pathPostfix;
         if (i < pathDirs.length - 1) {
             var aPathDirLink = $('<a/>').html(pathDirHtml).addClass('toolbarButton').attr('href', lsPathCmd).click(function () {
-                    return handleCmdClick($(this));
-                });
+                return handleCmdClick($(this));
+            });
             divToolbarPathContainer.append(aPathDirLink);
         } else {
             // Last one
@@ -489,11 +491,11 @@ function selectDeviceAndRefreshRootDir(device) {
     var divToolbarPathDevice = divToolbarPath.children('#divToolbarPathDevice');
 
     var aDeviceLink = $('<a/>').text(device).addClass('toolbarButton').attr('href', CMD_SHOW_DEVICE).click(function () {
-            return handleCmdClick($(this));
-        });
+        return handleCmdClick($(this));
+    });
     var aDeviceRootLink = $('<a/>').html('/&nbsp;').addClass('toolbarButton').attr('href', lsRootCmd).click(function () {
-            return handleCmdClick($(this));
-        });
+        return handleCmdClick($(this));
+    });
 
     divToolbarPathDevice.empty();
     divToolbarPathDevice.append(aDeviceLink);
@@ -521,40 +523,40 @@ function transferFile(mode, path) {
 
     const destPath = (mode == 'pull') ? downloadsDirPath : adbHelper.getCurDir();
     const transferId = adbHelper.transferFile(mode, path, destPath, (progressPercent) => {
-            divTransferProgress.text(modeText + ': ' + progressPercent);
-            updateTransferButton();
-        }, (adbTransferResult) => {
-            if (adbTransferResult.code == 0) {
-                divTransferProgress.text(modeText + ': done');
-                divTransferStop.empty();
-                if (mode == 'pull') {
-                    var pullPath = destPath + fileName;
-                    var showPullCmd = CMD_SHOW_PULL + CMD_DELIMITER + pullPath;
-                    var aShowPullLink = $('<a/>').text('Show').attr('href', showPullCmd).click(function () {
-                            return handleCmdClick($(this));
-                        });
-                    divTransferStop.append(aShowPullLink);
-                }
-            } else {
-                divTransferProgress.text(modeText + ': failed');
-                divTransferStop.empty();
+        divTransferProgress.text(modeText + ': ' + progressPercent);
+        updateTransferButton();
+    }, (adbTransferResult) => {
+        if (adbTransferResult.code == 0) {
+            divTransferProgress.text(modeText + ': done');
+            divTransferStop.empty();
+            if (mode == 'pull') {
+                var pullPath = destPath + fileName;
+                var showPullCmd = CMD_SHOW_PULL + CMD_DELIMITER + pullPath;
+                var aShowPullLink = $('<a/>').text('Show').attr('href', showPullCmd).click(function () {
+                    return handleCmdClick($(this));
+                });
+                divTransferStop.append(aShowPullLink);
             }
-            divTransferProgress.addClass('finished');
-            updateTransferButton();
-            fileNameHtml = fileName;
-            if (fileName.length > 40) {
-                fileNameHtml = fileName.substr(0, 30) + '...';
-            }
-            fileNameHtml = Utils.escapeHtmlPath(fileNameHtml);
-            var toastMessage = modeText + ' "' + fileNameHtml + '" finished.';
-            showToast(toastMessage);
-        });
+        } else {
+            divTransferProgress.text(modeText + ': failed');
+            divTransferStop.empty();
+        }
+        divTransferProgress.addClass('finished');
+        updateTransferButton();
+        fileNameHtml = fileName;
+        if (fileName.length > 40) {
+            fileNameHtml = fileName.substr(0, 30) + '...';
+        }
+        fileNameHtml = Utils.escapeHtmlPath(fileNameHtml);
+        var toastMessage = modeText + ' "' + fileNameHtml + '" finished.';
+        showToast(toastMessage);
+    });
 
     // Stop button
     var stopTransferCmd = CMD_STOP_TRANSFER + CMD_DELIMITER + transferId;
     var aStopTransferLink = $('<a/>').text('Stop').attr('href', stopTransferCmd).click(function () {
-            return handleCmdClick($(this));
-        });
+        return handleCmdClick($(this));
+    });
     divTransferStop.append(aStopTransferLink);
 
     // Update Transfer button

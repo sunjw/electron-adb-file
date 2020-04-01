@@ -365,6 +365,7 @@ class ADBHelper {
                 pullTransfer.on('progress', (stats) => {
                     var progressBytes = Utils.byteSizeToShortSize(stats.bytesTransferred) + 'B';
                     transferProcess.percent = progressBytes;
+                    transferProcess.rawTransferred = stats.bytesTransferred;
                     onProgressCallback(progressBytes);
                 });
                 pullTransfer.on('end', () => {
@@ -389,12 +390,24 @@ class ADBHelper {
 
     getTransferFileMinProgress() {
         var minProgress = 100;
-        for (const transferId of Object.keys(this.transferProcessList)) {
-            var transferProgress = this.transferProcessList[transferId].percent;
-            if (transferProgress < minProgress) {
-                minProgress = transferProgress;
+        if (!this.usingAdbkit) {
+            for (const transferId of Object.keys(this.transferProcessList)) {
+                var transferProgress = this.transferProcessList[transferId].percent;
+                if (transferProgress < minProgress) {
+                    minProgress = transferProgress;
+                }
             }
+        } else {
+            minProgress = 0;
+            for (const transferId of Object.keys(this.transferProcessList)) {
+                var transferByte = this.transferProcessList[transferId].rawTransferred;
+                if (minProgress == 0 || transferByte < minProgress) {
+                    minProgress = transferByte;
+                }
+            }
+            minProgress = Utils.byteSizeToShortSize(minProgress) + 'B';
         }
+
         return minProgress;
     }
 
