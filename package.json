@@ -19,7 +19,7 @@
   "license": "GPL-2.0",
   "devDependencies": {
     "electron": "^3.0.0",
-    "electron-rebuild": "^1.8.4"
+    "electron-rebuild": "^1.10.1"
   },
   "dependencies": {
     "electron-window-state": "^5.0.3",
