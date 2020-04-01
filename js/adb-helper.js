@@ -396,6 +396,32 @@ class ADBHelper {
                 var basename = Path.basename(filePath);
                 var fullDestPath = Path.join(destPath, basename);
                 pullTransfer.pipe(Fs.createWriteStream(fullDestPath));
+            } else if (transferProcess.mode == 'push') {
+                var fileSize = 0;
+                var fileStats = Fs.statSync(filePath);
+                fileSize = fileStats.size;
+
+                if (fileSize == 0) {
+                    onFinishedCallback(adbTransferResult);
+                    return;
+                }
+
+                transferProcess.totalSize = fileSize;
+                var basename = Path.basename(filePath);
+                var fullDestPath = Path.join(destPath, basename);
+                var pullTransfer = sync.pushFile(filePath, fullDestPath);
+                pullTransfer.on('progress', (stats) => {
+                    var progressPercent = Math.floor((stats.bytesTransferred * 100) / transferProcess.totalSize);
+                    transferProcess.percent = progressPercent;
+                    onProgressCallback(progressPercent + '%');
+                });
+                pullTransfer.on('end', () => {
+                    onFinishedCallback(adbTransferResult);
+                });
+                pullTransfer.on('error', (err) => {
+                    adbTransferResult.code = err.name;
+                    adbTransferResult.err = 'transferFile, mode=[' + transferProcess.mode + '], [' + filePath + '] failed';
+                });
             }
         });
     }
