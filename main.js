@@ -1,3 +1,6 @@
+const fs = require('fs');
+const path = require('path');
+
 // Modules to control application life and create native browser window
 const {app, BrowserWindow, dialog, ipcMain} = require('electron')
 
@@ -37,8 +40,10 @@ function createWindow () {
   // and load the index.html of the app.
   mainWindow.loadFile('index.html')
 
-  // Open the DevTools.
-  //mainWindow.webContents.openDevTools()
+  if (!fs.existsSync(path.join(__dirname, 'asserts/RELEASED'))) {
+    // Open the DevTools.
+    mainWindow.webContents.openDevTools()
+  }
 
   mainWindow.on('close', (e) => {
     // Do your control here
