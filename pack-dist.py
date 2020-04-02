@@ -109,6 +109,9 @@ def main():
         dest_app_file = os.path.join(dest_app_file, app_file)
         copy_file(app_file, dest_app_file)
 
+    release_file = os.path.join('dist', app_path_relative, 'asserts', 'RELEASED')
+    open(release_file, 'a').close()
+
     # Rebuild and clean.
     os.chdir(os.path.join('dist', app_path_relative))
     run_cmd('npm rebuild')
