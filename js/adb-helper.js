@@ -371,7 +371,7 @@ class ADBHelper {
                         fileSize = stats.size;
                     }
                 });
-                await Promise.join(statPromise);
+                await Promise.join(statPromise).catch(e => {});
 
                 if (adbTransferResult.code != 0 || fileSize == 0) {
                     onFinishedCallback(adbTransferResult);
