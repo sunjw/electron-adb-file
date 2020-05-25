@@ -25,7 +25,10 @@ function createWindow () {
     width: mainWindowState.width,
     height: mainWindowState.height,
     minWidth: 700,
-    minHeight: 500
+    minHeight: 500,
+    webPreferences: {
+      nodeIntegration: true
+    }
   })
 
   if (mainWindowState.isMaximized) {
