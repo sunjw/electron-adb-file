@@ -381,6 +381,10 @@ class ADBHelper {
                 transferProcess.totalSize = fileSize;
                 var pullTransfer = sync.pull(filePath);
                 pullTransfer.on('progress', (stats) => {
+                    if (stats.bytesTransferred > transferProcess.totalSize) {
+                        // adbkit cannot handle 4GB
+                        transferProcess.totalSize = transferProcess.totalSize + 4 * 1024 * 1024 * 1024;
+                    }
                     var progressPercent = Math.floor((stats.bytesTransferred * 100) / transferProcess.totalSize);
                     transferProcess.percent = progressPercent;
                     onProgressCallback(progressPercent + '%');
