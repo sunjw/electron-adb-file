@@ -38,7 +38,7 @@ class ADBHelper {
         this.usingAdbkit = Utils.isWindows();
         if (this.usingAdbkit) {
             this.adbkitClient = Adbkit.createClient();
-            Utils.log('usingAdbkit...');
+            Utils.log('using Adbkit...');
         }
 
         //Utils.log('adb=[' + this.adbPath + ']');
@@ -384,6 +384,7 @@ class ADBHelper {
                     if (stats.bytesTransferred > transferProcess.totalSize) {
                         // adbkit cannot handle 4GB
                         transferProcess.totalSize = transferProcess.totalSize + 4 * 1024 * 1024 * 1024;
+                        Utils.log('fix adbkit cannot handle 4GB');
                     }
                     var progressPercent = Math.floor((stats.bytesTransferred * 100) / transferProcess.totalSize);
                     transferProcess.percent = progressPercent;
