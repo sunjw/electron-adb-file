@@ -644,7 +644,7 @@ function handleCmdClick(cmdLink) {
         pullFile(filePath);
         break;
     case CMD_SHOW_PULL:
-        const pullFilePath = adbCmdParam;
+        const pullFilePath = Utils.fixWindowsPath(adbCmdParam);
         shell.showItemInFolder(pullFilePath);
         break;
     }

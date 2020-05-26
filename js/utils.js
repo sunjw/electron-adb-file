@@ -75,6 +75,13 @@ function isWindows() {
     return (process.platform == 'win32');
 }
 
+function fixWindowsPath(path) {
+    if (isWindows()) {
+        path = stringReplaceAll(path, '\/', '\\');
+    }
+    return path;
+}
+
 // exports
 exports.log = log;
 exports.cloneObject = cloneObject;
@@ -85,3 +92,4 @@ exports.getRandomInt = getRandomInt;
 exports.byteSizeToShortSize = byteSizeToShortSize;
 exports.getParentDir = getParentDir;
 exports.isWindows = isWindows;
+exports.fixWindowsPath = fixWindowsPath;
