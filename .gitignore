@@ -1,5 +1,6 @@
 *~
 .DS_Store
+*.bak
 
 node_modules
 dist/electron-adb-file.app/*
