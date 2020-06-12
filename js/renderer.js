@@ -158,6 +158,8 @@ function updateTransferButton() {
         if (!minProgress.endsWith('B')) {
             ipcRenderer.send('set-transfer-progress', transferProgress);
         }
+    } else if (count == 0) {
+        ipcRenderer.send('set-transfer-progress', 100);
     }
     aBtnTransfer.text(btnTransferText);
     ipcRenderer.send('set-transfer-count', count);
