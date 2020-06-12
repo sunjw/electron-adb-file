@@ -48,7 +48,9 @@ var toastTimeoutId = 0;
 
 var showHiddenFlag = false;
 
-var findInPage = new electronFind.FindInPage(remote.getCurrentWebContents());
+var findInPage = new electronFind.FindInPage(remote.getCurrentWebContents(), {
+    offsetRight: 200
+});
 ipcRenderer.on('on-find', (e, args) => {
     findInPage.openFindWindow();
 })
