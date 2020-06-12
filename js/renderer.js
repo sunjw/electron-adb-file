@@ -2,9 +2,11 @@ const {
     ipcRenderer,
     shell
 } = require('electron');
+const remote = require('electron').remote;
 
 const Path = require('path');
 
+const electronFind = require('electron-find');
 const fixPath = require('fix-path')();
 
 const Utils = require('./utils.js');
@@ -45,6 +47,11 @@ var divToast = 0;
 var toastTimeoutId = 0;
 
 var showHiddenFlag = false;
+
+var findInPage = new electronFind.FindInPage(remote.getCurrentWebContents());
+ipcRenderer.on('on-find', (e, args) => {
+    findInPage.openFindWindow();
+})
 
 ipcRenderer.on('set-downloads-path', (event, arg) => {
     Utils.log('set-downloads-path=[' + arg + ']');

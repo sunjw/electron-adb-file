@@ -75,6 +75,10 @@ function isWindows() {
     return (process.platform == 'win32');
 }
 
+function isMacOS() {
+    return (process.platform == 'darwin');
+}
+
 function fixWindowsPath(path) {
     if (isWindows()) {
         path = stringReplaceAll(path, '\/', '\\');
@@ -92,4 +96,5 @@ exports.getRandomInt = getRandomInt;
 exports.byteSizeToShortSize = byteSizeToShortSize;
 exports.getParentDir = getParentDir;
 exports.isWindows = isWindows;
+exports.isMacOS = isMacOS;
 exports.fixWindowsPath = fixWindowsPath;

@@ -4,7 +4,10 @@ const path = require('path');
 // Modules to control application life and create native browser window
 const {app, BrowserWindow, dialog, ipcMain} = require('electron')
 
+const electronLocalshortcut = require('electron-localshortcut')
 const windowStateKeeper = require('electron-window-state')
+
+const utils = require('./js/utils.js')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -76,6 +79,14 @@ function createWindow () {
     // Set user's downloads directory path to renderer.
     mainWindow.webContents.send('set-downloads-path', app.getPath('downloads'))
  })
+
+  var accelerator = 'Ctrl+F'
+  if (utils.isMacOS()) {
+    accelerator = 'Command+F'
+  }
+  electronLocalshortcut.register(mainWindow, accelerator, () => {
+    mainWindow.webContents.send('on-find')
+  })
 
    // Let us register listeners on the window, so we can update the state
   // automatically (the listeners will be removed when the window is closed)
