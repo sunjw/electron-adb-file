@@ -22,6 +22,10 @@ function createWindow () {
   })
 
   // Create the browser window.
+  var titleBarStyleOS = 'default'
+  if (utils.isMacOS()) {
+    titleBarStyleOS = 'hidden'
+  }
   mainWindow = new BrowserWindow({
     x: mainWindowState.x,
     y: mainWindowState.y,
@@ -29,6 +33,7 @@ function createWindow () {
     height: mainWindowState.height,
     minWidth: 700,
     minHeight: 500,
+    titleBarStyle: titleBarStyleOS,
     webPreferences: {
       nodeIntegration: true
     }
