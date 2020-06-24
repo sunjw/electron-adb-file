@@ -74,6 +74,9 @@ ul {
     border-bottom: 1px solid var(--color-android);
     -webkit-app-region: drag;
 }
+#divToolbarWrapper .toolbarFuncMac {
+    padding-left: 80px;
+}
 #divToolbarWrapper #divToolbarFunc .toolbarButton {
     float: left;
 }
