@@ -62,9 +62,9 @@ ul {
     border-bottom: 1px solid #e0e0e0;
 }
 #divToolbarWrapper .divToolbarLine {
-    padding: 0 20px;
-    height: 45px;
-    line-height: 45px;
+    padding: 0 15px;
+    height: 42px;
+    line-height: 42px;
 }
 #divToolbarWrapper .disabled {
     color: #666666;
