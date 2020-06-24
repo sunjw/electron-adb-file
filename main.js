@@ -24,7 +24,7 @@ function createWindow() {
   // Create the browser window.
   var titleBarStyleOS = 'default'
   if (utils.isMacOS()) {
-    titleBarStyleOS = 'hidden'
+    titleBarStyleOS = 'hiddenInset'
   }
   mainWindow = new BrowserWindow({
     x: mainWindowState.x,
