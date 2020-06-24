@@ -70,6 +70,15 @@ function createWindow() {
     }
   })
 
+  if (utils.isMacOS()) {
+    mainWindow.on('enter-full-screen', (e) => {
+      mainWindow.webContents.send('enter-full-screen')
+    })
+    mainWindow.on('leave-full-screen', (e) => {
+      mainWindow.webContents.send('leave-full-screen')
+    })
+  }
+
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
     // Dereference the window object, usually you would store windows
