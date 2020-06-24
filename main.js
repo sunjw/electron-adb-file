@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Modules to control application life and create native browser window
-const {app, BrowserWindow, dialog, ipcMain} = require('electron')
+const { app, BrowserWindow, dialog, ipcMain } = require('electron')
 
 const electronLocalshortcut = require('electron-localshortcut')
 const windowStateKeeper = require('electron-window-state')
@@ -14,7 +14,7 @@ const utils = require('./js/utils.js')
 let mainWindow
 let transferCount = 0
 
-function createWindow () {
+function createWindow() {
   // Load the previous state with fallback to defaults
   let mainWindowState = windowStateKeeper({
     defaultWidth: 900,
@@ -61,12 +61,11 @@ function createWindow () {
     if (transferCount > 0) {
       dialog.showMessageBox(
         mainWindow, {
-          type: 'info',
-          buttons: ['OK'],
-          title: 'Cannot exit',
-          message: 'Still transferring, cannot exit!'
-        }
-      )
+        type: 'info',
+        buttons: ['OK'],
+        title: 'Cannot exit',
+        message: 'Still transferring, cannot exit!'
+      })
       e.preventDefault()
     }
   })
@@ -83,7 +82,7 @@ function createWindow () {
   mainWindow.webContents.on('did-finish-load', () => {
     // Set user's downloads directory path to renderer.
     mainWindow.webContents.send('set-downloads-path', app.getPath('downloads'))
- })
+  })
 
   var accelerator = 'Ctrl+F'
   if (utils.isMacOS()) {
@@ -93,7 +92,7 @@ function createWindow () {
     mainWindow.webContents.send('on-find')
   })
 
-   // Let us register listeners on the window, so we can update the state
+  // Let us register listeners on the window, so we can update the state
   // automatically (the listeners will be removed when the window is closed)
   // and restore the maximized or full screen state
   mainWindowState.manage(mainWindow)
