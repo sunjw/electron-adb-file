@@ -33,6 +33,7 @@ var aBtnRefresh = 0;
 var aBtnHiddenFile = 0;
 var aBtnSdcard = 0;
 var aBtnTransfer = 0;
+var divToolbarFunc = 0;
 var divToolbarPath = 0;
 var divDirWrapper = 0;
 var divDirList = 0;
@@ -71,6 +72,8 @@ function init() {
     aBtnHiddenFile = $('#divToolbarWrapper #aBtnHiddenFile');
     aBtnSdcard = $('#divToolbarWrapper #aBtnSdcard');
     aBtnTransfer = $('#divToolbarWrapper #aBtnTransfer');
+
+    divToolbarFunc = $('#divToolbarFunc');
     divToolbarPath = $('#divToolbarPath');
     divDirWrapper = $('#divDirWrapper');
     divDirList = $('#divDirList');
@@ -104,6 +107,10 @@ function onWindowResize() {
 }
 
 function initToolbar() {
+    if (Utils.isMacOS()) {
+        divToolbarFunc.addClass('toolbarFuncMac');
+    }
+
     aBtnUp.addClass('disabled').click(function () {
         return handleCmdClick($(this));
     });
