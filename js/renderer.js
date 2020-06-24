@@ -52,6 +52,7 @@ var showHiddenFlag = false;
 var findInPage = new electronFind.FindInPage(remote.getCurrentWebContents(), {
     offsetRight: 200
 });
+
 ipcRenderer.on('on-find', (e, args) => {
     findInPage.openFindWindow();
 })
@@ -61,6 +62,18 @@ ipcRenderer.on('set-downloads-path', (event, arg) => {
     downloadsDirPath = arg;
     if (!downloadsDirPath.endsWith('/')) {
         downloadsDirPath = downloadsDirPath + '/';
+    }
+});
+
+ipcRenderer.on('enter-full-screen', (event, arg) => {
+    if (Utils.isMacOS()) {
+        divToolbarFunc.removeClass('toolbarFuncMac');
+    }
+});
+
+ipcRenderer.on('leave-full-screen', (event, arg) => {
+    if (Utils.isMacOS()) {
+        divToolbarFunc.addClass('toolbarFuncMac');
     }
 });
 
