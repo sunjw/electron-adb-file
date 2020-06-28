@@ -24,9 +24,11 @@ const CMD_STOP_TRANSFER = 'stop-transfer';
 const CMD_PULL = 'pull';
 const CMD_SHOW_PULL = 'show-pull';
 const CMD_WINDOW_MIN = 'window-min';
+const CMD_WINDOW_MAX = 'window-max';
 const CMD_WINDOW_CLOSE = 'window-close';
 
 const IMGSET_WINDOW_MIN = 'assets/min-k-10.png 1x, assets/min-k-12.png 1.25x, assets/min-k-15.png 1.5x, assets/min-k-15.png 1.75x, assets/min-k-20.png 2x, assets/min-k-20.png 2.25x, assets/min-k-24.png 2.5x, assets/min-k-30.png 3x, assets/min-k-30.png 3.5x';
+const IMGSET_WINDOW_MAX = 'assets/max-k-10.png 1x, assets/max-k-12.png 1.25x, assets/max-k-15.png 1.5x, assets/max-k-15.png 1.75x, assets/max-k-20.png 2x, assets/max-k-20.png 2.25x, assets/max-k-24.png 2.5x, assets/max-k-30.png 3x, assets/max-k-30.png 3.5x';
 const IMGSET_WINDOW_CLOSE = 'assets/close-k-10.png 1x, assets/close-k-12.png 1.25x, assets/close-k-15.png 1.5x, assets/close-k-15.png 1.75x, assets/close-k-20.png 2x, assets/close-k-20.png 2.25x, assets/close-k-24.png 2.5x, assets/close-k-30.png 3x, assets/close-k-30.png 3.5x';
 
 var adbHelper = 0;
@@ -139,6 +141,16 @@ function initToolbar() {
         var imgBtnWinMin = $('<img/>').attr('srcset', IMGSET_WINDOW_MIN);
         aBtnWinMin.append(imgBtnWinMin);
 
+        var aBtnWinMax = $('<a/>').attr({
+            'id': 'aBtnWinMax',
+            'href': CMD_WINDOW_MAX
+        }).addClass('toolbarButton').addClass('toolbarImgButton')
+            .click(function () {
+            return handleCmdClick($(this));
+        });
+        var imgBtnWinMax = $('<img/>').attr('srcset', IMGSET_WINDOW_MAX);
+        aBtnWinMax.append(imgBtnWinMax);
+
         var aBtnWinClose = $('<a/>').attr({
             'id': 'aBtnWinClose',
             'href': CMD_WINDOW_CLOSE
@@ -150,6 +162,7 @@ function initToolbar() {
         aBtnWinClose.append(imgBtnWinClose);
 
         divToolbarFuncRightPart.append(aBtnWinMin);
+        divToolbarFuncRightPart.append(aBtnWinMax);
         divToolbarFuncRightPart.append(aBtnWinClose);
     }
     if (Utils.isMacOS()) {
@@ -712,6 +725,9 @@ function handleCmdClick(cmdLink) {
         break;
     case CMD_WINDOW_MIN:
         remote.getCurrentWindow().minimize();
+        break;
+    case CMD_WINDOW_MAX:
+        remote.getCurrentWindow().maximize();
         break;
     case CMD_WINDOW_CLOSE:
         remote.getCurrentWindow().close();
