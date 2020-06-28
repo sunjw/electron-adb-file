@@ -25,10 +25,12 @@ const CMD_PULL = 'pull';
 const CMD_SHOW_PULL = 'show-pull';
 const CMD_WINDOW_MIN = 'window-min';
 const CMD_WINDOW_MAX = 'window-max';
+const CMD_WINDOW_RESTORE = 'window-restore';
 const CMD_WINDOW_CLOSE = 'window-close';
 
 const IMGSET_WINDOW_MIN = 'assets/min-k-10.png 1x, assets/min-k-12.png 1.25x, assets/min-k-15.png 1.5x, assets/min-k-15.png 1.75x, assets/min-k-20.png 2x, assets/min-k-20.png 2.25x, assets/min-k-24.png 2.5x, assets/min-k-30.png 3x, assets/min-k-30.png 3.5x';
 const IMGSET_WINDOW_MAX = 'assets/max-k-10.png 1x, assets/max-k-12.png 1.25x, assets/max-k-15.png 1.5x, assets/max-k-15.png 1.75x, assets/max-k-20.png 2x, assets/max-k-20.png 2.25x, assets/max-k-24.png 2.5x, assets/max-k-30.png 3x, assets/max-k-30.png 3.5x';
+const IMGSET_WINDOW_RESTORE = 'assets/restore-k-10.png 1x, assets/restore-k-12.png 1.25x, assets/restore-k-15.png 1.5x, assets/restore-k-15.png 1.75x, assets/restore-k-20.png 2x, assets/restore-k-20.png 2.25x, assets/restore-k-24.png 2.5x, assets/restore-k-30.png 3x, assets/restore-k-30.png 3.5x';
 const IMGSET_WINDOW_CLOSE = 'assets/close-k-10.png 1x, assets/close-k-12.png 1.25x, assets/close-k-15.png 1.5x, assets/close-k-15.png 1.75x, assets/close-k-20.png 2x, assets/close-k-20.png 2.25x, assets/close-k-24.png 2.5x, assets/close-k-30.png 3x, assets/close-k-30.png 3.5x';
 
 var adbHelper = 0;
@@ -134,7 +136,7 @@ function initToolbar() {
         var aBtnWinMin = $('<a/>').attr({
             'id': 'aBtnWinMin',
             'href': CMD_WINDOW_MIN
-        }).addClass('toolbarButton').addClass('toolbarImgButton')
+        }).addClass('toolbarButton').addClass('toolbarImgButton').addClass('toolbarControlButton')
             .click(function () {
             return handleCmdClick($(this));
         });
@@ -144,17 +146,27 @@ function initToolbar() {
         var aBtnWinMax = $('<a/>').attr({
             'id': 'aBtnWinMax',
             'href': CMD_WINDOW_MAX
-        }).addClass('toolbarButton').addClass('toolbarImgButton')
+        }).addClass('toolbarButton').addClass('toolbarImgButton').addClass('toolbarControlButton')
             .click(function () {
             return handleCmdClick($(this));
         });
         var imgBtnWinMax = $('<img/>').attr('srcset', IMGSET_WINDOW_MAX);
         aBtnWinMax.append(imgBtnWinMax);
 
+        var aBtnWinRestore = $('<a/>').attr({
+            'id': 'aBtnWinRestore',
+            'href': CMD_WINDOW_RESTORE
+        }).addClass('toolbarButton').addClass('toolbarImgButton').addClass('toolbarControlButton')
+            .click(function () {
+            return handleCmdClick($(this));
+        });
+        var imgBtnWinRestore = $('<img/>').attr('srcset', IMGSET_WINDOW_RESTORE);
+        aBtnWinRestore.append(imgBtnWinRestore);
+
         var aBtnWinClose = $('<a/>').attr({
             'id': 'aBtnWinClose',
             'href': CMD_WINDOW_CLOSE
-        }).addClass('toolbarButton').addClass('toolbarImgButton')
+        }).addClass('toolbarButton').addClass('toolbarImgButton').addClass('toolbarControlButton')
             .click(function () {
             return handleCmdClick($(this));
         });
@@ -163,6 +175,7 @@ function initToolbar() {
 
         divToolbarFuncRightPart.append(aBtnWinMin);
         divToolbarFuncRightPart.append(aBtnWinMax);
+        divToolbarFuncRightPart.append(aBtnWinRestore);
         divToolbarFuncRightPart.append(aBtnWinClose);
     }
     if (Utils.isMacOS()) {
@@ -728,6 +741,9 @@ function handleCmdClick(cmdLink) {
         break;
     case CMD_WINDOW_MAX:
         remote.getCurrentWindow().maximize();
+        break;
+    case CMD_WINDOW_RESTORE:
+        remote.getCurrentWindow().unmaximize();
         break;
     case CMD_WINDOW_CLOSE:
         remote.getCurrentWindow().close();
