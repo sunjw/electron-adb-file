@@ -22,7 +22,11 @@ function createWindow() {
   })
 
   // Create the browser window.
+  var frameOS = true
   var titleBarStyleOS = 'default'
+  if (utils.isWindows()) {
+    frameOS = false
+  }
   if (utils.isMacOS()) {
     titleBarStyleOS = 'hiddenInset'
   }
@@ -33,6 +37,7 @@ function createWindow() {
     height: mainWindowState.height,
     minWidth: 700,
     minHeight: 500,
+    frame: frameOS,
     titleBarStyle: titleBarStyleOS,
     webPreferences: {
       nodeIntegration: true
