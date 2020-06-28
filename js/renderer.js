@@ -143,25 +143,22 @@ function initToolbar() {
         var imgBtnWinMin = $('<img/>').attr('srcset', IMGSET_WINDOW_MIN);
         aBtnWinMin.append(imgBtnWinMin);
 
-        var aBtnWinMax = $('<a/>').attr({
-            'id': 'aBtnWinMax',
-            'href': CMD_WINDOW_MAX
+        var aBtnWinMaxRestore = $('<a/>').attr({
+            'id': 'aBtnWinMaxRestore'
         }).addClass('toolbarButton').addClass('toolbarImgButton').addClass('toolbarControlButton')
             .click(function () {
             return handleCmdClick($(this));
         });
-        var imgBtnWinMax = $('<img/>').attr('srcset', IMGSET_WINDOW_MAX);
-        aBtnWinMax.append(imgBtnWinMax);
-
-        var aBtnWinRestore = $('<a/>').attr({
-            'id': 'aBtnWinRestore',
-            'href': CMD_WINDOW_RESTORE
-        }).addClass('toolbarButton').addClass('toolbarImgButton').addClass('toolbarControlButton')
-            .click(function () {
-            return handleCmdClick($(this));
-        });
-        var imgBtnWinRestore = $('<img/>').attr('srcset', IMGSET_WINDOW_RESTORE);
-        aBtnWinRestore.append(imgBtnWinRestore);
+        var imgBtnWinMaxRestore = $('<img/>');
+        aBtnWinMaxRestore.append(imgBtnWinMaxRestore);
+        var curWindow = remote.getCurrentWindow();
+        if (curWindow.isMaximized()) {
+            aBtnWinMaxRestore.attr('href', CMD_WINDOW_RESTORE);
+            imgBtnWinMaxRestore.attr('srcset', IMGSET_WINDOW_RESTORE);
+        } else {
+            aBtnWinMaxRestore.attr('href', CMD_WINDOW_MAX);
+            imgBtnWinMaxRestore.attr('srcset', IMGSET_WINDOW_MAX);
+        }
 
         var aBtnWinClose = $('<a/>').attr({
             'id': 'aBtnWinClose',
@@ -174,8 +171,7 @@ function initToolbar() {
         aBtnWinClose.append(imgBtnWinClose);
 
         divToolbarFuncRightPart.append(aBtnWinMin);
-        divToolbarFuncRightPart.append(aBtnWinMax);
-        divToolbarFuncRightPart.append(aBtnWinRestore);
+        divToolbarFuncRightPart.append(aBtnWinMaxRestore);
         divToolbarFuncRightPart.append(aBtnWinClose);
     }
     if (Utils.isMacOS()) {
@@ -741,9 +737,13 @@ function handleCmdClick(cmdLink) {
         break;
     case CMD_WINDOW_MAX:
         remote.getCurrentWindow().maximize();
+        cmdLink.attr('href', CMD_WINDOW_RESTORE);
+        cmdLink.children('img').attr('srcset', IMGSET_WINDOW_RESTORE);
         break;
     case CMD_WINDOW_RESTORE:
         remote.getCurrentWindow().unmaximize();
+        cmdLink.attr('href', CMD_WINDOW_MAX);
+        cmdLink.children('img').attr('srcset', IMGSET_WINDOW_MAX);
         break;
     case CMD_WINDOW_CLOSE:
         remote.getCurrentWindow().close();
