@@ -143,6 +143,18 @@ ul {
     top: 0;
     left: 0;
 }
+#divToolbarWrapper #divToolbarFuncRightPart .toolbarControlButton {
+    cursor: default;
+}
+#divToolbarWrapper #divToolbarFuncRightPart .toolbarControlButton:hover,#divToolbarWrapper #divToolbarFuncRightPart .toolbarControlButton:active {
+    background-color: #e5e5e5;
+}
+#aBtnWinClose:hover,#aBtnWinClose:active {
+    background-color: #e81123 !important;
+}
+#aBtnWinClose:hover img,#aBtnWinClose:active img {
+    filter: invert(1);
+}
 /* Toolbar */
 
 /* Dialog */
