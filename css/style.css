@@ -145,6 +145,7 @@ ul {
 }
 #divToolbarWrapper #divToolbarFuncRightPart .toolbarControlButton {
     cursor: default;
+    user-select: none;
 }
 #divToolbarWrapper #divToolbarFuncRightPart .toolbarControlButton:hover,#divToolbarWrapper #divToolbarFuncRightPart .toolbarControlButton:active {
     background-color: #e5e5e5;
