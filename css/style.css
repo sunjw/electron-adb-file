@@ -3,7 +3,7 @@
     font-family: 'Product Sans';
     font-style: normal;
     font-weight: 400;
-    src: url(../asserts/GoogleSans-Regular.ttf) format('truetype');
+    src: url(../assets/GoogleSans-Regular.ttf) format('truetype');
 }
 
 :root {
@@ -255,12 +255,12 @@ ul {
     white-space: nowrap;
     text-overflow: ellipsis;
     padding-left: 70px;
-    background: url('../asserts/generic_outline_96.png') 16px 10px no-repeat;
+    background: url('../assets/generic_outline_96.png') 16px 10px no-repeat;
     background-size: 40px 40px;
     cursor: pointer;
 }
 #divDirList .fileDir {
-    background-image: url('../asserts/folder_96.png');
+    background-image: url('../assets/folder_96.png');
 }
 #divDirList .fileTypeOrSize {
     width: 100px;

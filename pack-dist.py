@@ -94,7 +94,7 @@ def main():
     os.chdir(cwd)
 
     # Copy new app.
-    app_dirs = ['asserts', 'css', 'js', 'node_modules']
+    app_dirs = ['assets', 'css', 'js', 'node_modules']
     for app_dir in app_dirs:
         dest_app_dir = os.path.join('dist', app_path_relative)
         dest_app_dir = os.path.join(dest_app_dir, app_dir)
@@ -109,7 +109,7 @@ def main():
         dest_app_file = os.path.join(dest_app_file, app_file)
         copy_file(app_file, dest_app_file)
 
-    release_file = os.path.join('dist', app_path_relative, 'asserts', 'RELEASED')
+    release_file = os.path.join('dist', app_path_relative, 'assets', 'RELEASED')
     open(release_file, 'a').close()
 
     # Rebuild and clean.

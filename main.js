@@ -56,7 +56,7 @@ function createWindow() {
   // and load the index.html of the app.
   mainWindow.loadFile('index.html')
 
-  if (!fs.existsSync(path.join(__dirname, 'asserts/RELEASED'))) {
+  if (!fs.existsSync(path.join(__dirname, 'assets/RELEASED'))) {
     // Open the DevTools.
     mainWindow.webContents.openDevTools()
   }
