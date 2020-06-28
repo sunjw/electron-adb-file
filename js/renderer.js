@@ -692,7 +692,7 @@ function handleCmdClick(cmdLink) {
         shell.showItemInFolder(pullFilePath);
         break;
     case CMD_WINDOW_CLOSE:
-        Utils.log(CMD_WINDOW_CLOSE);
+        remote.getCurrentWindow().close();
         break;
     }
     return false;
