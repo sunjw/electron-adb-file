@@ -23,7 +23,11 @@ const CMD_LS_DIR = 'ls';
 const CMD_STOP_TRANSFER = 'stop-transfer';
 const CMD_PULL = 'pull';
 const CMD_SHOW_PULL = 'show-pull';
+const CMD_WINDOW_MIN = 'window-min';
 const CMD_WINDOW_CLOSE = 'window-close';
+
+const IMGSET_WINDOW_MIN = 'assets/min-k-10.png 1x, assets/min-k-12.png 1.25x, assets/min-k-15.png 1.5x, assets/min-k-15.png 1.75x, assets/min-k-20.png 2x, assets/min-k-20.png 2.25x, assets/min-k-24.png 2.5x, assets/min-k-30.png 3x, assets/min-k-30.png 3.5x';
+const IMGSET_WINDOW_CLOSE = 'assets/close-k-10.png 1x, assets/close-k-12.png 1.25x, assets/close-k-15.png 1.5x, assets/close-k-15.png 1.75x, assets/close-k-20.png 2x, assets/close-k-20.png 2.25x, assets/close-k-24.png 2.5x, assets/close-k-30.png 3x, assets/close-k-30.png 3.5x';
 
 var adbHelper = 0;
 
@@ -124,14 +128,29 @@ function initToolbar() {
     if (Utils.isWindows()) {
         divToolbarFunc.addClass('toolbarFuncFramelessWin');
         var divToolbarFuncRightPart = $('#divToolbarFuncRightPart');
-        var aBtnClose = $('<a/>')
-            .attr('href', CMD_WINDOW_CLOSE).addClass('toolbarButton').addClass('toolbarImgButton')
+
+        var aBtnWinMin = $('<a/>').attr({
+            'id': 'aBtnWinMin',
+            'href': CMD_WINDOW_MIN
+        }).addClass('toolbarButton').addClass('toolbarImgButton')
             .click(function () {
             return handleCmdClick($(this));
         });
-        var imgBtnClose = $('<img/>').attr('srcset', 'assets/close-k-10.png 1x, assets/close-k-12.png 1.25x, assets/close-k-15.png 1.5x, assets/close-k-15.png 1.75x, assets/close-k-20.png 2x, assets/close-k-20.png 2.25x, assets/close-k-24.png 2.5x, assets/close-k-30.png 3x, assets/close-k-30.png 3.5x');
-        aBtnClose.append(imgBtnClose);
-        divToolbarFuncRightPart.append(aBtnClose);
+        var imgBtnWinMin = $('<img/>').attr('srcset', IMGSET_WINDOW_MIN);
+        aBtnWinMin.append(imgBtnWinMin);
+
+        var aBtnWinClose = $('<a/>').attr({
+            'id': 'aBtnWinClose',
+            'href': CMD_WINDOW_CLOSE
+        }).addClass('toolbarButton').addClass('toolbarImgButton')
+            .click(function () {
+            return handleCmdClick($(this));
+        });
+        var imgBtnWinClose = $('<img/>').attr('srcset', IMGSET_WINDOW_CLOSE);
+        aBtnWinClose.append(imgBtnWinClose);
+
+        divToolbarFuncRightPart.append(aBtnWinMin);
+        divToolbarFuncRightPart.append(aBtnWinClose);
     }
     if (Utils.isMacOS()) {
         divToolbarFunc.addClass('toolbarFuncFramelessMac');
@@ -690,6 +709,9 @@ function handleCmdClick(cmdLink) {
     case CMD_SHOW_PULL:
         const pullFilePath = Utils.fixWindowsPath(adbCmdParam);
         shell.showItemInFolder(pullFilePath);
+        break;
+    case CMD_WINDOW_MIN:
+        remote.getCurrentWindow().minimize();
         break;
     case CMD_WINDOW_CLOSE:
         remote.getCurrentWindow().close();
