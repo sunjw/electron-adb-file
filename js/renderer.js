@@ -23,6 +23,7 @@ const CMD_LS_DIR = 'ls';
 const CMD_STOP_TRANSFER = 'stop-transfer';
 const CMD_PULL = 'pull';
 const CMD_SHOW_PULL = 'show-pull';
+const CMD_WINDOW_CLOSE = 'window-close';
 
 var adbHelper = 0;
 
@@ -122,6 +123,16 @@ function onWindowResize() {
 function initToolbar() {
     if (Utils.isWindows()) {
         divToolbarFunc.addClass('toolbarFuncFramelessWin');
+        var divToolbarFuncRightPart = $('#divToolbarFuncRightPart');
+        var aBtnClose = $('<a/>')
+            .attr('href', CMD_WINDOW_CLOSE)
+            .addClass('toolbarImgButton')
+            .click(function () {
+            return handleCmdClick($(this));
+        });
+        var imgBtnClose = $('<img/>').attr('srcset', 'assets/close-w-10.png 1x, assets/close-w-12.png 1.25x, assets/close-w-15.png 1.5x, assets/close-w-15.png 1.75x, assets/close-w-20.png 2x, assets/close-w-20.png 2.25x, assets/close-w-24.png 2.5x, assets/close-w-30.png 3x, assets/close-w-30.png 3.5x');
+        aBtnClose.append(imgBtnClose);
+        divToolbarFuncRightPart.append(aBtnClose);
     }
     if (Utils.isMacOS()) {
         divToolbarFunc.addClass('toolbarFuncFramelessMac');
@@ -680,6 +691,9 @@ function handleCmdClick(cmdLink) {
     case CMD_SHOW_PULL:
         const pullFilePath = Utils.fixWindowsPath(adbCmdParam);
         shell.showItemInFolder(pullFilePath);
+        break;
+    case CMD_WINDOW_CLOSE:
+        Utils.log(CMD_WINDOW_CLOSE);
         break;
     }
     return false;
