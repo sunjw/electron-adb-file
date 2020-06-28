@@ -125,12 +125,11 @@ function initToolbar() {
         divToolbarFunc.addClass('toolbarFuncFramelessWin');
         var divToolbarFuncRightPart = $('#divToolbarFuncRightPart');
         var aBtnClose = $('<a/>')
-            .attr('href', CMD_WINDOW_CLOSE)
-            .addClass('toolbarImgButton')
+            .attr('href', CMD_WINDOW_CLOSE).addClass('toolbarButton').addClass('toolbarImgButton')
             .click(function () {
             return handleCmdClick($(this));
         });
-        var imgBtnClose = $('<img/>').attr('srcset', 'assets/close-w-10.png 1x, assets/close-w-12.png 1.25x, assets/close-w-15.png 1.5x, assets/close-w-15.png 1.75x, assets/close-w-20.png 2x, assets/close-w-20.png 2.25x, assets/close-w-24.png 2.5x, assets/close-w-30.png 3x, assets/close-w-30.png 3.5x');
+        var imgBtnClose = $('<img/>').attr('srcset', 'assets/close-k-10.png 1x, assets/close-k-12.png 1.25x, assets/close-k-15.png 1.5x, assets/close-k-15.png 1.75x, assets/close-k-20.png 2x, assets/close-k-20.png 2.25x, assets/close-k-24.png 2.5x, assets/close-k-30.png 3x, assets/close-k-30.png 3.5x');
         aBtnClose.append(imgBtnClose);
         divToolbarFuncRightPart.append(aBtnClose);
     }

@@ -86,6 +86,9 @@ ul {
 #divToolbarWrapper #divToolbarFunc .toolbarButton {
     float: left;
 }
+#divToolbarWrapper #divToolbarFunc .toolbarImgButton {
+    float: left;
+}
 #divToolbarWrapper #divToolbarFuncLeftPart:after,#divToolbarWrapper #divToolbarFuncRightPart:after {
     content: '';
     display: block;
