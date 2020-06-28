@@ -67,13 +67,13 @@ ipcRenderer.on('set-downloads-path', (event, arg) => {
 
 ipcRenderer.on('enter-full-screen', (event, arg) => {
     if (Utils.isMacOS()) {
-        divToolbarFunc.removeClass('toolbarFuncMacFrameless');
+        divToolbarFunc.removeClass('toolbarFuncFramelessMac');
     }
 });
 
 ipcRenderer.on('leave-full-screen', (event, arg) => {
     if (Utils.isMacOS()) {
-        divToolbarFunc.addClass('toolbarFuncMacFrameless');
+        divToolbarFunc.addClass('toolbarFuncFramelessMac');
     }
 });
 
@@ -120,8 +120,11 @@ function onWindowResize() {
 }
 
 function initToolbar() {
+    if (Utils.isWindows()) {
+        divToolbarFunc.addClass('toolbarFuncFramelessWin');
+    }
     if (Utils.isMacOS()) {
-        divToolbarFunc.addClass('toolbarFuncMacFrameless');
+        divToolbarFunc.addClass('toolbarFuncFramelessMac');
     }
 
     aBtnUp.addClass('disabled').click(function () {
