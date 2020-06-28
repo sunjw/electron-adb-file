@@ -67,13 +67,13 @@ ipcRenderer.on('set-downloads-path', (event, arg) => {
 
 ipcRenderer.on('enter-full-screen', (event, arg) => {
     if (Utils.isMacOS()) {
-        divToolbarFunc.removeClass('toolbarFuncMac');
+        divToolbarFunc.removeClass('toolbarFuncMacFrameless');
     }
 });
 
 ipcRenderer.on('leave-full-screen', (event, arg) => {
     if (Utils.isMacOS()) {
-        divToolbarFunc.addClass('toolbarFuncMac');
+        divToolbarFunc.addClass('toolbarFuncMacFrameless');
     }
 });
 
@@ -121,7 +121,7 @@ function onWindowResize() {
 
 function initToolbar() {
     if (Utils.isMacOS()) {
-        divToolbarFunc.addClass('toolbarFuncMac');
+        divToolbarFunc.addClass('toolbarFuncMacFrameless');
     }
 
     aBtnUp.addClass('disabled').click(function () {
