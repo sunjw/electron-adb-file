@@ -1,7 +1,7 @@
 const Fs = require('fs');
 const Path = require('path');
 
-const Adbkit = require('adbkit');
+const Adbkit = require('@sunjw8888/adbkit');
 const Promise = require("bluebird");
 
 const Utils = require('./utils.js');
