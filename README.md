@@ -4,6 +4,9 @@
 
 This is a not-finished documentation.
 
+## Out of box
+Windows and macOS distribution packages are in [dist](dist) directory.
+
 ## Build and run
 1. npm install
 2. npm rebuild
