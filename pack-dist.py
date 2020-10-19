@@ -73,6 +73,17 @@ def remove_dir(path):
     if os.path.exists(path):
         shutil.rmtree(path)
 
+def read_file_content(file_path):
+    if not os.path.exists(file_path):
+        return ''
+    file_content = open(file_path, 'rb').read()
+    return file_content
+
+def write_file_content(file_path, file_content):
+    file_obj = open(file_path, 'wb')
+    file_obj.write(file_content)
+    file_obj.close()
+
 def main():
     app_title = 'electron-adb-file'
     app_name = 'electron-adb-file.app'
