@@ -71,6 +71,7 @@ def remove_dir(path):
         shutil.rmtree(path)
 
 def main():
+    app_title = 'electron-adb-file'
     app_name = 'electron-adb-file.app'
     app_dir_path_relative = 'Contents/Resources/app'
     if is_windows_sys():
@@ -122,6 +123,13 @@ def main():
         remove_dir('./node_modules/node-pty/build/deps/winpty/src/Release/obj')
     else:
         remove_dir('./node_modules/node-pty/build/Release/obj.target')
+    os.chdir(cwd)
+
+    # Rename electron files.
+    os.chdir(os.path.join('dist', app_name))
+    if is_windows_sys():
+        if os.path.exists('./electron.exe'):
+            os.rename('./electron.exe', './%s.exe' % (app_title))
     os.chdir(cwd)
 
     # Package and clean up.
