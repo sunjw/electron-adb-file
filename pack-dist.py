@@ -8,23 +8,23 @@ from subprocess import Popen, PIPE, STDOUT
 
 # Log to stdout
 def log(message):
-    print("%s" % (message))
+    print('%s' % (message))
 
 # Log to stderr
 def log_err(message):
     print(message, file=sys.stderr)
 
 def run_cmd(cmd):
-    log("Run: \n%s" % (cmd))
+    log('Run: \n%s' % (cmd))
     os.system(cmd)
 
 def run_cmd_with_stdio(cmd, input_data):
-    log("Run: \n%s" % (cmd))
+    log('Run: \n%s' % (cmd))
     p = Popen(shlex.split(cmd), stdout=PIPE, stdin=PIPE, stderr=STDOUT)
     return p.communicate(input = input_data)[0]
 
 def run_cmd_with_stderr(cmd):
-    log("Run: \n%s" % (cmd))
+    log('Run: \n%s' % (cmd))
     p = Popen(shlex.split(cmd), stdout=PIPE, stdin=PIPE, stderr=PIPE)
 
     stdout_text, stderr_text = p.communicate()
@@ -32,7 +32,10 @@ def run_cmd_with_stderr(cmd):
     return stderr_text
 
 def is_windows_sys():
-    return (platform.system() == "Windows")
+    return (platform.system() == 'Windows')
+
+def is_macos_sys():
+    return (platform.system() == 'Darwin')
 
 def fix_win_path(path):
     if is_windows_sys():
@@ -76,7 +79,7 @@ def main():
     app_dir_path_relative = 'Contents/Resources/app'
     if is_windows_sys():
         app_name = 'electron-adb-file'
-        app_dir_path_relative = 'resources\\app'
+        app_dir_path_relative = 'resources/app'
     app_path_relative = os.path.join(app_name, app_dir_path_relative)
 
     cwd = os.getcwd()
@@ -127,9 +130,20 @@ def main():
 
     # Rename electron files.
     os.chdir(os.path.join('dist', app_name))
+    electron_exe_dir = ''
+    electron_exe_name = ''
+    electron_exe_app_name = ''
     if is_windows_sys():
-        if os.path.exists('./electron.exe'):
-            os.rename('./electron.exe', './%s.exe' % (app_title))
+        electron_exe_dir = './'
+        electron_exe_name = 'electron.exe'
+        electron_exe_app_name = '%s%s.exe' % (electron_exe_dir, app_title)
+    elif is_macos_sys():
+        electron_exe_dir = './Contents/MacOS/'
+        electron_exe_name = 'Electron'
+        electron_exe_app_name = '%s%s' % (electron_exe_dir, app_title)
+    electron_exe_path = '%s%s' % (electron_exe_dir, electron_exe_name)
+    if os.path.exists(electron_exe_path):
+            os.rename(electron_exe_path, electron_exe_app_name)
     os.chdir(cwd)
 
     # Package and clean up.
