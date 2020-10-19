@@ -51,7 +51,7 @@ def find_strings_in_string(strings, in_string):
     return False
 
 def copy_file(source, dest):
-    shutil.copyfile(source, dest)
+    shutil.copyfile(source, dest, follow_symlinks=False)
 
 def copy_dir(source, dest):
     for filename in os.listdir(source):
