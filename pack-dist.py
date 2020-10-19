@@ -155,6 +155,12 @@ def main():
     electron_exe_path = '%s%s' % (electron_exe_dir, electron_exe_name)
     if os.path.exists(electron_exe_path):
         os.rename(electron_exe_path, electron_exe_app_name)
+    if is_macos_sys():
+        info_plist_path = './Contents/Info.plist'
+        info_plist_content = read_file_content(info_plist_path)
+        info_plist_content = info_plist_content.replace(b'>Electron<',
+                                bytes('>%s<' % (app_title), encoding='utf8'))
+        write_file_content(info_plist_path, info_plist_content)
     os.chdir(cwd)
 
     # Package and clean up.
