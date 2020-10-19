@@ -143,7 +143,7 @@ def main():
         electron_exe_app_name = '%s%s' % (electron_exe_dir, app_title)
     electron_exe_path = '%s%s' % (electron_exe_dir, electron_exe_name)
     if os.path.exists(electron_exe_path):
-            os.rename(electron_exe_path, electron_exe_app_name)
+        os.rename(electron_exe_path, electron_exe_app_name)
     os.chdir(cwd)
 
     # Package and clean up.
