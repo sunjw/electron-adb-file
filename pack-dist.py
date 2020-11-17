@@ -2,6 +2,7 @@ import os
 import platform
 import shlex
 import shutil
+import stat
 import sys
 
 from subprocess import Popen, PIPE, STDOUT
@@ -116,8 +117,8 @@ def main():
         os.mkdir(dest_app_dir)
         copy_dir(app_dir, dest_app_dir)
 
-    app_files = ['index.html', 'main.js', 
-                'package.json', 'package-lock.json', 
+    app_files = ['index.html', 'main.js',
+                'package.json', 'package-lock.json',
                 'README.md', 'LICENSE']
     for app_file in app_files:
         dest_app_file = os.path.join('dist', app_path_relative)
@@ -129,6 +130,13 @@ def main():
 
     # Rebuild and clean.
     os.chdir(os.path.join('dist', app_path_relative))
+    if is_macos_sys():
+        exec_fix_paths = ['./node_modules/.bin/electron-rebuild',
+                        './node_modules/.bin/node-pre-gyp',
+                        './node_modules/.bin/rimraf']
+        for exec_file in exec_fix_paths:
+            st = os.stat(exec_file)
+            os.chmod(exec_file, st.st_mode | stat.S_IEXEC)
     run_cmd('npm rebuild')
     run_cmd('npm run rebuild-node-pty')
     remove_dir('./node_modules/electron/dist')
