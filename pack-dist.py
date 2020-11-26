@@ -91,7 +91,7 @@ def log_stage(stage_message):
 APP_TITLE = 'electron-adb-file'
 PACKAGE_NAME = 'electron-adb-file'
 
-APP_DIRS = ['assets', 'css', 'js', 'node_modules']
+APP_DIRS = ['node_modules', 'assets', 'css', 'js']
 APP_FILES = ['index.html', 'main.js',
             'package.json', 'package-lock.json',
             'README.md', 'LICENSE']
