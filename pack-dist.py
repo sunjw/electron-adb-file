@@ -100,6 +100,11 @@ EXEC_FIX_PATHS = ['./node_modules/.bin/electron-rebuild',
                 './node_modules/.bin/node-pre-gyp',
                 './node_modules/.bin/rimraf']
 
+REBUILD_CMD = 'rebuild-node-pty'
+REBUILD_CLEAN_PATHS_WIN = ['./node_modules/node-pty/build/Release/obj',
+                        './node_modules/node-pty/build/deps/winpty/src/Release/obj']
+REBUILD_CLEAN_PATHS_MACOS = ['./node_modules/node-pty/build/Release/obj.target']
+
 def main():
     app_name = PACKAGE_NAME + '.app'
     app_dir_path_relative = 'Contents/Resources/app'
@@ -149,13 +154,13 @@ def main():
             st = os.stat(exec_file)
             os.chmod(exec_file, st.st_mode | stat.S_IEXEC)
     run_cmd('npm rebuild')
-    run_cmd('npm run rebuild-node-pty')
+    run_cmd('npm run %s' % (REBUILD_CMD))
     remove_dir('./node_modules/electron/dist')
-    if is_windows_sys():
-        remove_dir('./node_modules/node-pty/build/Release/obj')
-        remove_dir('./node_modules/node-pty/build/deps/winpty/src/Release/obj')
-    else:
-        remove_dir('./node_modules/node-pty/build/Release/obj.target')
+    rebuild_clean_paths = REBUILD_CLEAN_PATHS_WIN
+    if is_macos_sys():
+        rebuild_clean_paths = REBUILD_CLEAN_PATHS_MACOS
+    for rebuild_clean_path in rebuild_clean_paths:
+        remove_dir(rebuild_clean_path)
     os.chdir(cwd)
 
     # Rename electron files.
