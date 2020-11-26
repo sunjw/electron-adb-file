@@ -85,21 +85,27 @@ def write_file_content(file_path, file_content):
     file_obj.write(file_content)
     file_obj.close()
 
+def log_stage(stage_message):
+    log('\n%s\n' % (stage_message))
+
 def main():
     app_title = 'electron-adb-file'
-    app_name = 'electron-adb-file.app'
+    package_name = 'electron-adb-file'
+    app_name = package_name + '.app'
     app_dir_path_relative = 'Contents/Resources/app'
     if is_windows_sys():
-        app_name = 'electron-adb-file'
+        app_name = package_name
         app_dir_path_relative = 'resources/app'
     app_path_relative = os.path.join(app_name, app_dir_path_relative)
 
     cwd = os.getcwd()
 
     # Update modules.
+    log_stage('Update modules...')
     run_cmd('npm install')
 
     # Extract old package and remove old app.
+    log_stage('Extract old package and remove old app...')
     os.chdir('dist')
     if is_windows_sys():
         run_cmd('7z -tzip x %s.zip' % (app_name))
@@ -110,6 +116,7 @@ def main():
     os.chdir(cwd)
 
     # Copy new app.
+    log_stage('Copy new app...')
     app_dirs = ['assets', 'css', 'js', 'node_modules']
     for app_dir in app_dirs:
         dest_app_dir = os.path.join('dist', app_path_relative)
@@ -129,6 +136,7 @@ def main():
     open(release_file, 'a').close()
 
     # Rebuild and clean.
+    log_stage('Rebuild and clean...')
     os.chdir(os.path.join('dist', app_path_relative))
     if is_macos_sys():
         exec_fix_paths = ['./node_modules/.bin/electron-rebuild',
@@ -148,6 +156,7 @@ def main():
     os.chdir(cwd)
 
     # Rename electron files.
+    log_stage('Rename electron files...')
     os.chdir(os.path.join('dist', app_name))
     electron_exe_dir = ''
     electron_exe_name = ''
@@ -172,6 +181,7 @@ def main():
     os.chdir(cwd)
 
     # Package and clean up.
+    log_stage('Package and clean up...')
     os.chdir('dist')
     if is_windows_sys():
         remove_file('%s.zip' % (app_name))
