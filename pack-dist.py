@@ -88,13 +88,14 @@ def write_file_content(file_path, file_content):
 def log_stage(stage_message):
     log('\n%s\n' % (stage_message))
 
+APP_TITLE = 'electron-adb-file'
+PACKAGE_NAME = 'electron-adb-file'
+
 def main():
-    app_title = 'electron-adb-file'
-    package_name = 'electron-adb-file'
-    app_name = package_name + '.app'
+    app_name = PACKAGE_NAME + '.app'
     app_dir_path_relative = 'Contents/Resources/app'
     if is_windows_sys():
-        app_name = package_name
+        app_name = PACKAGE_NAME
         app_dir_path_relative = 'resources/app'
     app_path_relative = os.path.join(app_name, app_dir_path_relative)
 
@@ -164,11 +165,11 @@ def main():
     if is_windows_sys():
         electron_exe_dir = './'
         electron_exe_name = 'electron.exe'
-        electron_exe_app_name = '%s%s.exe' % (electron_exe_dir, app_title)
+        electron_exe_app_name = '%s%s.exe' % (electron_exe_dir, APP_TITLE)
     elif is_macos_sys():
         electron_exe_dir = './Contents/MacOS/'
         electron_exe_name = 'Electron'
-        electron_exe_app_name = '%s%s' % (electron_exe_dir, app_title)
+        electron_exe_app_name = '%s%s' % (electron_exe_dir, APP_TITLE)
     electron_exe_path = '%s%s' % (electron_exe_dir, electron_exe_name)
     if os.path.exists(electron_exe_path):
         os.rename(electron_exe_path, electron_exe_app_name)
@@ -176,7 +177,7 @@ def main():
         info_plist_path = './Contents/Info.plist'
         info_plist_content = read_file_content(info_plist_path)
         info_plist_content = info_plist_content.replace(b'>Electron<',
-                                bytes('>%s<' % (app_title), encoding='utf8'))
+                                bytes('>%s<' % (APP_TITLE), encoding='utf8'))
         write_file_content(info_plist_path, info_plist_content)
     os.chdir(cwd)
 
