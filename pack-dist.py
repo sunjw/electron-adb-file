@@ -91,6 +91,15 @@ def log_stage(stage_message):
 APP_TITLE = 'electron-adb-file'
 PACKAGE_NAME = 'electron-adb-file'
 
+APP_DIRS = ['assets', 'css', 'js', 'node_modules']
+APP_FILES = ['index.html', 'main.js',
+            'package.json', 'package-lock.json',
+            'README.md', 'LICENSE']
+
+EXEC_FIX_PATHS = ['./node_modules/.bin/electron-rebuild',
+                './node_modules/.bin/node-pre-gyp',
+                './node_modules/.bin/rimraf']
+
 def main():
     app_name = PACKAGE_NAME + '.app'
     app_dir_path_relative = 'Contents/Resources/app'
@@ -118,17 +127,13 @@ def main():
 
     # Copy new app.
     log_stage('Copy new app...')
-    app_dirs = ['assets', 'css', 'js', 'node_modules']
-    for app_dir in app_dirs:
+    for app_dir in APP_DIRS:
         dest_app_dir = os.path.join('dist', app_path_relative)
         dest_app_dir = os.path.join(dest_app_dir, app_dir)
         os.mkdir(dest_app_dir)
         copy_dir(app_dir, dest_app_dir)
 
-    app_files = ['index.html', 'main.js',
-                'package.json', 'package-lock.json',
-                'README.md', 'LICENSE']
-    for app_file in app_files:
+    for app_file in APP_FILES:
         dest_app_file = os.path.join('dist', app_path_relative)
         dest_app_file = os.path.join(dest_app_file, app_file)
         copy_file(app_file, dest_app_file)
@@ -140,10 +145,7 @@ def main():
     log_stage('Rebuild and clean...')
     os.chdir(os.path.join('dist', app_path_relative))
     if is_macos_sys():
-        exec_fix_paths = ['./node_modules/.bin/electron-rebuild',
-                        './node_modules/.bin/node-pre-gyp',
-                        './node_modules/.bin/rimraf']
-        for exec_file in exec_fix_paths:
+        for exec_file in EXEC_FIX_PATHS:
             st = os.stat(exec_file)
             os.chmod(exec_file, st.st_mode | stat.S_IEXEC)
     run_cmd('npm rebuild')
