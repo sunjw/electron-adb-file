@@ -88,6 +88,10 @@ def write_file_content(file_path, file_content):
 def log_stage(stage_message):
     log('\n%s\n' % (stage_message))
 
+EXE_7Z = '7z'
+EXE_7Z_KEKA_MACOS = '/Applications/Keka.app/Contents/Resources/keka7z'
+USING_7Z_MACOS = False
+
 APP_TITLE = 'electron-adb-file'
 PACKAGE_NAME = 'electron-adb-file'
 
@@ -106,6 +110,10 @@ REBUILD_CLEAN_PATHS_WIN = ['./node_modules/node-pty/build/Release/obj',
 REBUILD_CLEAN_PATHS_MACOS = ['./node_modules/node-pty/build/Release/obj.target']
 
 def main():
+    exe_7z_sys = EXE_7Z
+    if is_macos_sys():
+        exe_7z_sys = EXE_7Z_KEKA_MACOS
+
     app_name = PACKAGE_NAME + '.app'
     app_dir_path_relative = 'Contents/Resources/app'
     if is_windows_sys():
@@ -122,8 +130,8 @@ def main():
     # Extract old package and remove old app.
     log_stage('Extract old package and remove old app...')
     os.chdir('dist')
-    if is_windows_sys():
-        run_cmd('7z -tzip x %s.zip' % (app_name))
+    if is_windows_sys() or USING_7Z_MACOS:
+        run_cmd('%s -t7z x %s.7z' % (exe_7z_sys, app_name))
     else:
         run_cmd('tar -xvf %s.tar.gz' % (app_name))
     remove_dir(app_path_relative)
@@ -191,9 +199,9 @@ def main():
     # Package and clean up.
     log_stage('Package and clean up...')
     os.chdir('dist')
-    if is_windows_sys():
-        remove_file('%s.zip' % (app_name))
-        run_cmd('7z -tzip a -r %s.zip %s' % (app_name, app_name))
+    if is_windows_sys() or USING_7Z_MACOS:
+        remove_file('%s.7z' % (app_name))
+        run_cmd('%s -t7z -mx9 a -r %s.7z %s' % (exe_7z_sys, app_name, app_name))
     else:
         remove_file('%s.tar.gz' % (app_name))
         run_cmd('tar -czvf %s.tar.gz %s' % (app_name, app_name))
