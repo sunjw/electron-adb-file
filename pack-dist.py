@@ -118,7 +118,6 @@ def main():
             if arg == '--no-extract-old':
                 extract_old = False
 
-
     exe_7z_sys = EXE_7Z
     if is_macos_sys():
         exe_7z_sys = EXE_7Z_KEKA_MACOS
