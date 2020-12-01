@@ -110,6 +110,15 @@ REBUILD_CLEAN_PATHS_WIN = ['./node_modules/node-pty/build/Release/obj',
 REBUILD_CLEAN_PATHS_MACOS = ['./node_modules/node-pty/build/Release/obj.target']
 
 def main():
+    extract_old = True
+
+    argc = len(sys.argv)
+    if argc >= 2:
+        for arg in sys.argv:
+            if arg == '--no-extract-old':
+                extract_old = False
+
+
     exe_7z_sys = EXE_7Z
     if is_macos_sys():
         exe_7z_sys = EXE_7Z_KEKA_MACOS
@@ -128,13 +137,16 @@ def main():
     run_cmd('npm install')
 
     # Extract old package and remove old app.
-    log_stage('Extract old package and remove old app...')
     os.chdir('dist')
-    if is_windows_sys() or USING_7Z_MACOS:
-        run_cmd('%s -t7z x %s.7z' % (exe_7z_sys, app_name))
+    if extract_old:
+        log_stage('Extract old package and remove old app...')
+        if is_windows_sys() or USING_7Z_MACOS:
+            run_cmd('%s -t7z x %s.7z' % (exe_7z_sys, app_name))
+        else:
+            run_cmd('tar -xvf %s.tar.gz' % (app_name))
+        remove_dir(app_path_relative)
     else:
-        run_cmd('tar -xvf %s.tar.gz' % (app_name))
-    remove_dir(app_path_relative)
+        log_stage('No extract old package...')
     os.mkdir(app_path_relative)
     os.chdir(cwd)
 
