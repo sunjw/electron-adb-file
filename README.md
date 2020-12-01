@@ -15,7 +15,9 @@ Windows and macOS distribution packages are in [dist](dist) directory.
 
 ## Pack
 python3 ./pack-dist.py  
-New package will overwrite exists one in [dist](dist) directory.
+New package will overwrite exists one in [dist](dist) directory.  
+After upgrade Electron, using below command to package with new Electron dist:  
+python3 ./pack-dist.py --no-extract-old  
 
 ## License
 
