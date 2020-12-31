@@ -2,15 +2,47 @@ function log(logString) {
     console.log(logString);
 }
 
-function cloneObject(obj) {
-    var clone = {};
-    for (var i in obj) {
-        if (obj[i] != null && typeof(obj[i]) == "object")
-            clone[i] = cloneObject(obj[i]);
-        else
-            clone[i] = obj[i];
+function clone(obj) {
+    var copy;
+
+    // Handle the 3 simple types, and null or undefined
+    if (null == obj || 'object' != typeof obj) {
+        return obj;
     }
-    return clone;
+
+    // Handle Buffer
+    if (obj instanceof Buffer) {
+        copy = Buffer.from(obj);
+        return copy;
+    }
+
+    // Handle Date
+    if (obj instanceof Date) {
+        copy = new Date();
+        copy.setTime(obj.getTime());
+        return copy;
+    }
+
+    // Handle Array
+    if (obj instanceof Array) {
+        copy = [];
+        for (var i = 0, len = obj.length; i < len; i++) {
+            copy[i] = clone(obj[i]);
+        }
+        return copy;
+    }
+
+    // Handle Object
+    if (obj instanceof Object) {
+        copy = {};
+        for (var attr in obj) {
+            if (obj.hasOwnProperty(attr))
+                copy[attr] = clone(obj[attr]);
+        }
+        return copy;
+    }
+
+    throw new Error('Unable to copy obj! Its type is not supported.');
 }
 
 function stringReplaceAll(string, target, replace) {
@@ -88,7 +120,7 @@ function fixWindowsPath(path) {
 
 // exports
 exports.log = log;
-exports.cloneObject = cloneObject;
+exports.clone = clone;
 exports.stringReplaceAll = stringReplaceAll;
 exports.escapeShellPath = escapeShellPath;
 exports.escapeHtmlPath = escapeHtmlPath;
