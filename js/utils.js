@@ -1,5 +1,5 @@
-function log(logString) {
-    console.log(logString);
+function log(...logString) {
+    console.log(...logString);
 }
 
 function clone(obj) {
@@ -103,6 +103,30 @@ function getParentDir(path) {
     return parentDirPath;
 }
 
+function getQueryVariable(variable) {
+    var query = window.location.search.substring(1);
+    var vars = query.split('&');
+    for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split('=');
+        if (decodeURIComponent(pair[0]) == variable) {
+            return decodeURIComponent(pair[1]);
+        }
+    }
+    return '';
+}
+
+function getLocation() {
+    return window.location.href;
+}
+
+function navToLocation(url) {
+    window.location.href = url;
+}
+
+function navToHash(hash) {
+    window.location.hash = hash;
+}
+
 function isWindows() {
     return (process.platform == 'win32');
 }
@@ -127,6 +151,10 @@ exports.escapeHtmlPath = escapeHtmlPath;
 exports.getRandomInt = getRandomInt;
 exports.byteSizeToShortSize = byteSizeToShortSize;
 exports.getParentDir = getParentDir;
+exports.getQueryVariable = getQueryVariable;
+exports.getLocation = getLocation;
+exports.navToLocation = navToLocation;
+exports.navToHash = navToHash;
 exports.isWindows = isWindows;
 exports.isMacOS = isMacOS;
 exports.fixWindowsPath = fixWindowsPath;
