@@ -45,6 +45,14 @@ function clone(obj) {
     throw new Error('Unable to copy obj! Its type is not supported.');
 }
 
+function isString(variable) {
+    return (typeof variable === 'string' || variable instanceof String);
+}
+
+function isObject(variable) {
+    return (typeof variable === 'object' && variable !== null);
+}
+
 function stringReplaceAll(string, target, replace) {
     return string.replace(new RegExp(target, 'g'), replace);
 }
@@ -103,16 +111,20 @@ function getParentDir(path) {
     return parentDirPath;
 }
 
-function getQueryVariable(variable) {
-    var query = window.location.search.substring(1);
-    var vars = query.split('&');
+function getUrlQueryVariable(queryStr, key) {
+    var vars = queryStr.split('&');
     for (var i = 0; i < vars.length; i++) {
         var pair = vars[i].split('=');
-        if (decodeURIComponent(pair[0]) == variable) {
+        if (decodeURIComponent(pair[0]) == key) {
             return decodeURIComponent(pair[1]);
         }
     }
     return '';
+}
+
+function getQueryVariable(key) {
+    var query = window.location.search.substring(1);
+    return getUrlQueryVariable(query, key);
 }
 
 function getLocation() {
@@ -145,12 +157,15 @@ function fixWindowsPath(path) {
 // exports
 exports.log = log;
 exports.clone = clone;
+exports.isString = isString;
+exports.isObject = isObject;
 exports.stringReplaceAll = stringReplaceAll;
 exports.escapeShellPath = escapeShellPath;
 exports.escapeHtmlPath = escapeHtmlPath;
 exports.getRandomInt = getRandomInt;
 exports.byteSizeToShortSize = byteSizeToShortSize;
 exports.getParentDir = getParentDir;
+exports.getUrlQueryVariable = getUrlQueryVariable;
 exports.getQueryVariable = getQueryVariable;
 exports.getLocation = getLocation;
 exports.navToLocation = navToLocation;
