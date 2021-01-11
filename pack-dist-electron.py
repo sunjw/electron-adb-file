@@ -40,7 +40,7 @@ def is_macos_sys():
 
 def fix_win_path(path):
     if is_windows_sys():
-        return path.replace("/", "\\")
+        return path.replace('/', '\\')
     else:
         return path
 
