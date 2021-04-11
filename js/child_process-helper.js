@@ -11,7 +11,7 @@ class ChildProcessHelper {
 
     run(onStdOutCallback, onExitCallback = 0) {
         this.childProcess = ChildProcess.spawn(this.cmd, this.args);
-        var errToCallback = 0;
+        let errToCallback = 0;
 
         this.childProcess.stdout.on('data', (data) => {
             onStdOutCallback(this, data);
@@ -59,7 +59,7 @@ class ChildProcessHelper {
     runSync() {
         const childCmdResult = ChildProcess.spawnSync(this.cmd, this.args);
         Utils.log('Sync [' + this.cmd + ' ' + (this.args.join(' ')) + '] exited with code: ' + childCmdResult.status);
-        var retCmdResult = {};
+        let retCmdResult = {};
         retCmdResult.child = this;
         retCmdResult.exitCode = childCmdResult.status;
         retCmdResult.err = 0;
