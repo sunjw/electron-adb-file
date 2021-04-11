@@ -203,16 +203,25 @@ class ADBHelper {
                     Utils.log('Format error: [' + line + ']');
                     continue;
                 }
+                let fixAndroidR = false;
                 file.mode = details[0];
                 file.linkMode = 0;
                 file.links = details[1];
                 file.ownUser = details[2];
                 file.ownGroup = details[3];
                 file.size = details[4];
-                file.modified = details[5] + ' ' + details[6];
+                if (details[5] == '?') {
+                    fixAndroidR = true;
+                }
+                if (!fixAndroidR) {
+                    file.modified = details[5] + ' ' + details[6];
+                } else {
+                    file.modified = details[5];
+                }
                 file.name = '';
                 var lineNamePart = line;
-                for (var i = 0; i < 7; ++i) {
+                let partsBeforeName = fixAndroidR ? 6 : 7;
+                for (var i = 0; i < partsBeforeName; ++i) {
                     var detailPart = details[i];
                     lineNamePart = lineNamePart.substr(lineNamePart.indexOf(detailPart) + detailPart.length);
                 }
