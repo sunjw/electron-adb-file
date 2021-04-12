@@ -45,12 +45,24 @@ function clone(obj) {
     throw new Error('Unable to copy obj! Its type is not supported.');
 }
 
+function variableExists(variable) {
+    return !(variable == undefined || variable == null);
+}
+
 function isString(variable) {
     return (typeof variable === 'string' || variable instanceof String);
 }
 
 function isObject(variable) {
     return (typeof variable === 'object' && variable !== null);
+}
+
+function getRandomInt(max) {
+    return Math.floor(Math.random() * Math.floor(max));
+}
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 function stringReplaceAll(string, target, replace) {
@@ -80,10 +92,6 @@ function escapeHtmlPath(path) {
     pathEscape = stringReplaceAll(pathEscape, '>', '&gt;');
     pathEscape = stringReplaceAll(pathEscape, ' ', '&nbsp;');
     return pathEscape;
-}
-
-function getRandomInt(max) {
-    return Math.floor(Math.random() * Math.floor(max));
 }
 
 function byteSizeToShortSize(size) {
@@ -143,6 +151,10 @@ function isWindows() {
     return (process.platform == 'win32');
 }
 
+function isLinux() {
+    return (process.platform == 'linux');
+}
+
 function isMacOS() {
     return (process.platform == 'darwin');
 }
@@ -154,15 +166,26 @@ function fixWindowsPath(path) {
     return path;
 }
 
+function expireKey(obj, key, ms, expiredCallback = 0) {
+    setTimeout(() => {
+        delete obj[key];
+        if (expiredCallback != 0) {
+            expiredCallback(obj, key);
+        }
+    }, ms);
+}
+
 // exports
 exports.log = log;
 exports.clone = clone;
+exports.variableExists = variableExists;
 exports.isString = isString;
 exports.isObject = isObject;
+exports.getRandomInt = getRandomInt;
+exports.capitalizeFirstLetter = capitalizeFirstLetter;
 exports.stringReplaceAll = stringReplaceAll;
 exports.escapeShellPath = escapeShellPath;
 exports.escapeHtmlPath = escapeHtmlPath;
-exports.getRandomInt = getRandomInt;
 exports.byteSizeToShortSize = byteSizeToShortSize;
 exports.getParentDir = getParentDir;
 exports.getUrlQueryVariable = getUrlQueryVariable;
@@ -171,5 +194,7 @@ exports.getLocation = getLocation;
 exports.navToLocation = navToLocation;
 exports.navToHash = navToHash;
 exports.isWindows = isWindows;
+exports.isLinux = isLinux;
 exports.isMacOS = isMacOS;
 exports.fixWindowsPath = fixWindowsPath;
+exports.expireKey = expireKey;
