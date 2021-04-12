@@ -22,8 +22,8 @@ function createWindow() {
   })
 
   // Create the browser window.
-  var frameOS = true
-  var titleBarStyleOS = 'default'
+  let frameOS = true
+  let titleBarStyleOS = 'default'
   if (utils.isWindows()) {
     frameOS = false
   }
@@ -98,7 +98,7 @@ function createWindow() {
     mainWindow.webContents.send('set-downloads-path', app.getPath('downloads'))
   })
 
-  var accelerator = 'Ctrl+F'
+  let accelerator = 'Ctrl+F'
   if (utils.isMacOS()) {
     accelerator = 'Command+F'
   }
@@ -117,7 +117,7 @@ ipcMain.on('set-transfer-count', (event, arg) => {
 })
 
 ipcMain.on('set-transfer-progress', (event, arg) => {
-  var transferProgress = arg / 100
+  let transferProgress = arg / 100
   mainWindow.setProgressBar(transferProgress);
 })
 

@@ -33,32 +33,32 @@ const IMGSET_WINDOW_MAX = 'assets/max-k-10.png 1x, assets/max-k-12.png 1.25x, as
 const IMGSET_WINDOW_RESTORE = 'assets/restore-k-10.png 1x, assets/restore-k-12.png 1.25x, assets/restore-k-15.png 1.5x, assets/restore-k-15.png 1.75x, assets/restore-k-20.png 2x, assets/restore-k-20.png 2.25x, assets/restore-k-24.png 2.5x, assets/restore-k-30.png 3x, assets/restore-k-30.png 3.5x';
 const IMGSET_WINDOW_CLOSE = 'assets/close-k-10.png 1x, assets/close-k-12.png 1.25x, assets/close-k-15.png 1.5x, assets/close-k-15.png 1.75x, assets/close-k-20.png 2x, assets/close-k-20.png 2.25x, assets/close-k-24.png 2.5x, assets/close-k-30.png 3x, assets/close-k-30.png 3.5x';
 
-var adbHelper = 0;
+let adbHelper = 0;
 
-var downloadsDirPath = 0;
+let downloadsDirPath = 0;
 
-var aBtnUp = 0;
-var aBtnRefresh = 0;
-var aBtnHiddenFile = 0;
-var aBtnSdcard = 0;
-var aBtnTransfer = 0;
-var divToolbarFunc = 0;
-var divToolbarPath = 0;
-var divDirWrapper = 0;
-var divDirList = 0;
-var divDialogWrapper = 0;
-var divDialogTitle = 0;
-var divDeviceList = 0;
-var divTransferList = 0;
-var divDialogButtonLine = 0;
-var divDialogBackground = 0;
-var divToast = 0;
+let aBtnUp = 0;
+let aBtnRefresh = 0;
+let aBtnHiddenFile = 0;
+let aBtnSdcard = 0;
+let aBtnTransfer = 0;
+let divToolbarFunc = 0;
+let divToolbarPath = 0;
+let divDirWrapper = 0;
+let divDirList = 0;
+let divDialogWrapper = 0;
+let divDialogTitle = 0;
+let divDeviceList = 0;
+let divTransferList = 0;
+let divDialogButtonLine = 0;
+let divDialogBackground = 0;
+let divToast = 0;
 
-var toastTimeoutId = 0;
+let toastTimeoutId = 0;
 
-var showHiddenFlag = false;
+let showHiddenFlag = false;
 
-var findInPage = new electronFind.FindInPage(remote.getCurrentWebContents(), {
+let findInPage = new electronFind.FindInPage(remote.getCurrentWebContents(), {
     offsetRight: 200
 });
 
@@ -116,7 +116,7 @@ function init() {
     clearDirList();
 
     onWindowResize();
-    $(window).resize(function () {
+    $(window).on('resize', function () {
         onWindowResize();
     });
 }
@@ -131,27 +131,27 @@ function onWindowResize() {
 function initToolbar() {
     if (Utils.isWindows()) {
         divToolbarFunc.addClass('toolbarFuncFramelessWin');
-        var divToolbarFuncRightPart = $('#divToolbarFuncRightPart');
+        let divToolbarFuncRightPart = $('#divToolbarFuncRightPart');
 
-        var aBtnWinMin = $('<a/>').attr({
+        let aBtnWinMin = $('<a/>').attr({
             'id': 'aBtnWinMin',
             'href': CMD_WINDOW_MIN
         }).addClass('toolbarButton').addClass('toolbarImgButton').addClass('toolbarControlButton')
             .click(function () {
             return handleCmdClick($(this));
         });
-        var imgBtnWinMin = $('<img/>').attr('srcset', IMGSET_WINDOW_MIN);
+        let imgBtnWinMin = $('<img/>').attr('srcset', IMGSET_WINDOW_MIN);
         aBtnWinMin.append(imgBtnWinMin);
 
-        var aBtnWinMaxRestore = $('<a/>').attr({
+        let aBtnWinMaxRestore = $('<a/>').attr({
             'id': 'aBtnWinMaxRestore'
         }).addClass('toolbarButton').addClass('toolbarImgButton').addClass('toolbarControlButton')
             .click(function () {
             return handleCmdClick($(this));
         });
-        var imgBtnWinMaxRestore = $('<img/>');
+        let imgBtnWinMaxRestore = $('<img/>');
         aBtnWinMaxRestore.append(imgBtnWinMaxRestore);
-        var curWindow = remote.getCurrentWindow();
+        let curWindow = remote.getCurrentWindow();
         if (curWindow.isMaximized()) {
             aBtnWinMaxRestore.attr('href', CMD_WINDOW_RESTORE);
             imgBtnWinMaxRestore.attr('srcset', IMGSET_WINDOW_RESTORE);
@@ -160,14 +160,14 @@ function initToolbar() {
             imgBtnWinMaxRestore.attr('srcset', IMGSET_WINDOW_MAX);
         }
 
-        var aBtnWinClose = $('<a/>').attr({
+        let aBtnWinClose = $('<a/>').attr({
             'id': 'aBtnWinClose',
             'href': CMD_WINDOW_CLOSE
         }).addClass('toolbarButton').addClass('toolbarImgButton').addClass('toolbarControlButton')
             .click(function () {
             return handleCmdClick($(this));
         });
-        var imgBtnWinClose = $('<img/>').attr('srcset', IMGSET_WINDOW_CLOSE);
+        let imgBtnWinClose = $('<img/>').attr('srcset', IMGSET_WINDOW_CLOSE);
         aBtnWinClose.append(imgBtnWinClose);
 
         divToolbarFuncRightPart.append(aBtnWinMin);
@@ -178,23 +178,24 @@ function initToolbar() {
         divToolbarFunc.addClass('toolbarFuncFramelessMac');
     }
 
-    aBtnUp.addClass('disabled').click(function () {
+    aBtnUp.addClass('disabled').on('click', function () {
         return handleCmdClick($(this));
     });
-    aBtnRefresh.addClass('disabled').click(function () {
+    aBtnRefresh.addClass('disabled').on('click', function () {
         return handleCmdClick($(this));
     });
-    aBtnHiddenFile.addClass('disabled').click(function () {
+    aBtnHiddenFile.addClass('disabled').on('click', function () {
         return handleCmdClick($(this));
     });
-    aBtnSdcard.addClass('disabled').click(function () {
+    aBtnSdcard.addClass('disabled').on('click', function () {
         return handleCmdClick($(this));
     });
-    aBtnTransfer.addClass('disabled').click(function () {
+    aBtnTransfer.addClass('disabled').on('click', function () {
         return handleCmdClick($(this));
     });
-    var divToolbarPathDevice = divToolbarPath.children('#divToolbarPathDevice');
-    var aDeviceLink = $('<a/>').text('No device selected').addClass('toolbarButton').attr('href', CMD_SHOW_DEVICE).click(function () {
+    let divToolbarPathDevice = divToolbarPath.children('#divToolbarPathDevice');
+    let aDeviceLink = $('<a/>').text('No device selected').addClass('toolbarButton')
+        .attr('href', CMD_SHOW_DEVICE).on('click', function () {
         return handleCmdClick($(this));
     });
     divToolbarPathDevice.empty();
@@ -202,13 +203,13 @@ function initToolbar() {
 }
 
 function fitToolbarPath() {
-    var divToolbarPathDevice = divToolbarPath.children('#divToolbarPathDevice');
-    var divToolbarPathWrapper = divToolbarPath.children('#divToolbarPathWrapper');
-    var divToolbarPathContainer = divToolbarPath.find('#divToolbarPathContainer');
-    var divToolbarPathWidth = divToolbarPath.width();
-    var divToolbarPathDeviceWidth = divToolbarPathDevice.outerWidth();
-    var divToolbarPathWrapperWidth = divToolbarPathWidth - divToolbarPathDeviceWidth - 5;
-    var divToolbarPathContainerLeft = 0;
+    let divToolbarPathDevice = divToolbarPath.children('#divToolbarPathDevice');
+    let divToolbarPathWrapper = divToolbarPath.children('#divToolbarPathWrapper');
+    let divToolbarPathContainer = divToolbarPath.find('#divToolbarPathContainer');
+    let divToolbarPathWidth = divToolbarPath.width();
+    let divToolbarPathDeviceWidth = divToolbarPathDevice.outerWidth();
+    let divToolbarPathWrapperWidth = divToolbarPathWidth - divToolbarPathDeviceWidth - 5;
+    let divToolbarPathContainerLeft = 0;
     if (divToolbarPathContainer.outerWidth() > divToolbarPathWrapperWidth) {
         divToolbarPathContainerLeft = divToolbarPathWrapperWidth - divToolbarPathContainer.outerWidth();
         divToolbarPathWrapper.addClass('overflow');
@@ -221,15 +222,15 @@ function fitToolbarPath() {
 
 function initTransferList() {
     divTransferList.empty();
-    var divNoTransfer = $('<div/>').attr('id', 'divNoTransfer').addClass('tips').text('No transfer.');
+    let divNoTransfer = $('<div/>').attr('id', 'divNoTransfer').addClass('tips').text('No transfer.');
     divTransferList.append(divNoTransfer);
 }
 
 function updateTransferButton() {
-    var count = adbHelper.getTransferFileCount();
-    var transferProgress = 0;
-    var minProgress = adbHelper.getTransferFileMinProgress();
-    var btnTransferText = 'Transfer';
+    let count = adbHelper.getTransferFileCount();
+    let transferProgress = 0;
+    let minProgress = adbHelper.getTransferFileMinProgress();
+    let btnTransferText = 'Transfer';
     if (count > 0) {
         transferProgress = minProgress;
         if (minProgress == 0 || minProgress == 100) {
@@ -253,8 +254,8 @@ function clearDeviceList() {
 }
 
 function initDirList() {
-    var divDirWrapperDom = divDirWrapper[0];
-    var divDirUploadBackgroundDom = divDirWrapper.children('#divDirUploadBackground')[0];
+    let divDirWrapperDom = divDirWrapper[0];
+    let divDirUploadBackgroundDom = divDirWrapper.children('#divDirUploadBackground')[0];
     divDirWrapperDom.ondragover = function (e) {
         e.stopPropagation();
         divDirWrapper.addClass('dropFile');
@@ -271,7 +272,7 @@ function initDirList() {
     divDirWrapperDom.ondrop = function (e) {
         divDirWrapper.removeClass('dropFile');
         e.preventDefault();
-        for (var f of e.dataTransfer.files) {
+        for (let f of e.dataTransfer.files) {
             pushFile(f.path);
         }
         return false;
@@ -283,9 +284,9 @@ function clearDirList() {
 }
 
 function fitDirWrapperHeight() {
-    var windowHeight = $(window).height();
-    var divDirWrapperTop = divDirWrapper.offset().top;
-    var divDirWrapperHeight = windowHeight - divDirWrapperTop - 5;
+    let windowHeight = $(window).height();
+    let divDirWrapperTop = divDirWrapper.offset().top;
+    let divDirWrapperHeight = windowHeight - divDirWrapperTop - 5;
     if (divDirWrapperHeight < 20) {
         divDirWrapperHeight = 20;
     }
@@ -314,8 +315,8 @@ function fitDialogPosition(ignoreHidden = false) {
         return;
     }
 
-    var windowWidth = $(window).width();
-    var divDialogWrapperLeft = (windowWidth - divDialogWrapper.outerWidth()) / 2;
+    let windowWidth = $(window).width();
+    let divDialogWrapperLeft = (windowWidth - divDialogWrapper.outerWidth()) / 2;
     if (divDialogWrapperLeft < 0) {
         divDialogWrapperLeft = 0;
     }
@@ -355,8 +356,8 @@ function showTransferListDialog() {
 }
 
 function fitFileNameWidth() {
-    var windowWidth = $(window).width();
-    var fileNameWidth = windowWidth - 350;
+    let windowWidth = $(window).width();
+    let fileNameWidth = windowWidth - 350;
     if (fileNameWidth < 0) {
         fileNameWidth = 0;
     }
@@ -378,7 +379,7 @@ function hideToast() {
 
 function refreshDeviceList() {
     clearDeviceList();
-    var divTips = $('<div/>').addClass('tips').text('Waiting for command running...');
+    let divTips = $('<div/>').addClass('tips').text('Waiting for command running...');
     divDeviceList.append(divTips.text('Waiting for command running...'));
     // Run command
     adbHelper.getDevices((adbDevicesResult) => {
@@ -389,17 +390,18 @@ function refreshDeviceList() {
             return;
         }
 
-        var devices = adbDevicesResult.devices;
+        let devices = adbDevicesResult.devices;
         if (devices.length == 0) {
             divDeviceList.append(divTips.text('No device found.'));
         } else {
             for (const device of devices) {
-                var deviceAvailable = (device.status == 'device');
-                var divDeviceLine = $('<div/>').addClass('deviceLine');
-                var divDeviceId = $('<div/>').addClass('deviceId');
+                let deviceAvailable = (device.status == 'device');
+                let divDeviceLine = $('<div/>').addClass('deviceLine');
+                let divDeviceId = $('<div/>').addClass('deviceId');
                 if (deviceAvailable) {
-                    var selectDeviceCmd = CMD_SELECT_DEVICE + CMD_DELIMITER + device.id;
-                    var aDeviceLink = $('<a/>').text(device.id).attr('href', selectDeviceCmd).click(function () {
+                    let selectDeviceCmd = CMD_SELECT_DEVICE + CMD_DELIMITER + device.id;
+                    let aDeviceLink = $('<a/>').text(device.id).attr('href', selectDeviceCmd)
+                        .on('click', function () {
                         return handleCmdClick($(this));
                     });
                     divDeviceId.append(aDeviceLink);
@@ -408,7 +410,7 @@ function refreshDeviceList() {
                 }
                 divDeviceLine.append(divDeviceId);
 
-                var divDeviceStatus = $('<div/>').addClass('deviceStatus').text('Status: ' + device.status);
+                let divDeviceStatus = $('<div/>').addClass('deviceStatus').text('Status: ' + device.status);
                 divDeviceLine.append(divDeviceStatus);
 
                 divDeviceList.append(divDeviceLine);
@@ -428,8 +430,8 @@ function setCurrentDir(path) {
 
 function sortDirList(dirList) {
     dirList.sort((file1, file2) => {
-        var file1Dir = ADBHelper.isFileDir(file1);
-        var file2Dir = ADBHelper.isFileDir(file2);
+        let file1Dir = ADBHelper.isFileDir(file1);
+        let file2Dir = ADBHelper.isFileDir(file2);
         if (file1Dir && !file2Dir) {
             return -1;
         }
@@ -451,31 +453,34 @@ function refreshDirList() {
             return;
         }
 
-        var dirList = adbDirListResult.dirList;
+        let dirList = adbDirListResult.dirList;
         sortDirList(dirList);
-        for (var file of dirList) {
-            var fileName = file.name;
+        for (let file of dirList) {
+            let fileName = file.name;
             if (!showHiddenFlag && fileName.startsWith('.')) {
                 continue;
             }
-            var fileNameHtml = Utils.escapeHtmlPath(fileName);
-            var divFileLine = $('<div/>').addClass('fileLine');
+            let fileNameHtml = Utils.escapeHtmlPath(fileName);
+            let divFileLine = $('<div/>').addClass('fileLine');
 
-            var divFileName = $('<div/>').addClass('fileName').attr('rel', CMD_CLICK_FILENAME).click(function () {
+            let divFileName = $('<div/>').addClass('fileName').attr('rel', CMD_CLICK_FILENAME)
+                .on('click', function () {
                 return handleCmdClick($(this));
             });
             if (ADBHelper.isFileDir(file)) {
                 // Directory
-                var lsDirCmd = CMD_LS_DIR + CMD_DELIMITER + fileName;
-                var aDirLink = $('<a/>').html(fileNameHtml).attr('href', lsDirCmd).click(function () {
+                let lsDirCmd = CMD_LS_DIR + CMD_DELIMITER + fileName;
+                let aDirLink = $('<a/>').html(fileNameHtml).attr('href', lsDirCmd)
+                    .on('click', function () {
                     return handleCmdClick($(this));
                 });
                 divFileName.append(aDirLink);
                 divFileName.addClass('fileDir');
             } else {
                 // File
-                var pullFileCmd = CMD_PULL + CMD_DELIMITER + fileName;
-                var aFileLink = $('<a/>').html(fileNameHtml).attr('href', pullFileCmd).click(function () {
+                let pullFileCmd = CMD_PULL + CMD_DELIMITER + fileName;
+                let aFileLink = $('<a/>').html(fileNameHtml).attr('href', pullFileCmd)
+                    .on('click', function () {
                     return handleCmdClick($(this));
                 });
                 divFileName.append(aFileLink);
@@ -483,21 +488,21 @@ function refreshDirList() {
             }
             divFileLine.append(divFileName);
 
-            var divFileTypeOrSize = $('<div/>').addClass('fileTypeOrSize');
+            let divFileTypeOrSize = $('<div/>').addClass('fileTypeOrSize');
             if (ADBHelper.isFileDir(file)) {
                 divFileTypeOrSize.text('Folder');
             } else {
                 divFileTypeOrSize.text(Utils.byteSizeToShortSize(file.size) + 'B');
             }
 
-            var divFileModified = $('<div/>').addClass('fileModified');
+            let divFileModified = $('<div/>').addClass('fileModified');
             if (!ADBHelper.isPermissionDenied(file)) {
                 divFileModified.text(file.modified);
             } else {
                 divFileModified.text('Permission denied');
             }
 
-            var divFileRightPart = $('<div/>').addClass('fileRightPart');
+            let divFileRightPart = $('<div/>').addClass('fileRightPart');
             divFileRightPart.append(divFileTypeOrSize);
             divFileRightPart.append(divFileModified);
 
@@ -511,38 +516,39 @@ function refreshDirList() {
     });
 
     // Up
-    var curDir = adbHelper.getCurDir();
+    let curDir = adbHelper.getCurDir();
     curDir = curDir.substr(0, curDir.length - 1);
-    var pathDelimIdx = curDir.lastIndexOf('/');
+    let pathDelimIdx = curDir.lastIndexOf('/');
     if (pathDelimIdx >= 0) {
         // Not root
-        var parentDir = Utils.getParentDir(curDir);
-        var lsUpDirCmd = CMD_LS_DIR + CMD_DELIMITER + parentDir;
+        let parentDir = Utils.getParentDir(curDir);
+        let lsUpDirCmd = CMD_LS_DIR + CMD_DELIMITER + parentDir;
         aBtnUp.attr('href', lsUpDirCmd).removeClass('disabled');
     } else {
         // Root
         aBtnUp.attr('href', '').addClass('disabled');
-        var lsRootCmd = CMD_LS_DIR + CMD_DELIMITER + '/';
+        let lsRootCmd = CMD_LS_DIR + CMD_DELIMITER + '/';
         aBtnRefresh.attr('href', lsRootCmd);
     }
 
     // Path bar
-    var divToolbarPathContainer = divToolbarPath.find('#divToolbarPathContainer');
+    let divToolbarPathContainer = divToolbarPath.find('#divToolbarPathContainer');
     divToolbarPathContainer.empty();
-    var pathDirs = curDir.split('/');
-    var pathPostfix = '/';
-    for (var i = 0; i < pathDirs.length; ++i) {
-        var pathDir = pathDirs[i].trim();
+    let pathDirs = curDir.split('/');
+    let pathPostfix = '/';
+    for (let i = 0; i < pathDirs.length; ++i) {
+        let pathDir = pathDirs[i].trim();
         pathDir = pathDir.trim();
         if (pathDir == '') {
             continue;
         }
-        var pathDirHtml = pathDir + ' / ';
+        let pathDirHtml = pathDir + ' / ';
         pathDirHtml = Utils.escapeHtmlPath(pathDirHtml);
         pathPostfix = pathPostfix + pathDir + '/';
-        var lsPathCmd = CMD_LS_DIR + CMD_DELIMITER + pathPostfix;
+        let lsPathCmd = CMD_LS_DIR + CMD_DELIMITER + pathPostfix;
         if (i < pathDirs.length - 1) {
-            var aPathDirLink = $('<a/>').html(pathDirHtml).addClass('toolbarButton').attr('href', lsPathCmd).click(function () {
+            let aPathDirLink = $('<a/>').html(pathDirHtml).addClass('toolbarButton')
+                .attr('href', lsPathCmd).on('click', function () {
                 return handleCmdClick($(this));
             });
             divToolbarPathContainer.append(aPathDirLink);
@@ -563,22 +569,24 @@ function selectDeviceAndRefreshRootDir(device) {
     refreshDirList();
 
     // Enable buttons
-    var lsRootCmd = CMD_LS_DIR + CMD_DELIMITER + '/';
-    var lsSdcardCmd = CMD_LS_DIR + CMD_DELIMITER + '/sdcard/';
-    var showHiddenCmd = CMD_SHOW_HIDDEN;
-    var showTransferCmd = CMD_SHOW_TRANSFER;
+    let lsRootCmd = CMD_LS_DIR + CMD_DELIMITER + '/';
+    let lsSdcardCmd = CMD_LS_DIR + CMD_DELIMITER + '/sdcard/';
+    let showHiddenCmd = CMD_SHOW_HIDDEN;
+    let showTransferCmd = CMD_SHOW_TRANSFER;
     aBtnHiddenFile.attr('href', showHiddenCmd).removeClass('disabled');
     aBtnSdcard.attr('href', lsSdcardCmd).removeClass('disabled');
     aBtnTransfer.attr('href', showTransferCmd).removeClass('disabled');
     aBtnRefresh.removeClass('disabled');
 
     // Path bar
-    var divToolbarPathDevice = divToolbarPath.children('#divToolbarPathDevice');
+    let divToolbarPathDevice = divToolbarPath.children('#divToolbarPathDevice');
 
-    var aDeviceLink = $('<a/>').text(device).addClass('toolbarButton').attr('href', CMD_SHOW_DEVICE).click(function () {
+    let aDeviceLink = $('<a/>').text(device).addClass('toolbarButton')
+        .attr('href', CMD_SHOW_DEVICE).on('click', function () {
         return handleCmdClick($(this));
     });
-    var aDeviceRootLink = $('<a/>').html('/&nbsp;').addClass('toolbarButton').attr('href', lsRootCmd).click(function () {
+    let aDeviceRootLink = $('<a/>').html('/&nbsp;').addClass('toolbarButton')
+        .attr('href', lsRootCmd).on('click', function () {
         return handleCmdClick($(this));
     });
 
@@ -592,17 +600,17 @@ function selectDeviceAndRefreshRootDir(device) {
 
 function transferFile(mode, path) {
     Utils.log('transferFile, mode=[' + mode + '], path=[' + path + ']');
-    var modeText = (mode == 'pull') ? 'Pull' : 'Push';
-    var fileName = Path.basename(path);
-    var fileNameHtml = Utils.escapeHtmlPath(fileName);
-    var divTransferLine = $('<div/>').addClass('transferLine');
-    var divFileName = $('<div/>').addClass('fileName').html(fileNameHtml);
+    let modeText = (mode == 'pull') ? 'Pull' : 'Push';
+    let fileName = Path.basename(path);
+    let fileNameHtml = Utils.escapeHtmlPath(fileName);
+    let divTransferLine = $('<div/>').addClass('transferLine');
+    let divFileName = $('<div/>').addClass('fileName').html(fileNameHtml);
     divTransferLine.append(divFileName);
-    var divTransferProgress = $('<div/>').addClass('transferProgress').text(modeText + 'ing...');
+    let divTransferProgress = $('<div/>').addClass('transferProgress').text(modeText + 'ing...');
     divTransferLine.append(divTransferProgress);
-    var divTransferStop = $('<div/>').addClass('transferStop');
+    let divTransferStop = $('<div/>').addClass('transferStop');
     divTransferLine.append(divTransferStop);
-    var divNoTransfer = divTransferList.children('#divNoTransfer');
+    let divNoTransfer = divTransferList.children('#divNoTransfer');
     divNoTransfer.hide();
     divNoTransfer.after(divTransferLine);
 
@@ -615,9 +623,10 @@ function transferFile(mode, path) {
             divTransferProgress.text(modeText + ': done');
             divTransferStop.empty();
             if (mode == 'pull') {
-                var pullPath = destPath + fileName;
-                var showPullCmd = CMD_SHOW_PULL + CMD_DELIMITER + pullPath;
-                var aShowPullLink = $('<a/>').text('Show').attr('href', showPullCmd).click(function () {
+                let pullPath = destPath + fileName;
+                let showPullCmd = CMD_SHOW_PULL + CMD_DELIMITER + pullPath;
+                let aShowPullLink = $('<a/>').text('Show').attr('href', showPullCmd)
+                    .on('click', function () {
                     return handleCmdClick($(this));
                 });
                 divTransferStop.append(aShowPullLink);
@@ -633,13 +642,14 @@ function transferFile(mode, path) {
             fileNameHtml = fileName.substr(0, 30) + '...';
         }
         fileNameHtml = Utils.escapeHtmlPath(fileNameHtml);
-        var toastMessage = modeText + ' "' + fileNameHtml + '" finished.';
+        let toastMessage = modeText + ' "' + fileNameHtml + '" finished.';
         showToast(toastMessage);
     });
 
     // Stop button
-    var stopTransferCmd = CMD_STOP_TRANSFER + CMD_DELIMITER + transferId;
-    var aStopTransferLink = $('<a/>').text('Stop').attr('href', stopTransferCmd).click(function () {
+    let stopTransferCmd = CMD_STOP_TRANSFER + CMD_DELIMITER + transferId;
+    let aStopTransferLink = $('<a/>').text('Stop').attr('href', stopTransferCmd)
+        .on('click', function () {
         return handleCmdClick($(this));
     });
     divTransferStop.append(aStopTransferLink);
@@ -669,16 +679,16 @@ function handleCmdClick(cmdLink) {
         return false;
     }
 
-    var cmd = '';
+    let cmd = '';
     if (cmdLink.is('[href]')) {
         cmd = cmdLink.attr('href');
     } else {
         cmd = cmdLink.attr('rel');
     }
     Utils.log('handleCmdClick=[' + cmd + ']');
-    var delimiterIdx = cmd.indexOf(CMD_DELIMITER);
-    var adbCmd = '';
-    var adbCmdParam = '';
+    let delimiterIdx = cmd.indexOf(CMD_DELIMITER);
+    let adbCmd = '';
+    let adbCmdParam = '';
     if (delimiterIdx >= 0) {
         adbCmd = cmd.substr(0, delimiterIdx);
         adbCmdParam = cmd.substr(delimiterIdx + 1);
@@ -709,7 +719,7 @@ function handleCmdClick(cmdLink) {
         aFileLink.click();
         break;
     case CMD_LS_DIR:
-        var path = '';
+        let path = '';
         if (!adbCmdParam.startsWith('/')) {
             // Relative path
             path = adbHelper.getCurDir() + adbCmdParam + '/';

@@ -3,7 +3,7 @@ function log(...logString) {
 }
 
 function clone(obj) {
-    var copy;
+    let copy;
 
     // Handle the 3 simple types, and null or undefined
     if (null == obj || 'object' != typeof obj) {
@@ -26,7 +26,7 @@ function clone(obj) {
     // Handle Array
     if (obj instanceof Array) {
         copy = [];
-        for (var i = 0, len = obj.length; i < len; i++) {
+        for (let i = 0, len = obj.length; i < len; i++) {
             copy[i] = clone(obj[i]);
         }
         return copy;
@@ -35,7 +35,7 @@ function clone(obj) {
     // Handle Object
     if (obj instanceof Object) {
         copy = {};
-        for (var attr in obj) {
+        for (let attr in obj) {
             if (obj.hasOwnProperty(attr))
                 copy[attr] = clone(obj[attr]);
         }
@@ -60,9 +60,9 @@ function stringReplaceAll(string, target, replace) {
 function escapeShellPath(path) {
     const needEscape = [' ', '&', '*', '$', '?', '|', '"', '\'',
         ';', '<', '>', '#', '(', ')'];
-    var pathEscape = path;
-    for (var escape of needEscape) {
-        var escapeReg = escape;
+    let pathEscape = path;
+    for (let escape of needEscape) {
+        let escapeReg = escape;
         if (escapeReg == '*' || escapeReg == '$' ||
             escapeReg == '?' || escapeReg == '|' ||
             escapeReg == '(' || escapeReg == ')') {
@@ -74,7 +74,7 @@ function escapeShellPath(path) {
 }
 
 function escapeHtmlPath(path) {
-    var pathEscape = path;
+    let pathEscape = path;
     pathEscape = stringReplaceAll(pathEscape, '&', '&amp;');
     pathEscape = stringReplaceAll(pathEscape, '<', '&lt;');
     pathEscape = stringReplaceAll(pathEscape, '>', '&gt;');
@@ -88,8 +88,8 @@ function getRandomInt(max) {
 
 function byteSizeToShortSize(size) {
     const shortSizeUnit = ['K', 'M', 'G'];
-    var shortSize = size;
-    for (var i = 0; i < shortSizeUnit.length; ++i) {
+    let shortSize = size;
+    for (let i = 0; i < shortSizeUnit.length; ++i) {
         if (size >= 1024) {
             shortSize = (size / 1024.0).toFixed(2) + shortSizeUnit[i];
             size = size / 1024;
@@ -101,20 +101,20 @@ function byteSizeToShortSize(size) {
 }
 
 function getParentDir(path) {
-    var curPath = path;
+    let curPath = path;
     if (curPath.endsWith('/')) {
         curPath = curPath.substr(0, curPath.length - 1);
     }
-    var pathDelimIdx = curPath.lastIndexOf('/');
-    var parentDirPath = curPath.substr(0, pathDelimIdx);
+    let pathDelimIdx = curPath.lastIndexOf('/');
+    let parentDirPath = curPath.substr(0, pathDelimIdx);
     parentDirPath = parentDirPath + '/';
     return parentDirPath;
 }
 
 function getUrlQueryVariable(queryStr, key) {
-    var vars = queryStr.split('&');
-    for (var i = 0; i < vars.length; i++) {
-        var pair = vars[i].split('=');
+    let vars = queryStr.split('&');
+    for (let i = 0; i < vars.length; i++) {
+        let pair = vars[i].split('=');
         if (decodeURIComponent(pair[0]) == key) {
             return decodeURIComponent(pair[1]);
         }
@@ -123,7 +123,7 @@ function getUrlQueryVariable(queryStr, key) {
 }
 
 function getQueryVariable(key) {
-    var query = window.location.search.substring(1);
+    let query = window.location.search.substring(1);
     return getUrlQueryVariable(query, key);
 }
 

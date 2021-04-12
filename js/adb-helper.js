@@ -48,13 +48,13 @@ class ADBHelper {
         const headerString = 'List of devices attached';
         const daemonString = 'daemon not running';
 
-        var adbDevicesResult = {};
+        let adbDevicesResult = {};
         adbDevicesResult.code = 0;
         adbDevicesResult.err = '';
         adbDevicesResult.devices = [];
 
-        var cmd = new ChildProcessHelper.ChildProcessHelper(this.adbPath, ['devices']);
-        var outChunks = [];
+        let cmd = new ChildProcessHelper.ChildProcessHelper(this.adbPath, ['devices']);
+        let outChunks = [];
 
         cmd.run((child, data) => {
             // On process output...
@@ -68,12 +68,12 @@ class ADBHelper {
                 return;
             }
 
-            var cmdOutput = outChunks.join('');
+            let cmdOutput = outChunks.join('');
             //Utils.log('cmdOutput=[' + cmdOutput + ']');
 
-            var lines = cmdOutput.split('\n');
+            let lines = cmdOutput.split('\n');
             // Check first
-            var firstLine = lines[0].trim();
+            let firstLine = lines[0].trim();
             if (firstLine != headerString && firstLine.indexOf(daemonString) < 0) {
                 adbDevicesResult.code = -1;
                 adbDevicesResult.err = cmdOutput;
@@ -81,17 +81,17 @@ class ADBHelper {
                 return;
             }
 
-            for (var line of lines) {
+            for (let line of lines) {
                 line = line.trim();
                 if (line == '' || line == headerString) {
                     continue;
                 }
 
-                var[id, status] = line.split('\t');
+                let[id, status] = line.split('\t');
                 if (status === undefined) {
                     continue;
                 }
-                var device = {};
+                let device = {};
                 device.id = id;
                 device.status = status;
                 adbDevicesResult.devices.push(device);
@@ -129,7 +129,7 @@ class ADBHelper {
     }
 
     getDirList(onDirListCallback) {
-        var adbDirListResult = {};
+        let adbDirListResult = {};
         adbDirListResult.code = 0;
         adbDirListResult.err = '';
         adbDirListResult.dirList = [];
@@ -143,9 +143,9 @@ class ADBHelper {
         }
 
         const fixedAdbShellPath = Utils.escapeShellPath(this.curDir);
-        var cmdArgs = this.getCurDeviceCmdBase().concat(['shell', 'ls', '-al', fixedAdbShellPath]);
-        var cmd = new ChildProcessHelper.ChildProcessHelper(this.adbPath, cmdArgs);
-        var outChunks = [];
+        let cmdArgs = this.getCurDeviceCmdBase().concat(['shell', 'ls', '-al', fixedAdbShellPath]);
+        let cmd = new ChildProcessHelper.ChildProcessHelper(this.adbPath, cmdArgs);
+        let outChunks = [];
 
         cmd.run((child, data) => {
             // On process output...
@@ -159,17 +159,17 @@ class ADBHelper {
                 return;
             }
 
-            var cmdOutput = outChunks.join('');
+            let cmdOutput = outChunks.join('');
             //Utils.log('cmdOutput=[' + cmdOutput + ']');
 
-            var lines = cmdOutput.split('\n');
-            for (var line of lines) {
+            let lines = cmdOutput.split('\n');
+            for (let line of lines) {
                 line = line.trim();
                 if (line == '' || line.startsWith('total ')) {
                     continue;
                 }
 
-                var file = {};
+                let file = {};
 
                 if (line.startsWith('ls: ')) {
                     if (!line.endsWith('Permission denied')) {
@@ -177,16 +177,16 @@ class ADBHelper {
                     }
 
                     // Permission denied, but actually, there is a something
-                    var permDetails = line.split(/\s+/);
+                    let permDetails = line.split(/\s+/);
                     if (permDetails.length < 3) {
                         Utils.log('Format error: [' + line + ']');
                         continue;
                     }
-                    var fileName = permDetails[1];
+                    let fileName = permDetails[1];
                     if (fileName.endsWith(':')) {
                         fileName = fileName.substr(0, fileName.length - 1);
                     }
-                    var pathDelimIdx = fileName.lastIndexOf('/');
+                    let pathDelimIdx = fileName.lastIndexOf('/');
                     if (pathDelimIdx >= 0) {
                         fileName = fileName.substr(pathDelimIdx + 1);
                     }
@@ -198,22 +198,31 @@ class ADBHelper {
                     continue;
                 }
 
-                var details = line.split(/\s+/);
+                let details = line.split(/\s+/);
                 if (details.length < 7) {
                     Utils.log('Format error: [' + line + ']');
                     continue;
                 }
+                let fixAndroidR = false;
                 file.mode = details[0];
                 file.linkMode = 0;
                 file.links = details[1];
                 file.ownUser = details[2];
                 file.ownGroup = details[3];
                 file.size = details[4];
-                file.modified = details[5] + ' ' + details[6];
+                if (details[5] == '?') {
+                    fixAndroidR = true;
+                }
+                if (!fixAndroidR) {
+                    file.modified = details[5] + ' ' + details[6];
+                } else {
+                    file.modified = details[5];
+                }
                 file.name = '';
-                var lineNamePart = line;
-                for (var i = 0; i < 7; ++i) {
-                    var detailPart = details[i];
+                let lineNamePart = line;
+                let partsBeforeName = fixAndroidR ? 6 : 7;
+                for (let i = 0; i < partsBeforeName; ++i) {
+                    let detailPart = details[i];
                     lineNamePart = lineNamePart.substr(lineNamePart.indexOf(detailPart) + detailPart.length);
                 }
                 file.name = lineNamePart.trim();
@@ -228,17 +237,17 @@ class ADBHelper {
             }
 
             // Fix link
-            for (var file of adbDirListResult.dirList) {
+            for (let file of adbDirListResult.dirList) {
                 if (!isFileLink(file)) {
                     continue;
                 }
 
                 //Utils.log('[' + file.name + '] is a link');
-                var tryPath = this.curDir + file.name + '/';
+                let tryPath = this.curDir + file.name + '/';
                 // Run some sync child_process in async callback
-                var cmdArgs = this.getCurDeviceCmdBase().concat(['shell', 'cd', tryPath]);
-                var cmdSync = new ChildProcessHelper.ChildProcessHelper(this.adbPath, cmdArgs);
-                var cmdResult = cmdSync.runSync();
+                let cmdArgs = this.getCurDeviceCmdBase().concat(['shell', 'cd', tryPath]);
+                let cmdSync = new ChildProcessHelper.ChildProcessHelper(this.adbPath, cmdArgs);
+                let cmdResult = cmdSync.runSync();
                 if (cmdResult.stdout.length == 0 && cmdResult.stderr.length == 0) {
                     // We 'cd' this path succeed
                     file.linkMode = 'd';
@@ -254,18 +263,18 @@ class ADBHelper {
 
     transferFile(transferMode, filePath, destPath, onProgressCallback, onFinishedCallback) {
         const transferRandId = Utils.getRandomInt(1000);
-        var transferProcessList = this.transferProcessList;
+        let transferProcessList = this.transferProcessList;
         transferProcessList[transferRandId] = {};
         transferProcessList[transferRandId].mode = transferMode;
         transferProcessList[transferRandId].percent = 0;
 
-        var onFinishedCallbackWrapper = function (adbTransferResult) {
+        let onFinishedCallbackWrapper = function (adbTransferResult) {
             delete transferProcessList[transferRandId];
             onFinishedCallback(adbTransferResult);
         };
 
         if (!this.usingAdbkit) {
-            var cmd = this.nativeTransferFile(transferProcessList[transferRandId],
+            let cmd = this.nativeTransferFile(transferProcessList[transferRandId],
                     filePath, destPath, onProgressCallback, onFinishedCallbackWrapper);
             transferProcessList[transferRandId].cmd = cmd;
         } else {
@@ -277,7 +286,7 @@ class ADBHelper {
     }
 
     nativeTransferFile(transferProcess, filePath, destPath, onProgressCallback, onFinishedCallback) {
-        var transferCmd = '';
+        let transferCmd = '';
         switch (transferProcess.mode) {
         case 'pull':
             transferCmd = 'pull';
@@ -286,11 +295,11 @@ class ADBHelper {
             transferCmd = 'push';
             break;
         }
-        var cmdArgs = this.getCurDeviceCmdBase().concat([transferCmd, filePath, destPath]);
-        var cmd = new ChildProcessHelper.ChildProcessHelper(this.adbPath, cmdArgs);
+        let cmdArgs = this.getCurDeviceCmdBase().concat([transferCmd, filePath, destPath]);
+        let cmd = new ChildProcessHelper.ChildProcessHelper(this.adbPath, cmdArgs);
 
-        var runFunction = 'runUnbuffer';
-        var cmdNewline = '[K';
+        let runFunction = 'runUnbuffer';
+        let cmdNewline = '[K';
         if (Utils.isWindows()) {
             // Windows PTY is broken...
             runFunction = 'run';
@@ -299,14 +308,14 @@ class ADBHelper {
 
         cmd[runFunction]((child, data) => {
             // On process output...
-            var progressOutput = data.toString();
+            let progressOutput = data.toString();
             //Utils.log(progressOutput);
-            var progressPercent = '';
-            var progressLines = progressOutput.split(cmdNewline);
-            var lineCount = progressLines.length;
-            for (var i = lineCount; i > 0; --i) {
-                var line = progressLines[i - 1].trim();
-                var prefix = line.substr(0, 6);
+            let progressPercent = '';
+            let progressLines = progressOutput.split(cmdNewline);
+            let lineCount = progressLines.length;
+            for (let i = lineCount; i > 0; --i) {
+                let line = progressLines[i - 1].trim();
+                let prefix = line.substr(0, 6);
                 if (prefix.startsWith('[') && prefix.endsWith(']')) {
                     // Found
                     Utils.log('transferFile, mode=[' + transferProcess.mode + '], progress line=[' + line + ']');
@@ -316,13 +325,13 @@ class ADBHelper {
                 }
             }
             if (progressPercent != '') {
-                var percentInt = parseInt(progressPercent.substr(0, progressPercent.length - 1));
+                let percentInt = parseInt(progressPercent.substr(0, progressPercent.length - 1));
                 transferProcess.percent = percentInt;
                 onProgressCallback(progressPercent);
             }
         }, (child, exitCode, err) => {
             // On process finished
-            var adbTransferResult = {};
+            let adbTransferResult = {};
             adbTransferResult.code = 0;
             adbTransferResult.err = '';
 
@@ -348,7 +357,7 @@ class ADBHelper {
 
     adbkitTransferFile(transferProcess, filePath, destPath, onProgressCallback, onFinishedCallback) {
         this.adbkitClient.syncService(this.curDevice, async(err, sync) => {
-            var adbTransferResult = {};
+            let adbTransferResult = {};
             adbTransferResult.code = 0;
             adbTransferResult.err = '';
 
@@ -362,8 +371,8 @@ class ADBHelper {
             transferProcess.sync = sync;
 
             if (transferProcess.mode == 'pull') {
-                var fileSize = 0;
-                var statPromise = sync.stat(filePath, (err, stats) => {
+                let fileSize = 0;
+                let statPromise = sync.stat(filePath, (err, stats) => {
                     if (err != null) {
                         adbTransferResult.code = err.name;
                         adbTransferResult.err = 'transferFile, mode=[' + transferProcess.mode + '], [' + filePath + '] failed';
@@ -379,14 +388,14 @@ class ADBHelper {
                 }
 
                 transferProcess.totalSize = fileSize;
-                var pullTransfer = sync.pull(filePath);
+                let pullTransfer = sync.pull(filePath);
                 pullTransfer.on('progress', (stats) => {
                     if (stats.bytesTransferred > transferProcess.totalSize) {
                         // adbkit cannot handle 4GB
                         transferProcess.totalSize = transferProcess.totalSize + 4 * 1024 * 1024 * 1024;
                         Utils.log('fix adbkit cannot handle 4GB');
                     }
-                    var progressPercent = Math.floor((stats.bytesTransferred * 100) / transferProcess.totalSize);
+                    let progressPercent = Math.floor((stats.bytesTransferred * 100) / transferProcess.totalSize);
                     transferProcess.percent = progressPercent;
                     onProgressCallback(progressPercent + '%');
                 });
@@ -398,12 +407,12 @@ class ADBHelper {
                     adbTransferResult.err = 'transferFile, mode=[' + transferProcess.mode + '], [' + filePath + '] failed';
                 });
 
-                var basename = Path.basename(filePath);
-                var fullDestPath = Path.join(destPath, basename);
+                let basename = Path.basename(filePath);
+                let fullDestPath = Path.join(destPath, basename);
                 pullTransfer.pipe(Fs.createWriteStream(fullDestPath));
             } else if (transferProcess.mode == 'push') {
-                var fileSize = 0;
-                var fileStats = Fs.statSync(filePath);
+                let fileSize = 0;
+                let fileStats = Fs.statSync(filePath);
                 fileSize = fileStats.size;
 
                 if (fileSize == 0) {
@@ -412,11 +421,11 @@ class ADBHelper {
                 }
 
                 transferProcess.totalSize = fileSize;
-                var basename = Path.basename(filePath);
-                var fullDestPath = destPath + basename;
-                var pullTransfer = sync.pushFile(filePath, fullDestPath);
+                let basename = Path.basename(filePath);
+                let fullDestPath = destPath + basename;
+                let pullTransfer = sync.pushFile(filePath, fullDestPath);
                 pullTransfer.on('progress', (stats) => {
-                    var progressPercent = Math.floor((stats.bytesTransferred * 100) / transferProcess.totalSize);
+                    let progressPercent = Math.floor((stats.bytesTransferred * 100) / transferProcess.totalSize);
                     transferProcess.percent = progressPercent;
                     onProgressCallback(progressPercent + '%');
                 });
@@ -436,9 +445,9 @@ class ADBHelper {
     }
 
     getTransferFileMinProgress() {
-        var minProgress = 100;
+        let minProgress = 100;
         for (const transferId of Object.keys(this.transferProcessList)) {
-            var transferProgress = this.transferProcessList[transferId].percent;
+            let transferProgress = this.transferProcessList[transferId].percent;
             if (transferProgress < minProgress) {
                 minProgress = transferProgress;
             }
@@ -450,10 +459,10 @@ class ADBHelper {
     stopTransferFile(transferId) {
         if (transferId in this.transferProcessList) {
             if (!this.usingAdbkit) {
-                var transferCmd = this.transferProcessList[transferId].cmd;
+                let transferCmd = this.transferProcessList[transferId].cmd;
                 transferCmd.stop();
             } else {
-                var transferSync = this.transferProcessList[transferId].sync;
+                let transferSync = this.transferProcessList[transferId].sync;
                 transferSync.end();
             }
         }
@@ -462,10 +471,10 @@ class ADBHelper {
     stopAllTransferFile() {
         for (const transferId of Object.keys(this.transferProcessList)) {
             if (!this.usingAdbkit) {
-                var transferCmd = this.transferProcessList[transferId].cmd;
+                let transferCmd = this.transferProcessList[transferId].cmd;
                 transferCmd.stop();
             } else {
-                var transferSync = this.transferProcessList[transferId].sync;
+                let transferSync = this.transferProcessList[transferId].sync;
                 transferSync.end();
             }
         }
