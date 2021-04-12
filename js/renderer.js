@@ -460,7 +460,7 @@ function refreshDirList() {
             if (!showHiddenFlag && fileName.startsWith('.')) {
                 continue;
             }
-            let fileNameHtml = Utils.escapeHtmlPath(fileName);
+            let fileNameHtml = Utils.escapeHtml(fileName);
             let divFileLine = $('<div/>').addClass('fileLine');
 
             let divFileName = $('<div/>').addClass('fileName').attr('rel', CMD_CLICK_FILENAME)
@@ -543,7 +543,7 @@ function refreshDirList() {
             continue;
         }
         let pathDirHtml = pathDir + ' / ';
-        pathDirHtml = Utils.escapeHtmlPath(pathDirHtml);
+        pathDirHtml = Utils.escapeHtml(pathDirHtml);
         pathPostfix = pathPostfix + pathDir + '/';
         let lsPathCmd = CMD_LS_DIR + CMD_DELIMITER + pathPostfix;
         if (i < pathDirs.length - 1) {
@@ -602,7 +602,7 @@ function transferFile(mode, path) {
     Utils.log('transferFile, mode=[' + mode + '], path=[' + path + ']');
     let modeText = (mode == 'pull') ? 'Pull' : 'Push';
     let fileName = Path.basename(path);
-    let fileNameHtml = Utils.escapeHtmlPath(fileName);
+    let fileNameHtml = Utils.escapeHtml(fileName);
     let divTransferLine = $('<div/>').addClass('transferLine');
     let divFileName = $('<div/>').addClass('fileName').html(fileNameHtml);
     divTransferLine.append(divFileName);
@@ -641,7 +641,7 @@ function transferFile(mode, path) {
         if (fileName.length > 40) {
             fileNameHtml = fileName.substr(0, 30) + '...';
         }
-        fileNameHtml = Utils.escapeHtmlPath(fileNameHtml);
+        fileNameHtml = Utils.escapeHtml(fileNameHtml);
         let toastMessage = modeText + ' "' + fileNameHtml + '" finished.';
         showToast(toastMessage);
     });

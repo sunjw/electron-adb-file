@@ -85,13 +85,13 @@ function escapeShellPath(path) {
     return pathEscape;
 }
 
-function escapeHtmlPath(path) {
-    let pathEscape = path;
-    pathEscape = stringReplaceAll(pathEscape, '&', '&amp;');
-    pathEscape = stringReplaceAll(pathEscape, '<', '&lt;');
-    pathEscape = stringReplaceAll(pathEscape, '>', '&gt;');
-    pathEscape = stringReplaceAll(pathEscape, ' ', '&nbsp;');
-    return pathEscape;
+function escapeHtml(string) {
+    let htmlEscape = string;
+    htmlEscape = stringReplaceAll(htmlEscape, '&', '&amp;');
+    htmlEscape = stringReplaceAll(htmlEscape, '<', '&lt;');
+    htmlEscape = stringReplaceAll(htmlEscape, '>', '&gt;');
+    htmlEscape = stringReplaceAll(htmlEscape, ' ', '&nbsp;');
+    return htmlEscape;
 }
 
 function byteSizeToShortSize(size) {
@@ -185,7 +185,7 @@ exports.getRandomInt = getRandomInt;
 exports.capitalizeFirstLetter = capitalizeFirstLetter;
 exports.stringReplaceAll = stringReplaceAll;
 exports.escapeShellPath = escapeShellPath;
-exports.escapeHtmlPath = escapeHtmlPath;
+exports.escapeHtml = escapeHtml;
 exports.byteSizeToShortSize = byteSizeToShortSize;
 exports.getParentDir = getParentDir;
 exports.getUrlQueryVariable = getUrlQueryVariable;
