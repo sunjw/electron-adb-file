@@ -23,7 +23,6 @@
   },
   "dependencies": {
     "@devicefarmer/adbkit": "^2.11.3",
-    "electron-find": "^1.0.6",
     "electron-localshortcut": "^3.2.1",
     "electron-window-state": "^5.0.3",
     "fix-path": "^3.0.0",

@@ -9,8 +9,9 @@ const Path = require('path');
 const electronFind = require('electron-find');
 const fixPath = require('fix-path')();
 
-const Utils = require('./utils.js');
-const ADBHelper = require('./adb-helper.js');
+const EleFic = require('./eleFindInContent');
+const Utils = require('./utils');
+const ADBHelper = require('./adb-helper');
 
 const CMD_DELIMITER = '/';
 const CMD_CLOSE_DIALOG = 'close-dialog';
@@ -58,12 +59,10 @@ let toastTimeoutId = 0;
 
 let showHiddenFlag = false;
 
-let findInPage = new electronFind.FindInPage(remote.getCurrentWebContents(), {
-    offsetRight: 200
-});
+let findInContent = new EleFic.ElectronFindInContent(remote.getCurrentWebContents());
 
 ipcRenderer.on('on-find', (e, args) => {
-    findInPage.openFindWindow();
+    findInContent.openFindBox();
 })
 
 ipcRenderer.on('set-downloads-path', (event, arg) => {
