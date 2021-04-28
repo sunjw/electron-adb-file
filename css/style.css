@@ -312,4 +312,8 @@ ul {
     border-radius: 20px;
     color: white;
 }
+
+.ficFindBox {
+    right: 100px !important;
+}
 /* Others */

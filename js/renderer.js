@@ -6,7 +6,6 @@ const remote = require('electron').remote;
 
 const Path = require('path');
 
-const electronFind = require('electron-find');
 const fixPath = require('fix-path')();
 
 const EleFic = require('./eleFindInContent');
@@ -60,6 +59,7 @@ let toastTimeoutId = 0;
 let showHiddenFlag = false;
 
 let findInContent = new EleFic.ElectronFindInContent(remote.getCurrentWebContents());
+findInContent.setPosition('bottomRight');
 
 ipcRenderer.on('on-find', (e, args) => {
     findInContent.openFindBox();
