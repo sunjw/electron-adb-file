@@ -91,6 +91,7 @@ def log_stage(stage_message):
 EXE_7Z = '7z'
 EXE_7Z_KEKA_MACOS = '/Applications/Keka.app/Contents/Resources/keka7z'
 USING_7Z_MACOS = False
+USING_XZ_MACOS = False
 
 APP_TITLE = 'electron-adb-file'
 PACKAGE_NAME = 'electron-adb-file'
@@ -142,7 +143,10 @@ def main():
         if is_windows_sys() or USING_7Z_MACOS:
             run_cmd('%s -t7z x %s.7z' % (exe_7z_sys, app_name))
         else:
-            run_cmd('tar -xvf %s.tar.gz' % (app_name))
+            if not USING_XZ_MACOS:
+                run_cmd('tar -xvf %s.tar.gz' % (app_name))
+            else:
+                run_cmd('tar -xvf %s.tar.xz' % (app_name))
         remove_dir(app_path_relative)
     else:
         log_stage('No extract old package...')
@@ -214,8 +218,12 @@ def main():
         remove_file('%s.7z' % (app_name))
         run_cmd('%s -t7z -mx9 a -r %s.7z %s' % (exe_7z_sys, app_name, app_name))
     else:
-        remove_file('%s.tar.gz' % (app_name))
-        run_cmd('tar -czvf %s.tar.gz %s' % (app_name, app_name))
+        if not USING_XZ_MACOS:
+            remove_file('%s.tar.gz' % (app_name))
+            run_cmd('tar -czvf %s.tar.gz %s' % (app_name, app_name))
+        else:
+            remove_file('%s.tar.xz' % (app_name))
+            run_cmd('tar -cJvf %s.tar.xz %s' % (app_name, app_name))
     remove_dir(app_name)
 
 if __name__ == '__main__':
