@@ -417,6 +417,7 @@ class ADBHelper {
             let adbTransferResult = {};
             adbTransferResult.code = 0;
             adbTransferResult.err = '';
+            adbTransferResult.message = '';
 
             if (err != null) {
                 adbTransferResult.code = err.name;
