@@ -91,7 +91,7 @@ def log_stage(stage_message):
 EXE_7Z = '7z'
 EXE_7Z_KEKA_MACOS = '/Applications/Keka.app/Contents/Resources/keka7z'
 USING_7Z_MACOS = False
-USING_XZ_MACOS = False
+USING_XZ_MACOS = True
 
 APP_TITLE = 'electron-adb-file'
 PACKAGE_NAME = 'electron-adb-file'
