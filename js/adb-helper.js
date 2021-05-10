@@ -403,7 +403,7 @@ class ADBHelper {
                 return;
             }
 
-            if (transferProcess.transferSpeed != '') {
+            if (transferProcess.transferSpeed && transferProcess.transferSpeed != '') {
                 adbTransferResult.message = ' (' + transferProcess.transferSpeed + ')';
             }
             onFinishedCallback(adbTransferResult);
