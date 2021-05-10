@@ -338,6 +338,7 @@ class ADBHelper {
         if (transferProcess.mode == 'pull') {
             transferProcess.totalSize = this.getFileSize(filePath);
             transferProcess.startTime = Date.now();
+            transferProcess.transferSpeed = '';
         }
 
         cmd[runFunction]((child, data) => {
@@ -372,6 +373,7 @@ class ADBHelper {
                         transferSpeed = bytesTransferred / transferTime;
                         //Utils.log('nativeTransferFile, ' + transferTime + 's @ ' + transferSpeed + 'B/s');
                         transferSpeed = Utils.byteSizeToShortSize(transferSpeed) + 'B/s';
+                        transferProcess.transferSpeed = transferSpeed;
                     }
                 }
                 let progressString = progressPercent;
@@ -385,6 +387,7 @@ class ADBHelper {
             let adbTransferResult = {};
             adbTransferResult.code = 0;
             adbTransferResult.err = '';
+            adbTransferResult.message = '';
 
             if (err != 0) {
                 adbTransferResult.code = exitCode;
@@ -400,6 +403,9 @@ class ADBHelper {
                 return;
             }
 
+            if (transferProcess.transferSpeed != '') {
+                adbTransferResult.message = ' (' + transferProcess.transferSpeed + ')';
+            }
             onFinishedCallback(adbTransferResult);
         });
 

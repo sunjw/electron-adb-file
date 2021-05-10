@@ -619,7 +619,7 @@ function transferFile(mode, path) {
         updateTransferButton();
     }, (adbTransferResult) => {
         if (adbTransferResult.code == 0) {
-            divTransferProgress.text(modeText + ': done');
+            divTransferProgress.text(modeText + ': done' + adbTransferResult.message);
             divTransferStop.empty();
             if (mode == 'pull') {
                 let pullPath = destPath + fileName;
