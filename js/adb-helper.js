@@ -261,6 +261,23 @@ class ADBHelper {
         });
     }
 
+    getFileSize(filePath) {
+        let fileSize = 0;
+        if (!this.usingAdbkit) {}
+        else {
+            let statPromise = sync.stat(filePath, (err, stats) => {
+                if (err != null) {
+                    adbTransferResult.code = err.name;
+                    adbTransferResult.err = 'adbkitTransferFile, mode=[' + transferProcess.mode + '], [' + filePath + '] failed';
+                } else {
+                    fileSize = stats.size;
+                }
+            });
+            await Promise.join(statPromise).catch(e => {});
+        }
+        return fileSize;
+    }
+
     transferFile(transferMode, filePath, destPath, onProgressCallback, onFinishedCallback) {
         const transferRandId = Utils.getRandomInt(1000);
         let transferProcessList = this.transferProcessList;
@@ -371,16 +388,7 @@ class ADBHelper {
             transferProcess.sync = sync;
 
             if (transferProcess.mode == 'pull') {
-                let fileSize = 0;
-                let statPromise = sync.stat(filePath, (err, stats) => {
-                    if (err != null) {
-                        adbTransferResult.code = err.name;
-                        adbTransferResult.err = 'adbkitTransferFile, mode=[' + transferProcess.mode + '], [' + filePath + '] failed';
-                    } else {
-                        fileSize = stats.size;
-                    }
-                });
-                await Promise.join(statPromise).catch(e => {});
+                let fileSize = this.getFileSize(filePath);
 
                 if (adbTransferResult.code != 0 || fileSize == 0) {
                     onFinishedCallback(adbTransferResult);
