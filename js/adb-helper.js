@@ -272,23 +272,7 @@ class ADBHelper {
         if (isNaN(fileSize)) {
             fileSize = 0;
         }
-        //Utils.log('getFileSize, [' + fileSizeStr + ']');
-        return fileSize;
-    }
-
-    adbkitGetFileSize(sync, filePath) {
-        let fileSize = 0;
-        async function getFileSizeInternal() {
-            let statPromise = sync.stat(filePath, (err, stats) => {
-                if (err != null) {
-                    Utils.log('getFileSize, [' + filePath + '] error: [' + err.name + ']');
-                } else {
-                    fileSize = stats.size;
-                }
-            });
-            await Promise.join(statPromise).catch(e => {});
-        };
-        getFileSizeInternal();
+        //Utils.log('nativeGetFileSize, [' + fileSizeStr + ']');
         return fileSize;
     }
 
@@ -415,7 +399,7 @@ class ADBHelper {
     }
 
     adbkitTransferFile(transferProcess, filePath, destPath, onProgressCallback, onFinishedCallback) {
-        this.adbkitClient.syncService(this.curDevice, (err, sync) => {
+        this.adbkitClient.syncService(this.curDevice, async(err, sync) => {
             let adbTransferResult = {};
             adbTransferResult.code = 0;
             adbTransferResult.err = '';
@@ -431,7 +415,15 @@ class ADBHelper {
             transferProcess.sync = sync;
 
             if (transferProcess.mode == 'pull') {
-                let fileSize = this.adbkitGetFileSize(sync, filePath);
+                let fileSize = 0;
+                let statPromise = sync.stat(filePath, (err, stats) => {
+                    if (err != null) {
+                        Utils.log('adbkitTransferFile, [' + filePath + '] error: [' + err.name + ']');
+                    } else {
+                        fileSize = stats.size;
+                    }
+                });
+                await Promise.join(statPromise).catch(e => {});
 
                 if (adbTransferResult.code != 0 || fileSize == 0) {
                     onFinishedCallback(adbTransferResult);
@@ -457,7 +449,7 @@ class ADBHelper {
                     if (transferTime > 3) {
                         hasSpeed = true;
                         transferSpeed = stats.bytesTransferred / transferTime;
-                        Utils.log('adbkitTransferFile, ' + transferTime + 's @ ' + transferSpeed + 'B/s');
+                        //Utils.log('adbkitTransferFile, ' + transferTime + 's @ ' + transferSpeed + 'B/s');
                         transferSpeed = Utils.byteSizeToShortSize(transferSpeed) + 'B/s';
                         transferProcess.transferSpeed = transferSpeed;
                     }
@@ -468,6 +460,9 @@ class ADBHelper {
                     onProgressCallback(progressString);
                 });
                 pullTransfer.on('end', () => {
+                    if (transferProcess.transferSpeed && transferProcess.transferSpeed != '') {
+                        adbTransferResult.message = ' (' + transferProcess.transferSpeed + ')';
+                    }
                     onFinishedCallback(adbTransferResult);
                 });
                 pullTransfer.on('error', (err) => {
