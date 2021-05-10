@@ -261,14 +261,19 @@ class ADBHelper {
         });
     }
 
-    getFileSize(filePath) {
+    async getFileSize(filePath) {
         let fileSize = 0;
-        if (!this.usingAdbkit) {}
-        else {
+        if (!this.usingAdbkit) {
+            const fixedAdbShellPath = Utils.escapeShellPath(filePath);
+            let cmdArgs = this.getCurDeviceCmdBase().concat(['shell', 'stat', '-c', '%s', fixedAdbShellPath]);
+            let cmdSync = new ChildProcessHelper.ChildProcessHelper(this.adbPath, cmdArgs);
+            let cmdResult = cmdSync.runSync();
+            let fileSizeStr = cmdResult.stdout.trim();
+            Utils.log('getFileSize, [' + fileSizeStr + ']');
+        } else {
             let statPromise = sync.stat(filePath, (err, stats) => {
                 if (err != null) {
-                    adbTransferResult.code = err.name;
-                    adbTransferResult.err = 'adbkitTransferFile, mode=[' + transferProcess.mode + '], [' + filePath + '] failed';
+                    Utils.log('getFileSize, [' + filePath + '] error: [' + err.name + ']');
                 } else {
                     fileSize = stats.size;
                 }
@@ -303,6 +308,10 @@ class ADBHelper {
     }
 
     nativeTransferFile(transferProcess, filePath, destPath, onProgressCallback, onFinishedCallback) {
+        if (transferProcess.mode == 'pull') {
+            this.getFileSize(filePath);
+        }
+
         let transferCmd = '';
         switch (transferProcess.mode) {
         case 'pull':
@@ -373,7 +382,7 @@ class ADBHelper {
     }
 
     adbkitTransferFile(transferProcess, filePath, destPath, onProgressCallback, onFinishedCallback) {
-        this.adbkitClient.syncService(this.curDevice, async(err, sync) => {
+        this.adbkitClient.syncService(this.curDevice, (err, sync) => {
             let adbTransferResult = {};
             adbTransferResult.code = 0;
             adbTransferResult.err = '';
