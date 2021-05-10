@@ -261,7 +261,7 @@ class ADBHelper {
         });
     }
 
-    async getFileSize(filePath) {
+    getFileSize(filePath) {
         let fileSize = 0;
         if (!this.usingAdbkit) {
             const fixedAdbShellPath = Utils.escapeShellPath(filePath);
@@ -269,16 +269,23 @@ class ADBHelper {
             let cmdSync = new ChildProcessHelper.ChildProcessHelper(this.adbPath, cmdArgs);
             let cmdResult = cmdSync.runSync();
             let fileSizeStr = cmdResult.stdout.trim();
-            Utils.log('getFileSize, [' + fileSizeStr + ']');
+            fileSize = Number(fileSizeStr);
+            if (isNaN(fileSize)) {
+                fileSize = 0;
+            }
+            //Utils.log('getFileSize, [' + fileSizeStr + ']');
         } else {
-            let statPromise = sync.stat(filePath, (err, stats) => {
-                if (err != null) {
-                    Utils.log('getFileSize, [' + filePath + '] error: [' + err.name + ']');
-                } else {
-                    fileSize = stats.size;
-                }
-            });
-            await Promise.join(statPromise).catch(e => {});
+            async function getFileSizeInternal() {
+                let statPromise = sync.stat(filePath, (err, stats) => {
+                    if (err != null) {
+                        Utils.log('getFileSize, [' + filePath + '] error: [' + err.name + ']');
+                    } else {
+                        fileSize = stats.size;
+                    }
+                });
+                await Promise.join(statPromise).catch(e => {});
+            };
+            getFileSizeInternal();
         }
         return fileSize;
     }
@@ -308,10 +315,6 @@ class ADBHelper {
     }
 
     nativeTransferFile(transferProcess, filePath, destPath, onProgressCallback, onFinishedCallback) {
-        if (transferProcess.mode == 'pull') {
-            this.getFileSize(filePath);
-        }
-
         let transferCmd = '';
         switch (transferProcess.mode) {
         case 'pull':
@@ -330,6 +333,11 @@ class ADBHelper {
             // Windows PTY is broken...
             runFunction = 'run';
             cmdNewline = '\n';
+        }
+
+        if (transferProcess.mode == 'pull') {
+            transferProcess.totalSize = this.getFileSize(filePath);
+            transferProcess.startTime = Date.now();
         }
 
         cmd[runFunction]((child, data) => {
@@ -353,6 +361,19 @@ class ADBHelper {
             if (progressPercent != '') {
                 let percentInt = parseInt(progressPercent.substr(0, progressPercent.length - 1));
                 transferProcess.percent = percentInt;
+                let hasSpeed = false;
+                let transferSpeed = '';
+                if (transferProcess.mode == 'pull') {
+                    let curTime = Date.now();
+                    let transferTime = (curTime - transferProcess.startTime) / 1000.0;
+                    if (transferTime > 3) {
+                        hasSpeed = true;
+                        let bytesTransferred = (percentInt / 100.0) * transferProcess.totalSize;
+                        transferSpeed = bytesTransferred / transferTime;
+                        Utils.log('nativeTransferFile, ' + transferTime + 's @ ' + transferSpeed + 'B/s');
+                        transferSpeed = Utils.byteSizeToShortSize(transferSpeed) + 'B/s';
+                    }
+                }
                 onProgressCallback(progressPercent);
             }
         }, (child, exitCode, err) => {
