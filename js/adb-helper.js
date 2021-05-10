@@ -261,32 +261,34 @@ class ADBHelper {
         });
     }
 
-    getFileSize(filePath) {
+    nativeGetFileSize(filePath) {
         let fileSize = 0;
-        if (!this.usingAdbkit) {
-            const fixedAdbShellPath = Utils.escapeShellPath(filePath);
-            let cmdArgs = this.getCurDeviceCmdBase().concat(['shell', 'stat', '-c', '%s', fixedAdbShellPath]);
-            let cmdSync = new ChildProcessHelper.ChildProcessHelper(this.adbPath, cmdArgs);
-            let cmdResult = cmdSync.runSync();
-            let fileSizeStr = cmdResult.stdout.trim();
-            fileSize = Number(fileSizeStr);
-            if (isNaN(fileSize)) {
-                fileSize = 0;
-            }
-            //Utils.log('getFileSize, [' + fileSizeStr + ']');
-        } else {
-            async function getFileSizeInternal() {
-                let statPromise = sync.stat(filePath, (err, stats) => {
-                    if (err != null) {
-                        Utils.log('getFileSize, [' + filePath + '] error: [' + err.name + ']');
-                    } else {
-                        fileSize = stats.size;
-                    }
-                });
-                await Promise.join(statPromise).catch(e => {});
-            };
-            getFileSizeInternal();
+        const fixedAdbShellPath = Utils.escapeShellPath(filePath);
+        let cmdArgs = this.getCurDeviceCmdBase().concat(['shell', 'stat', '-c', '%s', fixedAdbShellPath]);
+        let cmdSync = new ChildProcessHelper.ChildProcessHelper(this.adbPath, cmdArgs);
+        let cmdResult = cmdSync.runSync();
+        let fileSizeStr = cmdResult.stdout.trim();
+        fileSize = Number(fileSizeStr);
+        if (isNaN(fileSize)) {
+            fileSize = 0;
         }
+        //Utils.log('getFileSize, [' + fileSizeStr + ']');
+        return fileSize;
+    }
+
+    adbkitGetFileSize(sync, filePath) {
+        let fileSize = 0;
+        async function getFileSizeInternal() {
+            let statPromise = sync.stat(filePath, (err, stats) => {
+                if (err != null) {
+                    Utils.log('getFileSize, [' + filePath + '] error: [' + err.name + ']');
+                } else {
+                    fileSize = stats.size;
+                }
+            });
+            await Promise.join(statPromise).catch(e => {});
+        };
+        getFileSizeInternal();
         return fileSize;
     }
 
@@ -336,7 +338,7 @@ class ADBHelper {
         }
 
         if (transferProcess.mode == 'pull') {
-            transferProcess.totalSize = this.getFileSize(filePath);
+            transferProcess.totalSize = this.nativeGetFileSize(filePath);
             transferProcess.startTime = Date.now();
             transferProcess.transferSpeed = '';
         }
@@ -429,7 +431,7 @@ class ADBHelper {
             transferProcess.sync = sync;
 
             if (transferProcess.mode == 'pull') {
-                let fileSize = this.getFileSize(filePath);
+                let fileSize = this.adbkitGetFileSize(sync, filePath);
 
                 if (adbTransferResult.code != 0 || fileSize == 0) {
                     onFinishedCallback(adbTransferResult);
@@ -457,6 +459,7 @@ class ADBHelper {
                         transferSpeed = stats.bytesTransferred / transferTime;
                         Utils.log('adbkitTransferFile, ' + transferTime + 's @ ' + transferSpeed + 'B/s');
                         transferSpeed = Utils.byteSizeToShortSize(transferSpeed) + 'B/s';
+                        transferProcess.transferSpeed = transferSpeed;
                     }
                     let progressString = progressPercent + '%';
                     if (hasSpeed) {
