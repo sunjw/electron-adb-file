@@ -318,7 +318,7 @@ class ADBHelper {
                 let prefix = line.substr(0, 6);
                 if (prefix.startsWith('[') && prefix.endsWith(']')) {
                     // Found
-                    Utils.log('transferFile, mode=[' + transferProcess.mode + '], progress line=[' + line + ']');
+                    Utils.log('nativeTransferFile, mode=[' + transferProcess.mode + '], progress line=[' + line + ']');
                     progressPercent = prefix.substr(1, 4);
                     progressPercent = progressPercent.trim();
                     break;
@@ -337,7 +337,7 @@ class ADBHelper {
 
             if (err != 0) {
                 adbTransferResult.code = exitCode;
-                adbTransferResult.err = 'transferFile, mode=[' + transferProcess.mode + '], [' + filePath + '] failed';
+                adbTransferResult.err = 'nativeTransferFile, mode=[' + transferProcess.mode + '], [' + filePath + '] failed';
                 onFinishedCallback(adbTransferResult);
                 return;
             }
@@ -363,7 +363,7 @@ class ADBHelper {
 
             if (err != null) {
                 adbTransferResult.code = err.name;
-                adbTransferResult.err = 'transferFile, mode=[' + transferProcess.mode + '], [' + filePath + '] failed';
+                adbTransferResult.err = 'adbkitTransferFile, mode=[' + transferProcess.mode + '], [' + filePath + '] failed';
                 onFinishedCallback(adbTransferResult);
                 return;
             }
@@ -375,7 +375,7 @@ class ADBHelper {
                 let statPromise = sync.stat(filePath, (err, stats) => {
                     if (err != null) {
                         adbTransferResult.code = err.name;
-                        adbTransferResult.err = 'transferFile, mode=[' + transferProcess.mode + '], [' + filePath + '] failed';
+                        adbTransferResult.err = 'adbkitTransferFile, mode=[' + transferProcess.mode + '], [' + filePath + '] failed';
                     } else {
                         fileSize = stats.size;
                     }
@@ -388,23 +388,39 @@ class ADBHelper {
                 }
 
                 transferProcess.totalSize = fileSize;
+                transferProcess.startTime = Date.now();
+
                 let pullTransfer = sync.pull(filePath);
                 pullTransfer.on('progress', (stats) => {
+                    let curTime = Date.now();
                     if (stats.bytesTransferred > transferProcess.totalSize) {
                         // adbkit cannot handle 4GB
                         transferProcess.totalSize = transferProcess.totalSize + 4 * 1024 * 1024 * 1024;
-                        Utils.log('fix adbkit cannot handle 4GB');
+                        Utils.log('adbkitTransferFile, fix adbkit cannot handle 4GB');
                     }
                     let progressPercent = Math.floor((stats.bytesTransferred * 100) / transferProcess.totalSize);
                     transferProcess.percent = progressPercent;
-                    onProgressCallback(progressPercent + '%');
+                    let transferSpeed = '';
+                    let hasSpeed = false;
+                    let transferTime = (curTime - transferProcess.startTime) / 1000.0;
+                    if (transferTime > 3) {
+                        hasSpeed = true;
+                        transferSpeed = stats.bytesTransferred / transferTime;
+                        Utils.log('adbkitTransferFile, ' + transferTime + 's @ ' + transferSpeed + 'B/s');
+                        transferSpeed = Utils.byteSizeToShortSize(transferSpeed) + 'B/s';
+                    }
+                    let progressString = progressPercent + '%';
+                    if (hasSpeed) {
+                        progressString = progressString + ' (' + transferSpeed + ')';
+                    }
+                    onProgressCallback(progressString);
                 });
                 pullTransfer.on('end', () => {
                     onFinishedCallback(adbTransferResult);
                 });
                 pullTransfer.on('error', (err) => {
                     adbTransferResult.code = err.name;
-                    adbTransferResult.err = 'transferFile, mode=[' + transferProcess.mode + '], [' + filePath + '] failed';
+                    adbTransferResult.err = 'adbkitTransferFile, mode=[' + transferProcess.mode + '], [' + filePath + '] failed';
                 });
 
                 let basename = Path.basename(filePath);
@@ -434,7 +450,7 @@ class ADBHelper {
                 });
                 pullTransfer.on('error', (err) => {
                     adbTransferResult.code = err.name;
-                    adbTransferResult.err = 'transferFile, mode=[' + transferProcess.mode + '], [' + filePath + '] failed';
+                    adbTransferResult.err = 'adbkitTransferFile, mode=[' + transferProcess.mode + '], [' + filePath + '] failed';
                 });
             }
         });
