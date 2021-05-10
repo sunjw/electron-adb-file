@@ -370,11 +370,15 @@ class ADBHelper {
                         hasSpeed = true;
                         let bytesTransferred = (percentInt / 100.0) * transferProcess.totalSize;
                         transferSpeed = bytesTransferred / transferTime;
-                        Utils.log('nativeTransferFile, ' + transferTime + 's @ ' + transferSpeed + 'B/s');
+                        //Utils.log('nativeTransferFile, ' + transferTime + 's @ ' + transferSpeed + 'B/s');
                         transferSpeed = Utils.byteSizeToShortSize(transferSpeed) + 'B/s';
                     }
                 }
-                onProgressCallback(progressPercent);
+                let progressString = progressPercent;
+                if (hasSpeed) {
+                    progressString = progressString + ' (' + transferSpeed + ')';
+                }
+                onProgressCallback(progressString);
             }
         }, (child, exitCode, err) => {
             // On process finished
