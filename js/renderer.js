@@ -136,18 +136,18 @@ function initToolbar() {
             'id': 'aBtnWinMin',
             'href': CMD_WINDOW_MIN
         }).addClass('toolbarButton').addClass('toolbarImgButton').addClass('toolbarControlButton')
-            .click(function () {
-            return handleCmdClick($(this));
-        });
+            .on('click', function () {
+                return handleCmdClick($(this));
+            });
         let imgBtnWinMin = $('<img/>').attr('srcset', IMGSET_WINDOW_MIN);
         aBtnWinMin.append(imgBtnWinMin);
 
         let aBtnWinMaxRestore = $('<a/>').attr({
             'id': 'aBtnWinMaxRestore'
         }).addClass('toolbarButton').addClass('toolbarImgButton').addClass('toolbarControlButton')
-            .click(function () {
-            return handleCmdClick($(this));
-        });
+            .on('click', function () {
+                return handleCmdClick($(this));
+            });
         let imgBtnWinMaxRestore = $('<img/>');
         aBtnWinMaxRestore.append(imgBtnWinMaxRestore);
         let curWindow = remote.getCurrentWindow();
@@ -163,9 +163,9 @@ function initToolbar() {
             'id': 'aBtnWinClose',
             'href': CMD_WINDOW_CLOSE
         }).addClass('toolbarButton').addClass('toolbarImgButton').addClass('toolbarControlButton')
-            .click(function () {
-            return handleCmdClick($(this));
-        });
+            .on('click', function () {
+                return handleCmdClick($(this));
+            });
         let imgBtnWinClose = $('<img/>').attr('srcset', IMGSET_WINDOW_CLOSE);
         aBtnWinClose.append(imgBtnWinClose);
 
@@ -195,8 +195,8 @@ function initToolbar() {
     let divToolbarPathDevice = divToolbarPath.children('#divToolbarPathDevice');
     let aDeviceLink = $('<a/>').text('No device selected').addClass('toolbarButton')
         .attr('href', CMD_SHOW_DEVICE).on('click', function () {
-        return handleCmdClick($(this));
-    });
+            return handleCmdClick($(this));
+        });
     divToolbarPathDevice.empty();
     divToolbarPathDevice.append(aDeviceLink);
 }
@@ -296,7 +296,7 @@ function fitDirWrapperHeight() {
 }
 
 function initDialog() {
-    divDialogButtonLine.children('a').click(function () {
+    divDialogButtonLine.children('a').on('click', function () {
         return handleCmdClick($(this));
     });
 }
@@ -345,7 +345,7 @@ function showDeviceListDialog() {
 function showHidden() {
     showHiddenFlag = !showHiddenFlag;
     aBtnHiddenFile.html(showHiddenFlag ? 'Hide Hidden' : 'Show Hidden');
-    aBtnRefresh.click();
+    aBtnRefresh.trigger('click');
 }
 
 function showTransferListDialog() {
@@ -401,8 +401,8 @@ function refreshDeviceList() {
                     let selectDeviceCmd = CMD_SELECT_DEVICE + CMD_DELIMITER + device.id;
                     let aDeviceLink = $('<a/>').text(device.id).attr('href', selectDeviceCmd)
                         .on('click', function () {
-                        return handleCmdClick($(this));
-                    });
+                            return handleCmdClick($(this));
+                        });
                     divDeviceId.append(aDeviceLink);
                 } else {
                     divDeviceId.text(device.id);
@@ -464,15 +464,15 @@ function refreshDirList() {
 
             let divFileName = $('<div/>').addClass('fileName').attr('rel', CMD_CLICK_FILENAME)
                 .on('click', function () {
-                return handleCmdClick($(this));
-            });
+                    return handleCmdClick($(this));
+                });
             if (ADBHelper.isFileDir(file)) {
                 // Directory
                 let lsDirCmd = CMD_LS_DIR + CMD_DELIMITER + fileName;
                 let aDirLink = $('<a/>').html(fileNameHtml).attr('href', lsDirCmd)
                     .on('click', function () {
-                    return handleCmdClick($(this));
-                });
+                        return handleCmdClick($(this));
+                    });
                 divFileName.append(aDirLink);
                 divFileName.addClass('fileDir');
             } else {
@@ -480,8 +480,8 @@ function refreshDirList() {
                 let pullFileCmd = CMD_PULL + CMD_DELIMITER + fileName;
                 let aFileLink = $('<a/>').html(fileNameHtml).attr('href', pullFileCmd)
                     .on('click', function () {
-                    return handleCmdClick($(this));
-                });
+                        return handleCmdClick($(this));
+                    });
                 divFileName.append(aFileLink);
                 divFileName.addClass('fileNormal');
             }
@@ -548,8 +548,8 @@ function refreshDirList() {
         if (i < pathDirs.length - 1) {
             let aPathDirLink = $('<a/>').html(pathDirHtml).addClass('toolbarButton')
                 .attr('href', lsPathCmd).on('click', function () {
-                return handleCmdClick($(this));
-            });
+                    return handleCmdClick($(this));
+                });
             divToolbarPathContainer.append(aPathDirLink);
         } else {
             // Last one
@@ -582,12 +582,12 @@ function selectDeviceAndRefreshRootDir(device) {
 
     let aDeviceLink = $('<a/>').text(device).addClass('toolbarButton')
         .attr('href', CMD_SHOW_DEVICE).on('click', function () {
-        return handleCmdClick($(this));
-    });
+            return handleCmdClick($(this));
+        });
     let aDeviceRootLink = $('<a/>').html('/&nbsp;').addClass('toolbarButton')
         .attr('href', lsRootCmd).on('click', function () {
-        return handleCmdClick($(this));
-    });
+            return handleCmdClick($(this));
+        });
 
     divToolbarPathDevice.empty();
     divToolbarPathDevice.append(aDeviceLink);
@@ -626,8 +626,8 @@ function transferFile(mode, path) {
                 let showPullCmd = CMD_SHOW_PULL + CMD_DELIMITER + pullPath;
                 let aShowPullLink = $('<a/>').text('Show').attr('href', showPullCmd)
                     .on('click', function () {
-                    return handleCmdClick($(this));
-                });
+                        return handleCmdClick($(this));
+                    });
                 divTransferStop.append(aShowPullLink);
             }
         } else {
@@ -649,8 +649,8 @@ function transferFile(mode, path) {
     let stopTransferCmd = CMD_STOP_TRANSFER + CMD_DELIMITER + transferId;
     let aStopTransferLink = $('<a/>').text('Stop').attr('href', stopTransferCmd)
         .on('click', function () {
-        return handleCmdClick($(this));
-    });
+            return handleCmdClick($(this));
+        });
     divTransferStop.append(aStopTransferLink);
 
     // Update Transfer button
@@ -715,7 +715,7 @@ function handleCmdClick(cmdLink) {
     case CMD_CLICK_FILENAME:
         // Actually click link
         const aFileLink = cmdLink.children('a');
-        aFileLink.click();
+        aFileLink.trigger('click');
         break;
     case CMD_LS_DIR:
         let path = '';
