@@ -58,8 +58,8 @@ let divDialogBackground = null;
 let divToast = null;
 
 let toastTimeoutId = 0;
-
 let showHiddenFlag = false;
+let lastWaitingTipsTime = 0;
 
 let findInContent = new EleFic.ElectronFindInContent(remote.getCurrentWebContents());
 findInContent.setPosition('bottomRight');
@@ -381,11 +381,25 @@ function hideToast() {
 }
 
 function showWaiting() {
+    lastWaitingTipsTime = Date.now();
     divTipsWaiting.show();
 }
 
-function hideWaiting() {
+function hideWaitingNow() {
     divTipsWaiting.hide();
+}
+
+function hideWaiting() {
+    let curTime = Date.now();
+    let gap = curTime - lastWaitingTipsTime;
+    Utils.log('gap=' + gap + 'ms');
+    if (gap > 800) {
+        hideWaitingNow();
+        return;
+    }
+    setTimeout(() => {
+        hideWaitingNow();
+    }, gap);
 }
 
 function refreshDeviceList() {
