@@ -22,9 +22,6 @@ class ListFilter {
 
         this.divFindBox = null;
         this.inputToFind = null;
-        this.spanMatchCount = null;
-        this.spanMatchCase = null;
-        this.spanFindPrev = null;
         this.spanFindNext = null;
         this.spanClose = null;
     }
@@ -67,33 +64,6 @@ class ListFilter {
         };
         this.divFindBox.appendChild(this.inputToFind);
 
-        this.spanMatchCount = document.createElement('span');
-        this.spanMatchCount.innerHTML = '0/0';
-        this.spanMatchCount.classList.add('ficMatchCount');
-        this.divFindBox.appendChild(this.spanMatchCount);
-
-        this.spanMatchCase = document.createElement('span');
-        this.spanMatchCase.innerHTML = matchCaseIconSvg;
-        this.spanMatchCase.classList.add('ficButton', 'ficSvgButton', 'ficButtonMatchCase');
-        this.spanMatchCase.onclick = function () {
-            that.matchCase = !that.matchCase;
-            if (that.matchCase) {
-                that.spanMatchCase.classList.add('ficButtonActive');
-            } else {
-                that.spanMatchCase.classList.remove('ficButtonActive');
-            }
-            that.findNext();
-        };
-        this.divFindBox.appendChild(this.spanMatchCase);
-
-        this.spanFindPrev = document.createElement('span');
-        this.spanFindPrev.innerHTML = prevIconSvg;
-        this.spanFindPrev.classList.add('ficButton', 'ficSvgButton', 'ficButtonPrev');
-        this.spanFindPrev.onclick = function () {
-            that.findPrev();
-        };
-        this.divFindBox.appendChild(this.spanFindPrev);
-
         this.spanFindNext = document.createElement('span');
         this.spanFindNext.innerHTML = nextIconSvg;
         this.spanFindNext.classList.add('ficButton', 'ficSvgButton', 'ficButtonNext');
@@ -119,10 +89,6 @@ class ListFilter {
                 }
             }
         };
-
-        this.webContent.on('found-in-page', (e, r) => {
-            that.updateMatchCount(r);
-        });
     }
 
     openFindBox() {
@@ -149,7 +115,6 @@ class ListFilter {
         }
         this.webContent.stopFindInPage('clearSelection');
         this.findRequestId = null;
-        this.clearMatchCount();
     }
 
     findInternal(isForward) {
@@ -196,16 +161,6 @@ class ListFilter {
 
     findPrev() {
         this.findInternal(false);
-    }
-
-    updateMatchCount(result) {
-        let cur = result.activeMatchOrdinal;
-        let total = result.matches;
-        this.spanMatchCount.innerHTML = cur + '/' + total;
-    }
-
-    clearMatchCount() {
-        this.spanMatchCount.innerHTML = '0/0';
     }
 }
 
