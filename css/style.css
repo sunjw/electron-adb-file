@@ -18,6 +18,7 @@
 * {
     padding: 0;
     margin: 0;
+    box-sizing: content-box; /* Fix for bootstrap */
 }
 body {
     line-height: 1.4em;
@@ -324,5 +325,8 @@ ul {
 
 .ficFindBox {
     right: 100px !important;
+}
+.ficFindBox .ficToFind {
+    font-size: 12px;
 }
 /* Others */
