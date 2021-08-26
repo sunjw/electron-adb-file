@@ -652,10 +652,12 @@ function transferFile(mode, path) {
             if (mode == 'pull') {
                 let pullPath = destPath + fileName;
                 let showPullCmd = CMD_SHOW_PULL + CMD_DELIMITER + pullPath;
-                let aShowPullLink = $('<a/>').text('Show').attr('href', showPullCmd)
+                let aShowPullLink = $('<a/>').attr('href', showPullCmd)
                     .on('click', function () {
                         return handleCmdClick($(this));
                     });
+                let spanShowIcon = $('<span/>').addClass('material-icons-round').text('search');
+                aShowPullLink.append(spanShowIcon);
                 divTransferStop.append(aShowPullLink);
             }
         } else {
