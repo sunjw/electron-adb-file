@@ -310,6 +310,106 @@ ul {
 /* Footer */
 /* Footer */
 
+/* Filter */
+:root {
+    --fic-light-gray: #f6f6f6;
+    --fic-gray: #cecece;
+    --fic-focus: #2188ff;
+}
+
+.ficFindBox {
+    position: absolute;
+    right: 100px !important;
+    width: 336px;
+    height: 32px;
+    line-height: 32px;
+    background-color: var(--fic-light-gray);
+    box-shadow: 0 0 8px 2px rgba(0, 0, 0, 0.2);
+    user-select: none;
+    overflow: hidden;
+    display: none;
+}
+.ficFindBox.ficShow {
+    display: block;
+}
+.ficFindBox.ficTopLeft {
+    top: 0;
+    left: 20px;
+}
+.ficFindBox.ficTopRight {
+    top: 0;
+    right: 20px;
+}
+.ficFindBox.ficBottomLeft {
+    bottom: 0;
+    left: 20px;
+}
+.ficFindBox.ficBottomRight {
+    bottom: 0;
+    right: 20px;
+}
+.ficFindBox .ficToFind {
+    float: left;
+    width: 160px;
+    height: 18px;
+    margin: 6px 0 0 10px;
+    border: 1px solid var(--fic-gray);
+    border-radius: 0;
+    outline: none;
+    font-size: 12px;
+}
+.ficFindBox .ficToFind:focus {
+    border-color: var(--fic-focus);
+}
+.ficFindBox .ficMatchCount {
+    display: block;
+    float: left;
+    width: 46px;
+    height: 20px;
+    line-height: 20px;
+    margin: 6px 0 0 6px;
+    font-size: 14px;
+    text-align: center;
+}
+.ficFindBox .ficButton {
+    display: block;
+    float: left;
+    width: 22px;
+    height: 20px;
+    line-height: 20px;
+    margin: 5px 0 0 0;
+    cursor: pointer;
+    text-align: center;
+    border: 1px solid var(--fic-light-gray);
+}
+.ficFindBox .ficButton:hover {
+    border-color: var(--fic-gray);
+}
+.ficFindBox .ficButton:active, .ficFindBox .ficButton.ficButtonActive {
+    border-color: var(--fic-focus);
+}
+.ficFindBox .ficSvgButton {
+    align-items: center;
+}
+.ficFindBox .ficSvgButton svg {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+.ficFindBox .ficButtonPrev, .ficFindBox .ficButtonClose {
+    margin-left: 5px;
+}
+.ficFindBox .ficButtonMatchCase svg {
+    padding-top: 2px;
+}
+.ficFindBox .ficButtonPrev svg, .ficFindBox .ficButtonNext svg {
+    padding-top: 2px;
+}
+.ficFindBox .ficButtonClose svg {
+    padding-top: 1px;
+}
+/* Filter */
+
 /* Others */
 #divToast {
     display: none;
@@ -326,13 +426,6 @@ ul {
     padding: 10px 20px;
     border-radius: 20px;
     color: white;
-}
-
-.ficFindBox {
-    right: 100px !important;
-}
-.ficFindBox .ficToFind {
-    font-size: 12px;
 }
 
 .material-icons-round {

@@ -10,9 +10,9 @@ window.$ = window.jQuery = require('jquery');
 require('bootstrap');
 const fixPath = require('fix-path')();
 
-const EleFic = require('./eleFindInContent');
 const Utils = require('./utils');
 const ADBHelper = require('./adb-helper');
+const ListFilter = require('./listfilter');
 
 const CMD_DELIMITER = '/';
 const CMD_CLOSE_DIALOG = 'close-dialog';
@@ -61,11 +61,11 @@ let toastTimeoutId = 0;
 let showHiddenFlag = false;
 let lastWaitingTipsTime = 0;
 
-let findInContent = new EleFic.ElectronFindInContent(remote.getCurrentWebContents());
-findInContent.setPosition('bottomRight');
+let dirListFilter = new ListFilter.ListFilter(remote.getCurrentWebContents());
+dirListFilter.setPosition('bottomRight');
 
 ipcRenderer.on('on-find', (e, args) => {
-    findInContent.openFindBox();
+    dirListFilter.openFindBox();
 })
 
 ipcRenderer.on('set-downloads-path', (event, arg) => {
