@@ -316,9 +316,10 @@ ul {
     position: absolute;
     right: 100px !important;
     width: 336px;
-    height: 32px;
-    line-height: 32px;
+    height: 40px;
+    line-height: 40px;
     background-color: white;
+    border-radius: 6px 6px 0 0;
     box-shadow: 0 0 30px rgba(0,0,0,0.6);
     user-select: none;
     overflow: hidden;
@@ -347,8 +348,9 @@ ul {
     float: left;
     width: 160px;
     height: 18px;
-    margin: 6px 0 0 10px;
-    border: 1px solid var(--color-light-gray);
+    margin: 12px 0 0 10px;
+    border: 0;
+    border-bottom: 1px solid var(--color-light-gray);
     border-radius: 0;
     outline: none;
     font-size: 12px;
@@ -362,7 +364,7 @@ ul {
     width: 46px;
     height: 20px;
     line-height: 20px;
-    margin: 6px 0 0 6px;
+    margin: 12px 0 0 6px;
     font-size: 14px;
     text-align: center;
 }
@@ -372,7 +374,7 @@ ul {
     width: 22px;
     height: 20px;
     line-height: 20px;
-    margin: 5px 0 0 0;
+    margin: 10px 0 0 0;
     cursor: pointer;
     text-align: center;
     border: 1px solid white;
