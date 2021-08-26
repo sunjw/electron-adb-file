@@ -489,7 +489,11 @@ function refreshDirList() {
             let fileNameHtml = Utils.escapeHtml(fileName);
             let divFileLine = $('<div/>').addClass('fileLine');
 
-            let divFileName = $('<div/>').addClass('fileName').attr('rel', CMD_CLICK_FILENAME)
+            let divFileName = $('<div/>').addClass('fileName')
+                .attr({
+                    'data-ref': fileName,
+                    'rel': CMD_CLICK_FILENAME
+                })
                 .on('click', function () {
                     return handleCmdClick($(this));
                 });
