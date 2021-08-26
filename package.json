@@ -18,8 +18,10 @@
   "author": "Sun Junwen",
   "license": "GPL-2.0",
   "devDependencies": {
-    "electron": "^9.4.4",
-    "electron-rebuild": "^2.3.5"
+    "@electron/remote": "^1.2.1",
+    "electron": "^13.2.1",
+    "electron-rebuild": "^2.3.5",
+    "node-abi": "^2.30.0"
   },
   "dependencies": {
     "@devicefarmer/adbkit": "^2.11.3",
