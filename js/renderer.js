@@ -392,7 +392,7 @@ function hideWaitingNow() {
 function hideWaiting() {
     let curTime = Date.now();
     let gap = curTime - lastWaitingTipsTime;
-    Utils.log('gap=' + gap + 'ms');
+    // Utils.log('gap=' + gap + 'ms');
     if (gap > 800) {
         hideWaitingNow();
         return;
