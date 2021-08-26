@@ -380,7 +380,7 @@ function hideToast() {
 
 function refreshDeviceList() {
     clearDeviceList();
-    let divTips = $('<div/>').addClass('tips').text('Waiting for command running...');
+    let divTips = $('<div/>').addClass('tips');
     divDeviceList.append(divTips.text('Waiting for command running...'));
     // Run command
     adbHelper.getDevices((adbDevicesResult) => {
