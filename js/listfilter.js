@@ -10,7 +10,7 @@ class ListFilter {
     constructor(webContent) {
         this.webContent = webContent;
 
-        this.findBoxId = 'ficDivFindBox';
+        this.findBoxId = 'filterDivFindBox';
         this.initiated = false;
         this.findBoxShown = false;
         this.matchCase = false;
@@ -53,12 +53,12 @@ class ListFilter {
         this.divFindBox = document.createElement('div');
         this.divFindBox.id = this.findBoxId;
         this.divFindBox.classList.add('filterFindBox');
-        let positionClass = 'fic' + this.position[0].toUpperCase() + this.position.substring(1);
+        let positionClass = 'filter' + this.position[0].toUpperCase() + this.position.substring(1);
         this.divFindBox.classList.add(positionClass);
 
         this.inputToFind = document.createElement('input');
         this.inputToFind.setAttribute('type', 'text');
-        this.inputToFind.classList.add('ficToFind');
+        this.inputToFind.classList.add('filterInputFind');
         this.inputToFind.onkeydown = function (e) {
             if (e.code == 'Enter') {
                 that.findNext();
@@ -68,7 +68,7 @@ class ListFilter {
 
         this.spanBtnFilter = document.createElement('span');
         this.spanBtnFilter.innerHTML = nextIconSvg;
-        this.spanBtnFilter.classList.add('ficButton', 'ficSvgButton', 'ficButtonNext');
+        this.spanBtnFilter.classList.add('filterButton', 'filterSvgButton', 'filterButtonNext');
         this.spanBtnFilter.onclick = function () {
             that.findNext();
         };
@@ -76,7 +76,7 @@ class ListFilter {
 
         this.spanBtnClose = document.createElement('span');
         this.spanBtnClose.innerHTML = closeIconSvg;
-        this.spanBtnClose.classList.add('ficButton', 'ficSvgButton', 'ficButtonClose');
+        this.spanBtnClose.classList.add('filterButton', 'filterSvgButton', 'filterButtonClose');
         this.spanBtnClose.onclick = function () {
             that.closeFindBox();
         };
@@ -95,13 +95,13 @@ class ListFilter {
 
     openFindBox() {
         this.initUI();
-        this.divFindBox.classList.add('ficShow');
+        this.divFindBox.classList.add('filterShow');
         this.focusInput();
         this.findBoxShown = true;
     }
 
     closeFindBox() {
-        this.divFindBox.classList.remove('ficShow');
+        this.divFindBox.classList.remove('filterShow');
         this.stopFind();
         this.findBoxShown = false;
     }

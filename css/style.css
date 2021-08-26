@@ -325,26 +325,26 @@ ul {
     overflow: hidden;
     display: none;
 }
-.filterFindBox.ficShow {
+.filterFindBox.filterShow {
     display: block;
 }
-.filterFindBox.ficTopLeft {
+.filterFindBox.filterTopLeft {
     top: 0;
     left: 20px;
 }
-.filterFindBox.ficTopRight {
+.filterFindBox.filterTopRight {
     top: 0;
     right: 20px;
 }
-.filterFindBox.ficBottomLeft {
+.filterFindBox.filterBottomLeft {
     bottom: 0;
     left: 20px;
 }
-.filterFindBox.ficBottomRight {
+.filterFindBox.filterBottomRight {
     bottom: 0;
     right: 20px;
 }
-.filterFindBox .ficToFind {
+.filterFindBox .filterInputFind {
     float: left;
     width: 160px;
     height: 18px;
@@ -355,20 +355,10 @@ ul {
     outline: none;
     font-size: 12px;
 }
-.filterFindBox .ficToFind:focus {
+.filterFindBox .filterInputFind:focus {
     border-color: var(--color-android);
 }
-.filterFindBox .ficMatchCount {
-    display: block;
-    float: left;
-    width: 46px;
-    height: 20px;
-    line-height: 20px;
-    margin: 12px 0 0 6px;
-    font-size: 14px;
-    text-align: center;
-}
-.filterFindBox .ficButton {
+.filterFindBox .filterButton {
     display: block;
     float: left;
     width: 22px;
@@ -379,30 +369,30 @@ ul {
     text-align: center;
     border: 1px solid white;
 }
-.filterFindBox .ficButton:hover {
+.filterFindBox .filterButton:hover {
     border-color: var(--color-light-gray);
 }
-.filterFindBox .ficButton:active, .filterFindBox .ficButton.ficButtonActive {
+.filterFindBox .filterButton:active, .filterFindBox .filterButton.filterButtonActive {
     border-color: var(--color-android);
 }
-.filterFindBox .ficSvgButton {
+.filterFindBox .filterSvgButton {
     align-items: center;
 }
-.filterFindBox .ficSvgButton svg {
+.filterFindBox .filterSvgButton svg {
     margin-left: auto;
     margin-right: auto;
     display: block;
 }
-.filterFindBox .ficButtonPrev, .filterFindBox .ficButtonClose {
+.filterFindBox .filterButtonPrev, .filterFindBox .filterButtonClose {
     margin-left: 5px;
 }
-.filterFindBox .ficButtonMatchCase svg {
+.filterFindBox .filterButtonMatchCase svg {
     padding-top: 2px;
 }
-.filterFindBox .ficButtonPrev svg, .filterFindBox .ficButtonNext svg {
+.filterFindBox .filterButtonPrev svg, .filterFindBox .filterButtonNext svg {
     padding-top: 2px;
 }
-.filterFindBox .ficButtonClose svg {
+.filterFindBox .filterButtonClose svg {
     padding-top: 1px;
 }
 /* Filter */
