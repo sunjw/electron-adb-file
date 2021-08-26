@@ -380,6 +380,14 @@ function hideToast() {
     divToast.hide();
 }
 
+function showWaiting() {
+    divTipsWaiting.show();
+}
+
+function hideWaiting() {
+    divTipsWaiting.hide();
+}
+
 function refreshDeviceList() {
     clearDeviceList();
     let divTips = $('<div/>').addClass('tips');
@@ -448,6 +456,7 @@ function sortDirList(dirList) {
 
 function refreshDirList() {
     // setCurDir first!
+    showWaiting();
     adbHelper.getDirList((adbDirListResult) => {
         clearDirList();
 
@@ -516,6 +525,7 @@ function refreshDirList() {
 
         // Scroll to top
         divDirWrapper.scrollTop(0);
+        hideWaiting();
     });
 
     // Up

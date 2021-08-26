@@ -10,6 +10,7 @@
     --color-android: #006ee8;
     --color-android-light: #2196F3;
     --color-android-dark: #1565C0;
+    --color-gray: #666666;
     --file-name-width: 400px;
 }
 /* Defines */
@@ -61,7 +62,7 @@ ul {
 }
 
 .tips {
-    color: #666666;
+    color: var(--color-gray);
 }
 /* Common */
 
@@ -81,7 +82,7 @@ ul {
     line-height: 42px;
 }
 #divToolbarWrapper .disabled {
-    color: #666666;
+    color: var(--color-gray);
     cursor: default;
 }
 #divToolbarWrapper #divToolbarFunc {
@@ -126,11 +127,14 @@ ul {
     padding: 0 16px;
     margin-left: 10px;
 }
+#divToolbarWrapper #divToolbarFunc #divTipsWaiting {
+    display: none;
+}
 #divToolbarWrapper #divToolbarPath {
-    color: #666666;
+    color: var(--color-gray);
 }
 #divToolbarWrapper #divToolbarPath .toolbarButton {
-    color: #666666;
+    color: var(--color-gray);
 }
 #divToolbarWrapper #divToolbarPathDevice,#divToolbarWrapper #divToolbarPathWrapper {
     float: left;
@@ -193,9 +197,6 @@ ul {
     border-radius: 10px;
     box-shadow: 0 0 30px rgba(0,0,0,0.6);
 }
-#divDialogWrapper .tips {
-    color: #666666;
-}
 #divDialogTitle {
     margin-bottom: 20px;
 }
@@ -216,7 +217,7 @@ ul {
     color: black;
 }
 #divDeviceList .deviceStatus {
-    color: #666666;
+    color: var(--color-gray);
 }
 #divTransferList {
     width: 500px;
@@ -228,7 +229,7 @@ ul {
     text-overflow: ellipsis;
 }
 #divTransferList .transferProgress {
-    color: #666666;
+    color: var(--color-gray);
 }
 #divTransferList .transferLine {
     position: relative;
@@ -321,7 +322,7 @@ ul {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    background-color: #666666;
+    background-color: var(--color-gray);
     padding: 10px 20px;
     border-radius: 20px;
     color: white;
