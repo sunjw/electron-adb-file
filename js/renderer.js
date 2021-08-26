@@ -7,7 +7,7 @@ const remote = require('@electron/remote');
 const Path = require('path');
 
 window.$ = window.jQuery = require('jquery');
-
+require('bootstrap');
 const fixPath = require('fix-path')();
 
 const EleFic = require('./eleFindInContent');
