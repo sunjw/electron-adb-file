@@ -11,6 +11,7 @@
     --color-android-light: #2196F3;
     --color-android-dark: #1565C0;
     --color-gray: #666666;
+    --color-light-gray: #e0e0e0;
     --file-name-width: 400px;
 }
 /* Defines */
@@ -74,7 +75,7 @@ ul {
 
 /* Toolbar */
 #divToolbarWrapper {
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--color-light-gray);
 }
 #divToolbarWrapper .divToolbarLine {
     padding: 0 15px;
@@ -267,7 +268,7 @@ ul {
     line-height: 60px;
     overflow: hidden;
     white-space: nowrap;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--color-light-gray);
 }
 #divDirList .fileLine:after {
     content: '';
@@ -314,7 +315,7 @@ ul {
 :root {
     --fic-light-gray: #f6f6f6;
     --fic-gray: #cecece;
-    --fic-focus: #2188ff;
+    --color-android: #2188ff;
 }
 
 .ficFindBox {
@@ -359,7 +360,7 @@ ul {
     font-size: 12px;
 }
 .ficFindBox .ficToFind:focus {
-    border-color: var(--fic-focus);
+    border-color: var(--color-android);
 }
 .ficFindBox .ficMatchCount {
     display: block;
@@ -386,7 +387,7 @@ ul {
     border-color: var(--fic-gray);
 }
 .ficFindBox .ficButton:active, .ficFindBox .ficButton.ficButtonActive {
-    border-color: var(--fic-focus);
+    border-color: var(--color-android);
 }
 .ficFindBox .ficSvgButton {
     align-items: center;
