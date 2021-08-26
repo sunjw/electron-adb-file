@@ -8,6 +8,8 @@
 
 :root {
     --color-android: #006ee8;
+    --color-android-light: #649cff;
+    --color-android-dark: #0044b5;
     --file-name-width: 400px;
 }
 /* Defines */
@@ -43,6 +45,13 @@ a {
     color: var(--color-android);
     text-decoration: none;
 }
+a:hover {
+    color: var(--color-android-light);
+}
+a:active {
+    color: var(--color-android-dark);
+}
+
 img {
     border: 0;
 }
