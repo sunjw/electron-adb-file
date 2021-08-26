@@ -117,12 +117,15 @@ ul {
 #divToolbarWrapper #divToolbarFuncLeftPart .toolbarButton {
     margin-right: 10px;
 }
-#divToolbarWrapper #divToolbarFuncRightPart .toolbarButton {
+#divToolbarWrapper #divToolbarFuncRightPart .toolbarButton,#divToolbarWrapper #divToolbarFuncRightPart .tips {
     margin-left: 10px;
 }
 #divToolbarWrapper #divToolbarFunc .toolbarImgButton {
     padding: 0 16px;
     margin-left: 0px;
+}
+#divToolbarWrapper #divToolbarFuncRightPart .tips {
+    margin-right: 6px;
 }
 #divToolbarWrapper #divToolbarFunc #aBtnWinMin {
     padding: 0 16px;
