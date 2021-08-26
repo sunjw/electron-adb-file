@@ -364,7 +364,6 @@ ul {
 .filterFindBox .filterButton {
     display: block;
     float: left;
-    width: 22px;
     height: 20px;
     line-height: 20px;
     margin: 10px 0 0 0;
@@ -377,14 +376,6 @@ ul {
 }
 .filterFindBox .filterButton:active, .filterFindBox .filterButton.filterButtonActive {
     border-color: var(--color-android);
-}
-.filterFindBox .filterSvgButton {
-    align-items: center;
-}
-.filterFindBox .filterSvgButton svg {
-    margin-left: auto;
-    margin-right: auto;
-    display: block;
 }
 .filterFindBox .filterButtonPrev, .filterFindBox .filterButtonClose {
     margin-left: 5px;

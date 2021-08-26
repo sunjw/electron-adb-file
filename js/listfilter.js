@@ -59,15 +59,13 @@ class ListFilter {
         };
         this.divFindBox.append(this.inputToFind);
 
-        this.spanBtnFilter = document.createElement('span');
-        this.spanBtnFilter.innerHTML = nextIconSvg;
-        this.spanBtnFilter.classList.add('filterButton', 'filterSvgButton', 'filterButtonNext');
-        this.spanBtnFilter.onclick = function () {
+        this.spanBtnFilter = $('<span/>').text('Filter').addClass('filterButton filterButtonNext');
+        this.spanBtnFilter.on('click', function () {
             that.findNext();
-        };
+        });
         this.divFindBox.append(this.spanBtnFilter);
 
-        this.spanBtnClose = $('<span/>').text('close').addClass('filterButton', 'filterButtonClose');
+        this.spanBtnClose = $('<span/>').text('close').addClass('filterButton filterButtonClose');
         this.spanBtnClose.addClass('material-icons-round');
         this.spanBtnClose.on('click', function () {
             that.closeFindBox();
