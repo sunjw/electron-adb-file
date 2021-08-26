@@ -139,7 +139,7 @@ function initToolbar() {
         let aBtnWinMin = $('<a/>').attr({
             'id': 'aBtnWinMin',
             'href': CMD_WINDOW_MIN
-        }).addClass('toolbarButton').addClass('toolbarImgButton').addClass('toolbarControlButton')
+        }).addClass('toolbarButton toolbarImgButton toolbarControlButton')
             .on('click', function () {
                 return handleCmdClick($(this));
             });
@@ -148,7 +148,7 @@ function initToolbar() {
 
         let aBtnWinMaxRestore = $('<a/>').attr({
             'id': 'aBtnWinMaxRestore'
-        }).addClass('toolbarButton').addClass('toolbarImgButton').addClass('toolbarControlButton')
+        }).addClass('toolbarButton toolbarImgButton toolbarControlButton')
             .on('click', function () {
                 return handleCmdClick($(this));
             });
@@ -166,7 +166,7 @@ function initToolbar() {
         let aBtnWinClose = $('<a/>').attr({
             'id': 'aBtnWinClose',
             'href': CMD_WINDOW_CLOSE
-        }).addClass('toolbarButton').addClass('toolbarImgButton').addClass('toolbarControlButton')
+        }).addClass('toolbarButton toolbarImgButton toolbarControlButton')
             .on('click', function () {
                 return handleCmdClick($(this));
             });
