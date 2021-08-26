@@ -1,3 +1,5 @@
+const Utils = require('./utils');
+
 const matchCaseIconSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="m2.244 13.081.943-2.803H6.66l.944 2.803H8.86L5.54 3.75H4.322L1 13.081h1.244zm2.7-7.923L6.34 9.314H3.51l1.4-4.156h.034zm9.146 7.027h.035v.896h1.128V8.125c0-1.51-1.114-2.345-2.646-2.345-1.736 0-2.59.916-2.666 2.174h1.108c.068-.718.595-1.19 1.517-1.19.971 0 1.518.52 1.518 1.464v.731H12.19c-1.647.007-2.522.8-2.522 2.058 0 1.319.957 2.18 2.345 2.18 1.06 0 1.716-.43 2.078-1.011zm-1.763.035c-.752 0-1.456-.397-1.456-1.244 0-.65.424-1.115 1.408-1.115h1.805v.834c0 .896-.752 1.525-1.757 1.525z"/></svg>';
 const prevIconSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/></svg>';
 const nextIconSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/></svg>';
@@ -22,8 +24,8 @@ class ListFilter {
 
         this.divFindBox = null;
         this.inputToFind = null;
-        this.spanFindNext = null;
-        this.spanClose = null;
+        this.spanBtnFilter = null;
+        this.spanBtnClose = null;
     }
 
     setFindBoxId(findBoxId) {
@@ -50,7 +52,7 @@ class ListFilter {
 
         this.divFindBox = document.createElement('div');
         this.divFindBox.id = this.findBoxId;
-        this.divFindBox.classList.add('ficFindBox');
+        this.divFindBox.classList.add('filterFindBox');
         let positionClass = 'fic' + this.position[0].toUpperCase() + this.position.substring(1);
         this.divFindBox.classList.add(positionClass);
 
@@ -64,21 +66,21 @@ class ListFilter {
         };
         this.divFindBox.appendChild(this.inputToFind);
 
-        this.spanFindNext = document.createElement('span');
-        this.spanFindNext.innerHTML = nextIconSvg;
-        this.spanFindNext.classList.add('ficButton', 'ficSvgButton', 'ficButtonNext');
-        this.spanFindNext.onclick = function () {
+        this.spanBtnFilter = document.createElement('span');
+        this.spanBtnFilter.innerHTML = nextIconSvg;
+        this.spanBtnFilter.classList.add('ficButton', 'ficSvgButton', 'ficButtonNext');
+        this.spanBtnFilter.onclick = function () {
             that.findNext();
         };
-        this.divFindBox.appendChild(this.spanFindNext);
+        this.divFindBox.appendChild(this.spanBtnFilter);
 
-        this.spanClose = document.createElement('span');
-        this.spanClose.innerHTML = closeIconSvg;
-        this.spanClose.classList.add('ficButton', 'ficSvgButton', 'ficButtonClose');
-        this.spanClose.onclick = function () {
+        this.spanBtnClose = document.createElement('span');
+        this.spanBtnClose.innerHTML = closeIconSvg;
+        this.spanBtnClose.classList.add('ficButton', 'ficSvgButton', 'ficButtonClose');
+        this.spanBtnClose.onclick = function () {
             that.closeFindBox();
         };
-        this.divFindBox.appendChild(this.spanClose);
+        this.divFindBox.appendChild(this.spanBtnClose);
 
         this.containerElem.appendChild(this.divFindBox);
 

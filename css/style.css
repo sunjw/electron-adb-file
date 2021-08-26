@@ -312,7 +312,7 @@ ul {
 /* Footer */
 
 /* Filter */
-.ficFindBox {
+.filterFindBox {
     position: absolute;
     right: 100px !important;
     width: 336px;
@@ -325,26 +325,26 @@ ul {
     overflow: hidden;
     display: none;
 }
-.ficFindBox.ficShow {
+.filterFindBox.ficShow {
     display: block;
 }
-.ficFindBox.ficTopLeft {
+.filterFindBox.ficTopLeft {
     top: 0;
     left: 20px;
 }
-.ficFindBox.ficTopRight {
+.filterFindBox.ficTopRight {
     top: 0;
     right: 20px;
 }
-.ficFindBox.ficBottomLeft {
+.filterFindBox.ficBottomLeft {
     bottom: 0;
     left: 20px;
 }
-.ficFindBox.ficBottomRight {
+.filterFindBox.ficBottomRight {
     bottom: 0;
     right: 20px;
 }
-.ficFindBox .ficToFind {
+.filterFindBox .ficToFind {
     float: left;
     width: 160px;
     height: 18px;
@@ -355,10 +355,10 @@ ul {
     outline: none;
     font-size: 12px;
 }
-.ficFindBox .ficToFind:focus {
+.filterFindBox .ficToFind:focus {
     border-color: var(--color-android);
 }
-.ficFindBox .ficMatchCount {
+.filterFindBox .ficMatchCount {
     display: block;
     float: left;
     width: 46px;
@@ -368,7 +368,7 @@ ul {
     font-size: 14px;
     text-align: center;
 }
-.ficFindBox .ficButton {
+.filterFindBox .ficButton {
     display: block;
     float: left;
     width: 22px;
@@ -379,30 +379,30 @@ ul {
     text-align: center;
     border: 1px solid white;
 }
-.ficFindBox .ficButton:hover {
+.filterFindBox .ficButton:hover {
     border-color: var(--color-light-gray);
 }
-.ficFindBox .ficButton:active, .ficFindBox .ficButton.ficButtonActive {
+.filterFindBox .ficButton:active, .filterFindBox .ficButton.ficButtonActive {
     border-color: var(--color-android);
 }
-.ficFindBox .ficSvgButton {
+.filterFindBox .ficSvgButton {
     align-items: center;
 }
-.ficFindBox .ficSvgButton svg {
+.filterFindBox .ficSvgButton svg {
     margin-left: auto;
     margin-right: auto;
     display: block;
 }
-.ficFindBox .ficButtonPrev, .ficFindBox .ficButtonClose {
+.filterFindBox .ficButtonPrev, .filterFindBox .ficButtonClose {
     margin-left: 5px;
 }
-.ficFindBox .ficButtonMatchCase svg {
+.filterFindBox .ficButtonMatchCase svg {
     padding-top: 2px;
 }
-.ficFindBox .ficButtonPrev svg, .ficFindBox .ficButtonNext svg {
+.filterFindBox .ficButtonPrev svg, .filterFindBox .ficButtonNext svg {
     padding-top: 2px;
 }
-.ficFindBox .ficButtonClose svg {
+.filterFindBox .ficButtonClose svg {
     padding-top: 1px;
 }
 /* Filter */
