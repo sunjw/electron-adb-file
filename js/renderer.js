@@ -2,9 +2,11 @@ const {
     ipcRenderer,
     shell
 } = require('electron');
-const remote = require('electron').remote;
+const remote = require('@electron/remote');
 
 const Path = require('path');
+
+window.$ = window.jQuery = require('jquery');
 
 const fixPath = require('fix-path')();
 

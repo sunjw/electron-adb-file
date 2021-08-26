@@ -1,5 +1,7 @@
-const fs = require('fs');
-const path = require('path');
+require('@electron/remote/main').initialize()
+
+const fs = require('fs')
+const path = require('path')
 
 // Modules to control application life and create native browser window
 const { app, BrowserWindow, dialog, ipcMain } = require('electron')
@@ -40,7 +42,9 @@ function createWindow() {
     frame: frameOS,
     titleBarStyle: titleBarStyleOS,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true
     }
   })
 
@@ -118,7 +122,7 @@ ipcMain.on('set-transfer-count', (event, arg) => {
 
 ipcMain.on('set-transfer-progress', (event, arg) => {
   let transferProgress = arg / 100
-  mainWindow.setProgressBar(transferProgress);
+  mainWindow.setProgressBar(transferProgress)
 })
 
 // Fix for electron-9.
