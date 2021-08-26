@@ -35,26 +35,27 @@ const IMGSET_WINDOW_MAX = 'assets/max-k-10.png 1x, assets/max-k-12.png 1.25x, as
 const IMGSET_WINDOW_RESTORE = 'assets/restore-k-10.png 1x, assets/restore-k-12.png 1.25x, assets/restore-k-15.png 1.5x, assets/restore-k-15.png 1.75x, assets/restore-k-20.png 2x, assets/restore-k-20.png 2.25x, assets/restore-k-24.png 2.5x, assets/restore-k-30.png 3x, assets/restore-k-30.png 3.5x';
 const IMGSET_WINDOW_CLOSE = 'assets/close-k-10.png 1x, assets/close-k-12.png 1.25x, assets/close-k-15.png 1.5x, assets/close-k-15.png 1.75x, assets/close-k-20.png 2x, assets/close-k-20.png 2.25x, assets/close-k-24.png 2.5x, assets/close-k-30.png 3x, assets/close-k-30.png 3.5x';
 
-let adbHelper = 0;
+let adbHelper = null;
 
-let downloadsDirPath = 0;
+let downloadsDirPath = null;
 
-let aBtnUp = 0;
-let aBtnRefresh = 0;
-let aBtnHiddenFile = 0;
-let aBtnSdcard = 0;
-let aBtnTransfer = 0;
-let divToolbarFunc = 0;
-let divToolbarPath = 0;
-let divDirWrapper = 0;
-let divDirList = 0;
-let divDialogWrapper = 0;
-let divDialogTitle = 0;
-let divDeviceList = 0;
-let divTransferList = 0;
-let divDialogButtonLine = 0;
-let divDialogBackground = 0;
-let divToast = 0;
+let aBtnUp = null;
+let aBtnRefresh = null;
+let aBtnHiddenFile = null;
+let aBtnSdcard = null;
+let aBtnTransfer = null;
+let divTipsWaiting = null;
+let divToolbarFunc = null;
+let divToolbarPath = null;
+let divDirWrapper = null;
+let divDirList = null;
+let divDialogWrapper = null;
+let divDialogTitle = null;
+let divDeviceList = null;
+let divTransferList = null;
+let divDialogButtonLine = null;
+let divDialogBackground = null;
+let divToast = null;
 
 let toastTimeoutId = 0;
 
@@ -96,6 +97,7 @@ function init() {
     aBtnSdcard = $('#divToolbarWrapper #aBtnSdcard');
     aBtnTransfer = $('#divToolbarWrapper #aBtnTransfer');
 
+    divTipsWaiting = $('#divTipsWaiting');
     divToolbarFunc = $('#divToolbarFunc');
     divToolbarPath = $('#divToolbarPath');
     divDirWrapper = $('#divDirWrapper');

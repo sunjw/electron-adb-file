@@ -59,6 +59,10 @@ img {
 ul {
     list-style-type: none;
 }
+
+.tips {
+    color: #666666;
+}
 /* Common */
 
 /* Wrapper */
@@ -94,7 +98,7 @@ ul {
 #divToolbarWrapper #divToolbarFuncLeftPart,#divToolbarWrapper #divToolbarFuncRightPart {
     -webkit-app-region: no-drag;
 }
-#divToolbarWrapper #divToolbarFunc .toolbarButton {
+#divToolbarWrapper #divToolbarFunc .toolbarButton,#divToolbarWrapper #divToolbarFunc .tips {
     float: left;
 }
 #divToolbarWrapper #divToolbarFuncLeftPart:after,#divToolbarWrapper #divToolbarFuncRightPart:after {
