@@ -20,6 +20,8 @@
 * {
     padding: 0;
     margin: 0;
+}
+*,*::after,*::before {
     box-sizing: content-box; /* Fix for bootstrap */
 }
 body {
@@ -27,6 +29,12 @@ body {
     font-family: 'Product Sans',Arial,Helvetica,sans-serif;
     font-size: 16px;
     cursor: default;
+}
+:not(input):not(textarea),
+:not(input):not(textarea)::after,
+:not(input):not(textarea)::before {
+    -webkit-user-select: none;
+    user-select: none;
 }
 .clear {
     clear: both;
