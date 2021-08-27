@@ -286,6 +286,9 @@ ul {
     display: block;
     clear: both;
 }
+#divDirList .fileLine.fileFilterOut {
+    display: none;
+}
 #divDirList .fileName,#divDirList .fileTypeOrSize,#divDirList .fileModified {
     height: 58px;
     float: left;

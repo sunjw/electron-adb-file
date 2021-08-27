@@ -32,6 +32,10 @@ class ListFilter {
         this.containerElem = containerElem;
     }
 
+    getFilterVal() {
+        return this.inputToFilter.val().trim();
+    }
+
     setFilterButtonAttr(attrs) {
         this.filterButtonAttrs = attrs;
     }

@@ -498,6 +498,8 @@ function refreshDirList() {
 
         let dirList = adbDirListResult.dirList;
         sortDirList(dirList);
+
+        let fileLineCount = 0;
         for (let file of dirList) {
             let fileName = file.name;
             if (!showHiddenFlag && fileName.startsWith('.')) {
@@ -556,11 +558,14 @@ function refreshDirList() {
             divFileLine.append(divFileRightPart);
 
             divDirList.append(divFileLine);
+            fileLineCount++;
         }
 
         // Scroll to top
         divDirWrapper.scrollTop(0);
         hideWaiting();
+
+        Utils.log('refreshDirList, fileLineCount=' + fileLineCount);
     });
 
     // Up
@@ -608,6 +613,30 @@ function refreshDirList() {
     }
 
     fitToolbarPath();
+}
+
+function filterDirList(toFilter) {
+    let divFileLines = divDirList.children('.fileLine');
+    let filterCount = 0;
+    if (toFilter == '') {
+        divFileLines.removeClass('fileFilterOut');
+        filterCount = divFileLines.length;
+    } else {
+        for (let i = 0; i < divFileLines.length; i++) {
+            let divFileLine = $(divFileLines[i]);
+            let divFileName = divFileLine.children('.fileName');
+            let fileName = divFileName.attr('data-ref');
+            fileName = fileName.toLowerCase();
+            let toFilterLower = toFilter.toLowerCase();
+            if (fileName.indexOf(toFilterLower) == -1) {
+                divFileLine.addClass('fileFilterOut');
+            } else {
+                divFileLine.removeClass('fileFilterOut');
+                filterCount++;
+            }
+        }
+    }
+    Utils.log('filterDirList, toFilter=[' + toFilter + '], filterCount=' + filterCount);
 }
 
 function selectDeviceAndRefreshRootDir(device) {
@@ -791,6 +820,13 @@ function handleCmdClick(cmdLink) {
     case CMD_SHOW_PULL:
         const pullFilePath = Utils.fixWindowsPath(adbCmdParam);
         shell.showItemInFolder(pullFilePath);
+        break;
+    case CMD_FILTER_DIR:
+        let filterVal = dirListFilter.getFilterVal();
+        filterDirList(filterVal);
+        break;
+    case CMD_FILTER_DIR_CLEAR:
+        filterDirList('');
         break;
     case CMD_WINDOW_MIN:
         remote.getCurrentWindow().minimize();
