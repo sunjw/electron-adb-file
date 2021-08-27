@@ -5,7 +5,7 @@ class ListFilter {
     constructor(webContent) {
         this.webContent = webContent;
 
-        this.filterBoxId = 'filterDivFindBox';
+        this.filterBoxId = 'filterDivFilterBox';
         this.initiated = false;
         this.filterBoxShown = false;
         this.matchCase = false;
@@ -33,7 +33,7 @@ class ListFilter {
         }
         this.initiated = true;
 
-        this.divFindBox = $('<div/>').attr('id', this.filterBoxId).addClass('filterFindBox');
+        this.divFindBox = $('<div/>').attr('id', this.filterBoxId).addClass('filterBox');
 
         this.inputToFilter = $('<input/>').attr({
             'id': 'inputToFilter',

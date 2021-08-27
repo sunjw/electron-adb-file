@@ -25,6 +25,7 @@ const CMD_LS_DIR = 'ls';
 const CMD_STOP_TRANSFER = 'stop-transfer';
 const CMD_PULL = 'pull';
 const CMD_SHOW_PULL = 'show-pull';
+const CMD_FILTER_DIR = 'filter-dir';
 const CMD_WINDOW_MIN = 'window-min';
 const CMD_WINDOW_MAX = 'window-max';
 const CMD_WINDOW_RESTORE = 'window-restore';

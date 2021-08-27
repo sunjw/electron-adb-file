@@ -323,7 +323,7 @@ ul {
 /* Footer */
 
 /* Filter */
-.filterFindBox {
+.filterBox {
     position: absolute;
     bottom: 0;
     right: 0;
@@ -337,10 +337,10 @@ ul {
     overflow: hidden;
     display: none;
 }
-.filterFindBox.filterShow {
+.filterBox.filterShow {
     display: block;
 }
-.filterFindBox input[type='text'] {
+.filterBox input[type='text'] {
     float: left;
     width: 160px;
     height: 20px;
@@ -351,10 +351,10 @@ ul {
     outline: none;
     font-size: 16px;
 }
-.filterFindBox input[type='text']:focus {
+.filterBox input[type='text']:focus {
     border-color: var(--color-android);
 }
-.filterFindBox .filterButton {
+.filterBox .filterButton {
     display: block;
     float: left;
     height: 20px;
@@ -362,17 +362,17 @@ ul {
     margin: 14px 10px 0 0;
     cursor: pointer;
 }
-.filterFindBox .filterButton .material-icons-round {
+.filterBox .filterButton .material-icons-round {
     font-size: 20px;
 }
-.filterFindBox #filterBtnClose {
+.filterBox #filterBtnClose {
     margin-left: 10px;
     color: var(--color-gray);
 }
-.filterFindBox #filterBtnClose:hover {
+.filterBox #filterBtnClose:hover {
     color: var(--color-android-light);
 }
-.filterFindBox #filterBtnClose:active {
+.filterBox #filterBtnClose:active {
     color: var(--color-android-dark);
 }
 /* Filter */
