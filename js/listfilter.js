@@ -7,7 +7,7 @@ class ListFilter {
 
         this.filterBoxId = 'filterDivFindBox';
         this.initiated = false;
-        this.findBoxShown = false;
+        this.filterBoxShown = false;
         this.matchCase = false;
         this.findRequestId = null;
         this.lastStrToFind = '';
@@ -16,7 +16,7 @@ class ListFilter {
         this.containerElem = $('body');
 
         this.divFindBox = null;
-        this.inputToFind = null;
+        this.inputToFilter = null;
         this.aFilter = null;
         this.aClose = null;
     }
@@ -39,13 +39,16 @@ class ListFilter {
 
         this.divFindBox = $('<div/>').attr('id', this.filterBoxId).addClass('filterFindBox');
 
-        this.inputToFind = $('<input/>').attr('type', 'text').addClass('filterInputFind');
-        this.inputToFind[0].onkeydown = function (e) {
+        this.inputToFilter = $('<input/>').attr({
+            'id': 'inputToFilter',
+            'type': 'text'
+        });
+        this.inputToFilter[0].onkeydown = function (e) {
             if (e.code == 'Enter') {
                 that.findNext();
             }
         };
-        this.divFindBox.append(this.inputToFind);
+        this.divFindBox.append(this.inputToFilter);
 
         this.aFilter = $('<a/>').attr('id', 'filterBtnFilter').text('Filter');
         this.aFilter.addClass('filterButton');
@@ -77,23 +80,23 @@ class ListFilter {
         this.initUI();
         this.divFindBox.addClass('filterShow');
         this.focusInput();
-        this.findBoxShown = true;
+        this.filterBoxShown = true;
         Utils.log('openFindBox');
     }
 
     closeFindBox() {
-        if (!this.findBoxShown) {
+        if (!this.filterBoxShown) {
             return;
         }
         this.divFindBox.removeClass('filterShow');
         this.stopFind();
-        this.findBoxShown = false;
+        this.filterBoxShown = false;
         Utils.log('closeFindBox');
     }
 
     focusInput() {
-        this.inputToFind.focus();
-        this.inputToFind[0].select();
+        this.inputToFilter.focus();
+        this.inputToFilter[0].select();
     }
 
     stopFind() {
@@ -106,7 +109,7 @@ class ListFilter {
 
     findInternal(isForward) {
         const invisibleChar = '\u2028'; // Tricky for avoid Electron find in input.
-        let strToFind = this.inputToFind.val();
+        let strToFind = this.inputToFilter.val();
         let strMatchCase = this.matchCase;
 
         if (strToFind.length == 0) {
@@ -115,7 +118,7 @@ class ListFilter {
 
         let strToFindBackup = strToFind.slice();
         let strToFindTweak = strToFind.substring(0, 1) + invisibleChar + strToFind.substring(1);
-        this.inputToFind.val(strToFindTweak);
+        this.inputToFilter.val(strToFindTweak);
         if (strToFind != this.lastStrToFind) {
             this.stopFind(); // restart
         }
@@ -138,7 +141,7 @@ class ListFilter {
         this.lastStrToFind = strToFind;
         this.lastMatchCase = strMatchCase;
         setTimeout(() => {
-            this.inputToFind.val(strToFindBackup);
+            this.inputToFilter.val(strToFindBackup);
         }, 100);
     }
 
