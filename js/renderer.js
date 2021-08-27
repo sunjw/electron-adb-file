@@ -114,6 +114,7 @@ function init() {
     initTransferList();
     initDialog();
     initDirList();
+    initFilter();
 
     clearDeviceList();
     clearDirList();
@@ -280,6 +281,12 @@ function initDirList() {
         }
         return false;
     };
+}
+
+function initFilter() {
+    dirListFilter.setFilterButtonAttr({
+        'rel': CMD_FILTER_DIR
+    });
 }
 
 function clearDirList() {

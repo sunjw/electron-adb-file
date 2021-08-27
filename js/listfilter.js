@@ -14,6 +14,7 @@ class ListFilter {
         this.lastMatchCase = null;
 
         this.containerElem = $('body');
+        this.filterButtonAttrs = null;
 
         this.divFilterBox = null;
         this.inputToFilter = null;
@@ -23,6 +24,10 @@ class ListFilter {
 
     setContainerElem(containerElem) {
         this.containerElem = containerElem;
+    }
+
+    setFilterButtonAttr(attrs) {
+        this.filterButtonAttrs = attrs;
     }
 
     initUI() {
@@ -52,6 +57,9 @@ class ListFilter {
             that.findNext();
             return false;
         });
+        if (this.filterButtonAttrs) {
+            this.aFilter.attr(this.filterButtonAttrs);
+        }
         this.divFilterBox.append(this.aFilter);
 
         this.aClose = $('<a/>').attr('id', 'filterBtnClose').addClass('filterButton');
