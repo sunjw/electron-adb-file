@@ -328,8 +328,8 @@ ul {
     bottom: 0;
     right: 100px;
     width: 336px;
-    height: 40px;
-    line-height: 40px;
+    height: 48px;
+    line-height: 48px;
     background-color: white;
     border-radius: 6px 6px 0 0;
     box-shadow: 0 0 30px rgba(0,0,0,0.6);
@@ -343,13 +343,13 @@ ul {
 .filterFindBox .filterInputFind {
     float: left;
     width: 160px;
-    height: 18px;
-    margin: 12px 10px 0 20px;
+    height: 20px;
+    margin: 14px 10px 0 16px;
     border: 0;
     border-bottom: 1px solid var(--color-light-gray);
     border-radius: 0;
     outline: none;
-    font-size: 12px;
+    font-size: 16px;
 }
 .filterFindBox .filterInputFind:focus {
     border-color: var(--color-android);
@@ -359,8 +359,11 @@ ul {
     float: left;
     height: 20px;
     line-height: 20px;
-    margin: 10px 10px 0 0;
+    margin: 14px 10px 0 0;
     cursor: pointer;
+}
+.filterFindBox .filterButton .material-icons-round {
+    font-size: 20px;
 }
 /* Filter */
 
