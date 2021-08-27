@@ -26,6 +26,7 @@ const CMD_STOP_TRANSFER = 'stop-transfer';
 const CMD_PULL = 'pull';
 const CMD_SHOW_PULL = 'show-pull';
 const CMD_FILTER_DIR = 'filter-dir';
+const CMD_FILTER_DIR_CLEAR = 'filter-dir-clear';
 const CMD_WINDOW_MIN = 'window-min';
 const CMD_WINDOW_MAX = 'window-max';
 const CMD_WINDOW_RESTORE = 'window-restore';
@@ -287,7 +288,13 @@ function initFilter() {
     dirListFilter.setFilterButtonAttr({
         'rel': CMD_FILTER_DIR
     });
+    dirListFilter.setCloseButtonAttr({
+        'rel': CMD_FILTER_DIR_CLEAR
+    });
     dirListFilter.setFilterHandler(function (linkButton) {
+        return handleCmdClick(linkButton);
+    });
+    dirListFilter.setCloseHandler(function (linkButton) {
         return handleCmdClick(linkButton);
     });
 }

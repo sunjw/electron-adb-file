@@ -19,6 +19,8 @@ class ListFilter {
         this.containerElem = $('body');
         this.filterButtonAttrs = null;
         this.filterHandler = null;
+        this.closeButtonAttrs = null;
+        this.closeHandler = null;
 
         this.divFilterBox = null;
         this.inputToFilter = null;
@@ -36,6 +38,14 @@ class ListFilter {
 
     setFilterHandler(filterHandler) {
         this.filterHandler = filterHandler;
+    }
+
+    setCloseButtonAttr(attrs) {
+        this.closeButtonAttrs = attrs;
+    }
+
+    setCloseHandler(closeHandler) {
+        this.closeHandler = closeHandler;
     }
 
     initUI() {
@@ -79,6 +89,9 @@ class ListFilter {
         });
         let spanCloseIcon = $('<span/>').addClass('material-icons-round').text('close');
         this.aClose.append(spanCloseIcon);
+        if (this.closeButtonAttrs) {
+            this.aClose.attr(this.closeButtonAttrs);
+        }
         this.divFilterBox.append(this.aClose);
 
         this.containerElem.append(this.divFilterBox);
@@ -91,21 +104,24 @@ class ListFilter {
     }
 
     openFilterBox() {
+        Utils.log('openFilterBox');
         this.initUI();
         this.divFilterBox.addClass('filterShow');
         this.focusInput();
         this.filterBoxShown = true;
-        Utils.log('openFilterBox');
     }
 
     closeFilterBox() {
         if (!this.filterBoxShown) {
             return;
         }
+        Utils.log('closeFilterBox');
         this.divFilterBox.removeClass('filterShow');
         this.stopFind();
         this.filterBoxShown = false;
-        Utils.log('closeFilterBox');
+        if (this.closeHandler) {
+            this.closeHandler(this.aClose);
+        }
     }
 
     focusInput() {
