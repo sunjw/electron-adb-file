@@ -70,9 +70,7 @@ class ListFilter {
 
         $('body').on('keydown', function (e) {
             if (e.code == 'Escape') {
-                if (that.findBoxShown) {
-                    that.closeFindBox();
-                }
+                that.closeFindBox();
             }
         });
     }
@@ -85,6 +83,9 @@ class ListFilter {
     }
 
     closeFindBox() {
+        if (!this.findBoxShown) {
+            return;
+        }
         this.divFindBox.removeClass('filterShow');
         this.stopFind();
         this.findBoxShown = false;
