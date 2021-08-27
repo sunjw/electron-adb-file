@@ -21,10 +21,6 @@ class ListFilter {
         this.aClose = null;
     }
 
-    setFindBoxId(filterBoxId) {
-        this.filterBoxId = filterBoxId;
-    }
-
     setContainerElem(containerElem) {
         this.containerElem = containerElem;
     }
