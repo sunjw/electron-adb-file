@@ -307,7 +307,7 @@ ul {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    padding-left: 11px;
+    padding-left: 12px;
     cursor: pointer;
 }
 #divDirList .fileName:hover a {
