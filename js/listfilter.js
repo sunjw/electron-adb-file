@@ -117,7 +117,6 @@ class ListFilter {
         }
         Utils.log('closeFilterBox');
         this.divFilterBox.removeClass('filterShow');
-        this.stopFind();
         this.filterBoxShown = false;
         if (this.closeHandler) {
             this.closeHandler(this.aClose);
@@ -127,60 +126,6 @@ class ListFilter {
     focusInput() {
         this.inputToFilter.focus();
         this.inputToFilter[0].select();
-    }
-
-    stopFind() {
-        if (this.findRequestId == null) {
-            return;
-        }
-        this.webContent.stopFindInPage('clearSelection');
-        this.findRequestId = null;
-    }
-
-    findInternal(isForward) {
-        const invisibleChar = '\u2028'; // Tricky for avoid Electron find in input.
-        let strToFind = this.inputToFilter.val();
-        let strMatchCase = this.matchCase;
-
-        if (strToFind.length == 0) {
-            return;
-        }
-
-        let strToFindBackup = strToFind.slice();
-        let strToFindTweak = strToFind.substring(0, 1) + invisibleChar + strToFind.substring(1);
-        this.inputToFilter.val(strToFindTweak);
-        if (strToFind != this.lastStrToFind) {
-            this.stopFind(); // restart
-        }
-        if (this.lastMatchCase == null || this.lastMatchCase != strMatchCase) {
-            this.stopFind(); // restart
-        }
-        if (this.findRequestId != null) {
-            this.webContent.findInPage(strToFind, {
-                forward: isForward,
-                findNext: true,
-                matchCase: strMatchCase
-            });
-        } else {
-            this.findRequestId = this.webContent.findInPage(strToFind, {
-                forward: true,
-                findNext: false,
-                matchCase: strMatchCase
-            });
-        }
-        this.lastStrToFind = strToFind;
-        this.lastMatchCase = strMatchCase;
-        setTimeout(() => {
-            this.inputToFilter.val(strToFindBackup);
-        }, 100);
-    }
-
-    findNext() {
-        this.findInternal(true);
-    }
-
-    findPrev() {
-        this.findInternal(false);
     }
 }
 
