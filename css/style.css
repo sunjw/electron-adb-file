@@ -327,7 +327,7 @@ ul {
     position: absolute;
     bottom: 0;
     right: 100px;
-    width: 336px;
+    width: 275px;
     height: 48px;
     line-height: 48px;
     background-color: white;
@@ -364,6 +364,16 @@ ul {
 }
 .filterFindBox .filterButton .material-icons-round {
     font-size: 20px;
+}
+.filterFindBox #filterBtnClose {
+    margin-left: 4px;
+    color: var(--color-gray);
+}
+.filterFindBox #filterBtnClose:hover {
+    color: var(--color-android-light);
+}
+.filterFindBox #filterBtnClose:active {
+    color: var(--color-android-dark);
 }
 /* Filter */
 

@@ -49,14 +49,15 @@ class ListFilter {
         };
         this.divFindBox.append(this.inputToFind);
 
-        this.aFilter = $('<a/>').text('Filter').addClass('filterButton filterButtonNext');
+        this.aFilter = $('<a/>').attr('id', 'filterBtnFilter').text('Filter');
+        this.aFilter.addClass('filterButton');
         this.aFilter.on('click', function () {
             that.findNext();
             return false;
         });
         this.divFindBox.append(this.aFilter);
 
-        this.aClose = $('<a/>').addClass('filterButton filterButtonClose');
+        this.aClose = $('<a/>').attr('id', 'filterBtnClose').addClass('filterButton');
         this.aClose.on('click', function () {
             that.closeFindBox();
         });
