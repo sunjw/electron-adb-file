@@ -287,6 +287,9 @@ function initFilter() {
     dirListFilter.setFilterButtonAttr({
         'rel': CMD_FILTER_DIR
     });
+    dirListFilter.setFilterHandler(function (linkButton) {
+        return handleCmdClick(linkButton);
+    });
 }
 
 function clearDirList() {

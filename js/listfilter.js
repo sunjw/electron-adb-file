@@ -8,13 +8,17 @@ class ListFilter {
         this.filterBoxId = 'filterDivFilterBox';
         this.initiated = false;
         this.filterBoxShown = false;
+
+        // find
         this.matchCase = false;
         this.findRequestId = null;
         this.lastStrToFind = '';
         this.lastMatchCase = null;
 
+        // attr
         this.containerElem = $('body');
         this.filterButtonAttrs = null;
+        this.filterHandler = null;
 
         this.divFilterBox = null;
         this.inputToFilter = null;
@@ -28,6 +32,10 @@ class ListFilter {
 
     setFilterButtonAttr(attrs) {
         this.filterButtonAttrs = attrs;
+    }
+
+    setFilterHandler(filterHandler) {
+        this.filterHandler = filterHandler;
     }
 
     initUI() {
@@ -54,8 +62,9 @@ class ListFilter {
         this.aFilter = $('<a/>').attr('id', 'filterBtnFilter').text('Filter');
         this.aFilter.addClass('filterButton');
         this.aFilter.on('click', function () {
-            Utils.log('Filter...');
-            that.findNext();
+            if (that.filterHandler) {
+                return that.filterHandler($(this));
+            }
             return false;
         });
         if (this.filterButtonAttrs) {
