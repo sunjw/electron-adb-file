@@ -289,7 +289,8 @@ ul {
 #divDirList .fileLine.fileFilterOut {
     display: none;
 }
-#divDirList .fileName,#divDirList .fileTypeOrSize,#divDirList .fileModified {
+#divDirList .fileName,#divDirList .fileNameIcon,#divDirList .fileNameLink,
+#divDirList .fileTypeOrSize,#divDirList .fileModified {
     height: 58px;
     float: left;
 }
@@ -306,13 +307,12 @@ ul {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    padding-left: 70px;
-    background: url('../assets/generic_outline_96.png') 16px 10px no-repeat;
-    background-size: 40px 40px;
+    padding-left: 12px;
     cursor: pointer;
 }
-#divDirList .fileDir {
-    background-image: url('../assets/folder_96.png');
+#divDirList .fileName .material-icons-round {
+    font-size: 40px;
+    color: var(--color-gray);
 }
 #divDirList .fileTypeOrSize {
     width: 100px;

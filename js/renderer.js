@@ -512,29 +512,37 @@ function refreshDirList() {
                 .attr({
                     'data-ref': fileName,
                     'rel': CMD_CLICK_FILENAME
-                })
-                .on('click', function () {
-                    return handleCmdClick($(this));
                 });
+            divFileName.on('click', function () {
+                return handleCmdClick($(this));
+            });
+            let divFileNameIcon = $('<div/>').addClass('fileNameIcon');
+            let divFileNameLink = $('<div/>').addClass('fileNameLink');
             if (ADBHelper.isFileDir(file)) {
                 // Directory
+                let spanDirIcon = $('<span/>').addClass('material-icons-round').text('folder');
+                divFileNameIcon.append(spanDirIcon);
                 let lsDirCmd = CMD_LS_DIR + CMD_DELIMITER + fileName;
                 let aDirLink = $('<a/>').html(fileNameHtml).attr('href', lsDirCmd)
                     .on('click', function () {
                         return handleCmdClick($(this));
                     });
-                divFileName.append(aDirLink);
+                divFileNameLink.append(aDirLink);
                 divFileName.addClass('fileDir');
             } else {
                 // File
+                let spanDirIcon = $('<span/>').addClass('material-icons-round').text('insert_drive_file');
+                divFileNameIcon.append(spanDirIcon);
                 let pullFileCmd = CMD_PULL + CMD_DELIMITER + fileName;
                 let aFileLink = $('<a/>').html(fileNameHtml).attr('href', pullFileCmd)
                     .on('click', function () {
                         return handleCmdClick($(this));
                     });
-                divFileName.append(aFileLink);
+                divFileNameLink.append(aFileLink);
                 divFileName.addClass('fileNormal');
             }
+            divFileName.append(divFileNameIcon);
+            divFileName.append(divFileNameLink);
             divFileLine.append(divFileName);
 
             let divFileTypeOrSize = $('<div/>').addClass('fileTypeOrSize');
