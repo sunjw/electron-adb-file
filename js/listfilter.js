@@ -39,11 +39,11 @@ class ListFilter {
             'id': 'inputToFilter',
             'type': 'text'
         });
-        this.inputToFilter[0].onkeydown = function (e) {
-            if (e.code == 'Enter') {
+        this.inputToFilter.on('keydown', function (e) {
+            if (e.code == 'Enter' || e.code == 'NumpadEnter') {
                 that.findNext();
             }
-        };
+        });
         this.divFindBox.append(this.inputToFilter);
 
         this.aFilter = $('<a/>').attr('id', 'filterBtnFilter').text('Filter');
