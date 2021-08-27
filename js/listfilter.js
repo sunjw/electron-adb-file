@@ -60,7 +60,7 @@ class ListFilter {
 
         this.aClose = $('<a/>').attr('id', 'filterBtnClose').addClass('filterButton');
         this.aClose.on('click', function () {
-            that.closeFindBox();
+            that.closeFilterBox();
             return false;
         });
         let spanCloseIcon = $('<span/>').addClass('material-icons-round').text('close');
@@ -71,27 +71,27 @@ class ListFilter {
 
         $('body').on('keydown', function (e) {
             if (e.code == 'Escape') {
-                that.closeFindBox();
+                that.closeFilterBox();
             }
         });
     }
 
-    openFindBox() {
+    openFilterBox() {
         this.initUI();
         this.divFindBox.addClass('filterShow');
         this.focusInput();
         this.filterBoxShown = true;
-        Utils.log('openFindBox');
+        Utils.log('openFilterBox');
     }
 
-    closeFindBox() {
+    closeFilterBox() {
         if (!this.filterBoxShown) {
             return;
         }
         this.divFindBox.removeClass('filterShow');
         this.stopFind();
         this.filterBoxShown = false;
-        Utils.log('closeFindBox');
+        Utils.log('closeFilterBox');
     }
 
     focusInput() {

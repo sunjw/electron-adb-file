@@ -64,7 +64,7 @@ let lastWaitingTipsTime = 0;
 let dirListFilter = new ListFilter.ListFilter(remote.getCurrentWebContents());
 
 ipcRenderer.on('on-find', (e, args) => {
-    dirListFilter.openFindBox();
+    dirListFilter.openFilterBox();
 })
 
 ipcRenderer.on('set-downloads-path', (event, arg) => {
