@@ -88,14 +88,13 @@ def write_file_content(file_path, file_content):
 def log_stage(stage_message):
     log('\n%s\n' % (stage_message))
 
-EXE_7Z = '7z'
-EXE_7Z_KEKA_MACOS = '/Applications/Keka.app/Contents/Resources/keka7z'
-USING_7Z_MACOS = False
+EXE_7Z_WIN = '7z'
 USING_XZ_MACOS = True
 
 APP_TITLE = 'electron-adb-file'
 PACKAGE_NAME = 'electron-adb-file'
 
+DIST_DIR = 'dist'
 APP_DIRS = ['node_modules', 'assets', 'css', 'js']
 APP_FILES = ['index.html', 'main.js',
             'package.json', 'package-lock.json',
@@ -119,15 +118,18 @@ def main():
             if arg == '--no-extract-old':
                 extract_old = False
 
-    exe_7z_sys = EXE_7Z
-    if is_macos_sys():
-        exe_7z_sys = EXE_7Z_KEKA_MACOS
+    exe_7z_sys = EXE_7Z_WIN # 7z is not supported on macOS
+    tar_ext = 'gz'
+    tar_param = '-czvf'
+    if USING_XZ_MACOS:
+        tar_ext = 'xz'
+        tar_param = '-cJvf'
 
-    app_name = PACKAGE_NAME + '.app'
-    app_dir_path_relative = 'Contents/Resources/app'
-    if is_windows_sys():
-        app_name = PACKAGE_NAME
-        app_dir_path_relative = 'resources/app'
+    app_name = PACKAGE_NAME
+    app_dir_path_relative = 'resources/app'
+    if is_macos_sys():
+        app_name = PACKAGE_NAME + '.app'
+        app_dir_path_relative = 'Contents/Resources/app'
     app_path_relative = os.path.join(app_name, app_dir_path_relative)
 
     cwd = os.getcwd()
@@ -137,41 +139,68 @@ def main():
     run_cmd('npm install')
 
     # Extract old package and remove old app.
-    os.chdir('dist')
     if extract_old:
         log_stage('Extract old package and remove old app...')
-        if is_windows_sys() or USING_7Z_MACOS:
+        os.chdir(DIST_DIR)
+        if is_windows_sys():
             run_cmd('%s -t7z x %s.7z' % (exe_7z_sys, app_name))
         else:
-            if not USING_XZ_MACOS:
-                run_cmd('tar -xvf %s.tar.gz' % (app_name))
-            else:
-                run_cmd('tar -xvf %s.tar.xz' % (app_name))
+            run_cmd('tar -xvf %s.tar.%s' % (app_name, tar_ext))
         remove_dir(app_path_relative)
+        os.chdir(cwd)
     else:
-        log_stage('No extract old package...')
+        log_stage('No extract old package and copy from electron dist...')
+        electron_node_module_dir = 'node_modules/electron'
+        electron_dist_dir = 'dist'
+        os.chdir(electron_node_module_dir)
+        if is_windows_sys():
+            electron_dist_package = 'dist.7z'
+            run_cmd('%s -t7z a -r %s %s' % (exe_7z_sys, electron_dist_package, electron_dist_dir))
+            os.chdir(cwd)
+            electron_dist_package_path = os.path.join(electron_node_module_dir, electron_dist_package)
+            copy_file(electron_dist_package_path, os.path.join(DIST_DIR, electron_dist_package))
+            remove_file(electron_dist_package_path)
+            os.chdir(DIST_DIR)
+            run_cmd('%s -t7z x %s' % (exe_7z_sys, electron_dist_package))
+            remove_file(electron_dist_package)
+            os.rename(electron_dist_dir, app_name)
+        else:
+            os.chdir(electron_dist_dir)
+            electron_dist_app_name = 'Electron.app'
+            electron_dist_package = '%s.tar.%s' % (electron_dist_app_name, tar_ext)
+            run_cmd('tar %s %s %s' % (tar_param, electron_dist_package, electron_dist_app_name))
+            os.chdir(cwd)
+            electron_dist_package_path = os.path.join(electron_node_module_dir, electron_dist_dir, electron_dist_package)
+            copy_file(electron_dist_package_path, os.path.join(DIST_DIR, electron_dist_package))
+            remove_file(electron_dist_package_path)
+            os.chdir(DIST_DIR)
+            run_cmd('tar -xvf %s' % (electron_dist_package))
+            remove_file(electron_dist_package)
+            os.rename(electron_dist_app_name, app_name)
+        os.chdir(cwd)
+    os.chdir(DIST_DIR)
     os.mkdir(app_path_relative)
     os.chdir(cwd)
 
     # Copy new app.
     log_stage('Copy new app...')
     for app_dir in APP_DIRS:
-        dest_app_dir = os.path.join('dist', app_path_relative)
+        dest_app_dir = os.path.join(DIST_DIR, app_path_relative)
         dest_app_dir = os.path.join(dest_app_dir, app_dir)
         os.mkdir(dest_app_dir)
         copy_dir(app_dir, dest_app_dir)
 
     for app_file in APP_FILES:
-        dest_app_file = os.path.join('dist', app_path_relative)
+        dest_app_file = os.path.join(DIST_DIR, app_path_relative)
         dest_app_file = os.path.join(dest_app_file, app_file)
         copy_file(app_file, dest_app_file)
 
-    release_file = os.path.join('dist', app_path_relative, 'assets', 'RELEASED')
+    release_file = os.path.join(DIST_DIR, app_path_relative, 'assets', 'RELEASED')
     open(release_file, 'a').close()
 
     # Rebuild and clean.
     log_stage('Rebuild and clean...')
-    os.chdir(os.path.join('dist', app_path_relative))
+    os.chdir(os.path.join(DIST_DIR, app_path_relative))
     if is_macos_sys():
         for exec_file in EXEC_FIX_PATHS:
             st = os.stat(exec_file)
@@ -188,7 +217,7 @@ def main():
 
     # Rename electron files.
     log_stage('Rename electron files...')
-    os.chdir(os.path.join('dist', app_name))
+    os.chdir(os.path.join(DIST_DIR, app_name))
     electron_exe_dir = ''
     electron_exe_name = ''
     electron_exe_app_name = ''
@@ -213,17 +242,13 @@ def main():
 
     # Package and clean up.
     log_stage('Package and clean up...')
-    os.chdir('dist')
-    if is_windows_sys() or USING_7Z_MACOS:
+    os.chdir(DIST_DIR)
+    if is_windows_sys():
         remove_file('%s.7z' % (app_name))
         run_cmd('%s -t7z -mx9 a -r %s.7z %s' % (exe_7z_sys, app_name, app_name))
     else:
-        if not USING_XZ_MACOS:
-            remove_file('%s.tar.gz' % (app_name))
-            run_cmd('tar -czvf %s.tar.gz %s' % (app_name, app_name))
-        else:
-            remove_file('%s.tar.xz' % (app_name))
-            run_cmd('tar -cJvf %s.tar.xz %s' % (app_name, app_name))
+        remove_file('%s.tar.%s' % (app_name, tar_ext))
+        run_cmd('tar %s %s.tar.%s %s' % (tar_param, app_name, tar_ext, app_name))
     remove_dir(app_name)
 
 if __name__ == '__main__':
