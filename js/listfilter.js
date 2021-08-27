@@ -74,13 +74,13 @@ class ListFilter {
 
         this.containerElem.append(this.divFindBox);
 
-        document.body.onkeydown = function (e) {
+        $('body').on('keydown', function (e) {
             if (e.code == 'Escape') {
                 if (that.findBoxShown) {
                     that.closeFindBox();
                 }
             }
-        };
+        });
     }
 
     openFindBox() {
