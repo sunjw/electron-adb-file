@@ -326,12 +326,12 @@ ul {
 .filterFindBox {
     position: absolute;
     bottom: 0;
-    right: 100px;
+    right: 0;
     width: 275px;
     height: 48px;
     line-height: 48px;
     background-color: white;
-    border-radius: 6px 6px 0 0;
+    border-radius: 6px 0 0 0;
     box-shadow: 0 0 30px rgba(0,0,0,0.6);
     user-select: none;
     overflow: hidden;
@@ -366,7 +366,7 @@ ul {
     font-size: 20px;
 }
 .filterFindBox #filterBtnClose {
-    margin-left: 4px;
+    margin-left: 10px;
     color: var(--color-gray);
 }
 .filterFindBox #filterBtnClose:hover {
