@@ -307,7 +307,7 @@ ul {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    padding-left: 12px;
+    padding-left: 11px;
     cursor: pointer;
 }
 #divDirList .fileName:hover a {
@@ -319,6 +319,10 @@ ul {
 #divDirList .fileName .materialIcons {
     font-size: 40px;
     color: var(--color-gray);
+}
+#divDirList .fileNameIcon {
+    width: 48px;
+    margin-top: 9px;
 }
 #divDirList .fileTypeOrSize {
     width: 100px;

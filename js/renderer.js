@@ -530,7 +530,7 @@ function refreshDirList() {
                 divFileName.addClass('fileDir');
             } else {
                 // File
-                let spanDirIcon = $('<span/>').addClass('materialIcons material-icons-round').text('insert_drive_file');
+                let spanDirIcon = $('<span/>').addClass('materialIcons material-icons-outlined').text('insert_drive_file');
                 divFileNameIcon.append(spanDirIcon);
                 let pullFileCmd = CMD_PULL + CMD_DELIMITER + fileName;
                 let aFileLink = $('<a/>').html(fileNameHtml).attr('href', pullFileCmd)
