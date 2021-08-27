@@ -512,10 +512,9 @@ function refreshDirList() {
                 .attr({
                     'data-ref': fileName,
                     'rel': CMD_CLICK_FILENAME
+                }).on('click', function () {
+                    return handleCmdClick($(this));
                 });
-            divFileName.on('click', function () {
-                return handleCmdClick($(this));
-            });
             let divFileNameIcon = $('<div/>').addClass('fileNameIcon');
             let divFileNameLink = $('<div/>').addClass('fileNameLink');
             if (ADBHelper.isFileDir(file)) {
@@ -802,7 +801,7 @@ function handleCmdClick(cmdLink) {
         break;
     case CMD_CLICK_FILENAME:
         // Actually click link
-        const aFileLink = cmdLink.children('a');
+        const aFileLink = cmdLink.find('a');
         aFileLink.trigger('click');
         break;
     case CMD_LS_DIR:

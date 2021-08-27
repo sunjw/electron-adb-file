@@ -310,6 +310,12 @@ ul {
     padding-left: 12px;
     cursor: pointer;
 }
+#divDirList .fileName:hover a {
+    color: var(--color-android-light);
+}
+#divDirList .fileName:active a {
+    color: var(--color-android-dark);
+}
 #divDirList .fileName .material-icons-round {
     font-size: 40px;
     color: var(--color-gray);
