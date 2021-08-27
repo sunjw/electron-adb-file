@@ -15,7 +15,7 @@ class ListFilter {
 
         this.containerElem = $('body');
 
-        this.divFindBox = null;
+        this.divFilterBox = null;
         this.inputToFilter = null;
         this.aFilter = null;
         this.aClose = null;
@@ -33,7 +33,7 @@ class ListFilter {
         }
         this.initiated = true;
 
-        this.divFindBox = $('<div/>').attr('id', this.filterBoxId).addClass('filterBox');
+        this.divFilterBox = $('<div/>').attr('id', this.filterBoxId).addClass('filterBox');
 
         this.inputToFilter = $('<input/>').attr({
             'id': 'inputToFilter',
@@ -44,7 +44,7 @@ class ListFilter {
                 that.findNext();
             }
         });
-        this.divFindBox.append(this.inputToFilter);
+        this.divFilterBox.append(this.inputToFilter);
 
         this.aFilter = $('<a/>').attr('id', 'filterBtnFilter').text('Filter');
         this.aFilter.addClass('filterButton');
@@ -52,7 +52,7 @@ class ListFilter {
             that.findNext();
             return false;
         });
-        this.divFindBox.append(this.aFilter);
+        this.divFilterBox.append(this.aFilter);
 
         this.aClose = $('<a/>').attr('id', 'filterBtnClose').addClass('filterButton');
         this.aClose.on('click', function () {
@@ -61,9 +61,9 @@ class ListFilter {
         });
         let spanCloseIcon = $('<span/>').addClass('material-icons-round').text('close');
         this.aClose.append(spanCloseIcon);
-        this.divFindBox.append(this.aClose);
+        this.divFilterBox.append(this.aClose);
 
-        this.containerElem.append(this.divFindBox);
+        this.containerElem.append(this.divFilterBox);
 
         $('body').on('keydown', function (e) {
             if (e.code == 'Escape') {
@@ -74,7 +74,7 @@ class ListFilter {
 
     openFilterBox() {
         this.initUI();
-        this.divFindBox.addClass('filterShow');
+        this.divFilterBox.addClass('filterShow');
         this.focusInput();
         this.filterBoxShown = true;
         Utils.log('openFilterBox');
@@ -84,7 +84,7 @@ class ListFilter {
         if (!this.filterBoxShown) {
             return;
         }
-        this.divFindBox.removeClass('filterShow');
+        this.divFilterBox.removeClass('filterShow');
         this.stopFind();
         this.filterBoxShown = false;
         Utils.log('closeFilterBox');
