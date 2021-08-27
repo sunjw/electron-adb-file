@@ -91,7 +91,7 @@ class ListFilter {
             that.closeFilterBox();
             return false;
         });
-        let spanCloseIcon = $('<span/>').addClass('material-icons-round').text('close');
+        let spanCloseIcon = $('<span/>').addClass('materialIcons material-icons-round').text('close');
         this.aClose.append(spanCloseIcon);
         if (this.closeButtonAttrs) {
             this.aClose.attr(this.closeButtonAttrs);

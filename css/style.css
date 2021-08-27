@@ -316,7 +316,7 @@ ul {
 #divDirList .fileName:active a {
     color: var(--color-android-dark);
 }
-#divDirList .fileName .material-icons-round {
+#divDirList .fileName .materialIcons {
     font-size: 40px;
     color: var(--color-gray);
 }
@@ -371,7 +371,7 @@ ul {
     margin: 14px 10px 0 0;
     cursor: pointer;
 }
-.filterBox .filterButton .material-icons-round {
+.filterBox .filterButton .materialIcons {
     font-size: 20px;
 }
 .filterBox #filterBtnClose {
@@ -404,7 +404,7 @@ ul {
     color: white;
 }
 
-.material-icons-round {
+.materialIcons {
     font-size: 22px;
 }
 /* Others */

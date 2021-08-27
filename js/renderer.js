@@ -519,7 +519,7 @@ function refreshDirList() {
             let divFileNameLink = $('<div/>').addClass('fileNameLink');
             if (ADBHelper.isFileDir(file)) {
                 // Directory
-                let spanDirIcon = $('<span/>').addClass('material-icons-round').text('folder');
+                let spanDirIcon = $('<span/>').addClass('materialIcons material-icons-round').text('folder');
                 divFileNameIcon.append(spanDirIcon);
                 let lsDirCmd = CMD_LS_DIR + CMD_DELIMITER + fileName;
                 let aDirLink = $('<a/>').html(fileNameHtml).attr('href', lsDirCmd)
@@ -530,7 +530,7 @@ function refreshDirList() {
                 divFileName.addClass('fileDir');
             } else {
                 // File
-                let spanDirIcon = $('<span/>').addClass('material-icons-round').text('insert_drive_file');
+                let spanDirIcon = $('<span/>').addClass('materialIcons material-icons-round').text('insert_drive_file');
                 divFileNameIcon.append(spanDirIcon);
                 let pullFileCmd = CMD_PULL + CMD_DELIMITER + fileName;
                 let aFileLink = $('<a/>').html(fileNameHtml).attr('href', pullFileCmd)
@@ -713,7 +713,7 @@ function transferFile(mode, path) {
                     .on('click', function () {
                         return handleCmdClick($(this));
                     });
-                let spanShowIcon = $('<span/>').addClass('material-icons-round').text('search');
+                let spanShowIcon = $('<span/>').addClass('materialIcons material-icons-round').text('search');
                 aShowPullLink.append(spanShowIcon);
                 divTransferStop.append(aShowPullLink);
             }
