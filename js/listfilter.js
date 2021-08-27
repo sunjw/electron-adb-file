@@ -19,8 +19,8 @@ class ListFilter {
 
         this.divFindBox = null;
         this.inputToFind = null;
-        this.spanBtnFilter = null;
-        this.spanBtnClose = null;
+        this.aFilter = null;
+        this.aClose = null;
     }
 
     setFindBoxId(findBoxId) {
@@ -49,18 +49,20 @@ class ListFilter {
         };
         this.divFindBox.append(this.inputToFind);
 
-        this.spanBtnFilter = $('<span/>').text('Filter').addClass('filterButton filterButtonNext');
-        this.spanBtnFilter.on('click', function () {
+        this.aFilter = $('<a/>').text('Filter').addClass('filterButton filterButtonNext');
+        this.aFilter.on('click', function () {
             that.findNext();
+            return false;
         });
-        this.divFindBox.append(this.spanBtnFilter);
+        this.divFindBox.append(this.aFilter);
 
-        this.spanBtnClose = $('<span/>').text('close').addClass('filterButton filterButtonClose');
-        this.spanBtnClose.addClass('material-icons-round');
-        this.spanBtnClose.on('click', function () {
+        this.aClose = $('<a/>').addClass('filterButton filterButtonClose');
+        this.aClose.on('click', function () {
             that.closeFindBox();
         });
-        this.divFindBox.append(this.spanBtnClose);
+        let spanCloseIcon = $('<span/>').addClass('material-icons-round').text('close');
+        this.aClose.append(spanCloseIcon);
+        this.divFindBox.append(this.aClose);
 
         this.containerElem.append(this.divFindBox);
 
