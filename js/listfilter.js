@@ -60,6 +60,7 @@ class ListFilter {
         this.aClose = $('<a/>').attr('id', 'filterBtnClose').addClass('filterButton');
         this.aClose.on('click', function () {
             that.closeFindBox();
+            return false;
         });
         let spanCloseIcon = $('<span/>').addClass('material-icons-round').text('close');
         this.aClose.append(spanCloseIcon);
