@@ -46,7 +46,7 @@ class ListFilter {
         });
         this.inputToFilter.on('keydown', function (e) {
             if (e.code == 'Enter' || e.code == 'NumpadEnter') {
-                that.findNext();
+                that.aFilter.trigger('click');
             }
         });
         this.divFilterBox.append(this.inputToFilter);
@@ -54,6 +54,7 @@ class ListFilter {
         this.aFilter = $('<a/>').attr('id', 'filterBtnFilter').text('Filter');
         this.aFilter.addClass('filterButton');
         this.aFilter.on('click', function () {
+            Utils.log('Filter...');
             that.findNext();
             return false;
         });
