@@ -16,8 +16,6 @@ class ListFilter {
         this.lastMatchCase = null;
 
         this.containerElem = $('body');
-        this.availablePosition = ['topRight', 'topLeft', 'bottomLeft', 'bottomRight'];
-        this.position = this.availablePosition[0];
 
         this.divFindBox = null;
         this.inputToFind = null;
@@ -33,12 +31,6 @@ class ListFilter {
         this.containerElem = containerElem;
     }
 
-    setPosition(position) {
-        if (this.availablePosition.includes(position)) {
-            this.position = position;
-        }
-    }
-
     initUI() {
         let that = this;
 
@@ -48,8 +40,6 @@ class ListFilter {
         this.initiated = true;
 
         this.divFindBox = $('<div/>').attr('id', this.findBoxId).addClass('filterFindBox');
-        let positionClass = 'filter' + this.position[0].toUpperCase() + this.position.substring(1);
-        this.divFindBox.addClass(positionClass);
 
         this.inputToFind = $('<input/>').attr('type', 'text').addClass('filterInputFind');
         this.inputToFind[0].onkeydown = function (e) {

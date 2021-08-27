@@ -62,7 +62,6 @@ let showHiddenFlag = false;
 let lastWaitingTipsTime = 0;
 
 let dirListFilter = new ListFilter.ListFilter(remote.getCurrentWebContents());
-dirListFilter.setPosition('bottomRight');
 
 ipcRenderer.on('on-find', (e, args) => {
     dirListFilter.openFindBox();

@@ -325,7 +325,8 @@ ul {
 /* Filter */
 .filterFindBox {
     position: absolute;
-    right: 100px !important;
+    bottom: 0;
+    right: 100px;
     width: 336px;
     height: 40px;
     line-height: 40px;
@@ -338,22 +339,6 @@ ul {
 }
 .filterFindBox.filterShow {
     display: block;
-}
-.filterFindBox.filterTopLeft {
-    top: 0;
-    left: 20px;
-}
-.filterFindBox.filterTopRight {
-    top: 0;
-    right: 20px;
-}
-.filterFindBox.filterBottomLeft {
-    bottom: 0;
-    left: 20px;
-}
-.filterFindBox.filterBottomRight {
-    bottom: 0;
-    right: 20px;
 }
 .filterFindBox .filterInputFind {
     float: left;
