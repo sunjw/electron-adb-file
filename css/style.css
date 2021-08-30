@@ -303,10 +303,6 @@ ul {
     clear: both;
 }
 #divDirList .fileName {
-    width: var(--file-name-width);
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
     padding-left: 12px;
     cursor: pointer;
 }
@@ -323,6 +319,12 @@ ul {
 #divDirList .fileNameIcon {
     width: 48px;
     margin-top: 9px;
+}
+#divDirList .fileNameLink {
+    width: var(--file-name-width);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 #divDirList .fileTypeOrSize {
     width: 100px;
