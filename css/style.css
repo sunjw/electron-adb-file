@@ -312,12 +312,12 @@ ul {
 #divDirList .fileName:active a {
     color: var(--color-android-dark);
 }
-#divDirList .fileName .materialIcons {
-    font-size: 40px;
-    color: var(--color-gray);
-}
 #divDirList .fileNameIcon {
     width: 48px;
+}
+#divDirList .fileNameIcon .materialIcons {
+    font-size: 40px;
+    color: var(--color-gray);
     margin-top: 9px;
 }
 #divDirList .fileNameLink {
