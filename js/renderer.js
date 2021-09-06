@@ -62,6 +62,7 @@ let divToast = null;
 let toastTimeoutId = 0;
 let showHiddenFlag = false;
 let lastWaitingTipsTime = 0;
+let transferTitle = 'Transfer';
 let transferring = false;
 let transferPendingFinish = false;
 
@@ -237,16 +238,17 @@ function updateTransferButton() {
     let count = adbHelper.getTransferFileCount();
     let transferProgress = 0;
     let minProgress = adbHelper.getTransferFileMinProgress();
-    let btnTransferText = 'Transfer';
+    let btnTransferText = transferTitle;
     if (count > 0) {
         transferring = true;
+        transferPendingFinish = false;
         transferProgress = minProgress;
         if (minProgress == 0 || minProgress == 100) {
             minProgress = '...';
         } else {
             minProgress = minProgress + '%';
         }
-        btnTransferText = 'Transfer(' + minProgress + ')';
+        btnTransferText = transferTitle + ' (' + minProgress + ')';
         if (!minProgress.endsWith('B')) {
             ipcRenderer.send('set-transfer-progress', transferProgress);
         }
@@ -255,10 +257,11 @@ function updateTransferButton() {
         if (transferring) {
             transferPendingFinish = true;
             transferring = false;
+            btnTransferText = transferTitle + ' (' + '<span>xxx</span>' + ')';
             aBtnTransfer.addClass('pendingFinish');
         }
     }
-    aBtnTransfer.text(btnTransferText);
+    aBtnTransfer.html(btnTransferText);
     ipcRenderer.send('set-transfer-count', count);
 }
 
@@ -378,6 +381,10 @@ function showHidden() {
 }
 
 function showTransferListDialog() {
+    if (transferPendingFinish) {
+        aBtnTransfer.text(transferTitle);
+        transferPendingFinish = false;
+    }
     aBtnTransfer.removeClass('pendingFinish');
     divDeviceList.hide();
     divTransferList.show();
