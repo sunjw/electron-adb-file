@@ -239,16 +239,20 @@ function updateTransferButton() {
     let transferProgress = 0;
     let minProgress = adbHelper.getTransferFileMinProgress();
     let btnTransferText = transferTitle;
+    let spanFinishIcon = $('<span/>')
+        .addClass('materialIcons material-icons-round')
+        .text('done');
     if (count > 0) {
         transferring = true;
         transferPendingFinish = false;
+        aBtnTransfer.removeClass('pendingFinish');
         transferProgress = minProgress;
         if (minProgress == 0 || minProgress == 100) {
             minProgress = '...';
         } else {
             minProgress = minProgress + '%';
         }
-        btnTransferText = transferTitle + ' (' + minProgress + ')';
+        btnTransferText = transferTitle + '&nbsp;(' + minProgress + ')';
         if (!minProgress.endsWith('B')) {
             ipcRenderer.send('set-transfer-progress', transferProgress);
         }
@@ -257,11 +261,14 @@ function updateTransferButton() {
         if (transferring) {
             transferPendingFinish = true;
             transferring = false;
-            btnTransferText = transferTitle + ' (' + '<span>xxx</span>' + ')';
+            btnTransferText = transferTitle + '&nbsp;(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)';
             aBtnTransfer.addClass('pendingFinish');
         }
     }
     aBtnTransfer.html(btnTransferText);
+    if (transferPendingFinish) {
+        aBtnTransfer.append(spanFinishIcon);
+    }
     ipcRenderer.send('set-transfer-count', count);
 }
 
@@ -382,10 +389,10 @@ function showHidden() {
 
 function showTransferListDialog() {
     if (transferPendingFinish) {
-        aBtnTransfer.text(transferTitle);
+        aBtnTransfer.html(transferTitle);
         transferPendingFinish = false;
+        aBtnTransfer.removeClass('pendingFinish');
     }
-    aBtnTransfer.removeClass('pendingFinish');
     divDeviceList.hide();
     divTransferList.show();
     showDialogBase('Transfer List');

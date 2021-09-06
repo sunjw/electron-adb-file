@@ -180,6 +180,14 @@ ul {
 #divToolbarWrapper #divToolbarFuncRightPart .toolbarControlButton:hover,#divToolbarWrapper #divToolbarFuncRightPart .toolbarControlButton:active {
     background-color: #e5e5e5;
 }
+#aBtnTransfer {
+    position: relative;
+}
+#aBtnTransfer.pendingFinish span.materialIcons {
+    position: absolute;
+    top: 9px;
+    right: 6px;
+}
 #aBtnWinClose:hover,#aBtnWinClose:active {
     background-color: #e81123 !important;
 }
