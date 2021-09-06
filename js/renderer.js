@@ -44,6 +44,7 @@ let downloadsDirPath = null;
 let aBtnUp = null;
 let aBtnRefresh = null;
 let aBtnHiddenFile = null;
+let aBtnAndroid = null;
 let aBtnSdcard = null;
 let aBtnTransfer = null;
 let divTipsWaiting = null;
@@ -98,6 +99,7 @@ function init() {
     aBtnUp = $('#divToolbarWrapper #aBtnUp');
     aBtnRefresh = $('#divToolbarWrapper #aBtnRefresh');
     aBtnHiddenFile = $('#divToolbarWrapper #aBtnHiddenFile');
+    aBtnAndroid = $('#divToolbarWrapper #aBtnAndroid');
     aBtnSdcard = $('#divToolbarWrapper #aBtnSdcard');
     aBtnTransfer = $('#divToolbarWrapper #aBtnTransfer');
 
@@ -193,6 +195,9 @@ function initToolbar() {
         return handleCmdClick($(this));
     });
     aBtnHiddenFile.addClass('disabled').on('click', function () {
+        return handleCmdClick($(this));
+    });
+    aBtnAndroid.addClass('disabled').on('click', function () {
         return handleCmdClick($(this));
     });
     aBtnSdcard.addClass('disabled').on('click', function () {
@@ -677,10 +682,12 @@ function selectDeviceAndRefreshRootDir(device) {
 
     // Enable buttons
     let lsRootCmd = CMD_LS_DIR + CMD_DELIMITER + '/';
+    let lsAndroidCmd = CMD_LS_DIR + CMD_DELIMITER + '/sdcard/Android/';
     let lsSdcardCmd = CMD_LS_DIR + CMD_DELIMITER + '/sdcard/';
     let showHiddenCmd = CMD_SHOW_HIDDEN;
     let showTransferCmd = CMD_SHOW_TRANSFER;
     aBtnHiddenFile.attr('href', showHiddenCmd).removeClass('disabled');
+    aBtnAndroid.attr('href', lsAndroidCmd).removeClass('disabled');
     aBtnSdcard.attr('href', lsSdcardCmd).removeClass('disabled');
     aBtnTransfer.attr('href', showTransferCmd).removeClass('disabled');
     aBtnRefresh.removeClass('disabled');
