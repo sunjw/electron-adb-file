@@ -62,6 +62,8 @@ let divToast = null;
 let toastTimeoutId = 0;
 let showHiddenFlag = false;
 let lastWaitingTipsTime = 0;
+let transferring = false;
+let transferPendingFinish = false;
 
 let dirListFilter = new ListFilter.ListFilter(remote.getCurrentWebContents());
 
@@ -237,6 +239,7 @@ function updateTransferButton() {
     let minProgress = adbHelper.getTransferFileMinProgress();
     let btnTransferText = 'Transfer';
     if (count > 0) {
+        transferring = true;
         transferProgress = minProgress;
         if (minProgress == 0 || minProgress == 100) {
             minProgress = '...';
@@ -249,6 +252,11 @@ function updateTransferButton() {
         }
     } else if (count == 0) {
         ipcRenderer.send('set-transfer-progress', 100);
+        if (transferring) {
+            transferPendingFinish = true;
+            transferring = false;
+            aBtnTransfer.addClass('pendingFinish');
+        }
     }
     aBtnTransfer.text(btnTransferText);
     ipcRenderer.send('set-transfer-count', count);
@@ -370,6 +378,7 @@ function showHidden() {
 }
 
 function showTransferListDialog() {
+    aBtnTransfer.removeClass('pendingFinish');
     divDeviceList.hide();
     divTransferList.show();
     showDialogBase('Transfer List');
