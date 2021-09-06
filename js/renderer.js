@@ -729,7 +729,7 @@ function transferFile(mode, path) {
         }
         fileNameHtml = Utils.escapeHtml(fileNameHtml);
         let toastMessage = modeText + ' "' + fileNameHtml + '" finished.';
-        showToast(toastMessage);
+        // showToast(toastMessage);
     });
 
     // Stop button
