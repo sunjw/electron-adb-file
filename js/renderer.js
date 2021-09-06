@@ -246,7 +246,7 @@ function updateTransferButton() {
     let btnTransferText = transferTitle;
     let spanFinishIcon = $('<span/>')
         .addClass('materialIcons material-icons-round')
-        .text('file_download_done');
+        .text('done');
     if (count > 0) {
         transferring = true;
         transferPendingFinish = false;
