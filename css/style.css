@@ -205,6 +205,7 @@ ul {
     padding: 20px 30px;
     border-radius: 10px;
     box-shadow: 0 0 30px rgba(0,0,0,0.6);
+    top: -100px !important;
 }
 #divDialogTitle {
     margin-bottom: 20px;
