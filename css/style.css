@@ -208,8 +208,9 @@ ul {
     background-color: white;
     padding: 20px 30px;
     border-radius: 10px;
+    border: 0;
     box-shadow: 0 0 30px rgba(0,0,0,0.6);
-    top: -100px !important;
+    top: -100px;
 }
 #divDialogWrapper .modal-body {
     padding: 0 !important;
