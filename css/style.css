@@ -200,12 +200,19 @@ ul {
 #divDialogWrapper {
     display: none;
 }
+#divDialogWrapper .modal-dialog {
+    width: min-content !important;
+    max-width: 600px !important;
+}
 #divDialogWrapper .modal-content {
     background-color: white;
     padding: 20px 30px;
     border-radius: 10px;
     box-shadow: 0 0 30px rgba(0,0,0,0.6);
     top: -100px !important;
+}
+#divDialogWrapper .modal-body {
+    padding: 0 !important;
 }
 #divDialogTitle {
     margin-bottom: 20px;
