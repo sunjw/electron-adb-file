@@ -60,6 +60,9 @@ let divDialogButtonLine = null;
 let divDialogBackground = null;
 let divToast = null;
 
+let modalDialogWrapper = null;
+let modalOnHideCallback = null;
+
 let toastTimeoutId = 0;
 let showHiddenFlag = false;
 let lastWaitingTipsTime = 0;
@@ -67,7 +70,6 @@ let transferTitle = 'Transfer';
 let transferring = false;
 let transferPendingFinish = false;
 
-let modalDialogWrapper = null;
 let dirListFilter = new ListFilter.ListFilter(remote.getCurrentWebContents());
 
 ipcRenderer.on('on-find', (e, args) => {
@@ -344,6 +346,11 @@ function initDialog() {
     modalDialogWrapper = new bootstrap.Modal(divDialogWrapper[0], {
         backdrop: 'static'
     });
+    divDialogWrapper.on('hidden.bs.modal', function () {
+        if (modalOnHideCallback) {
+            modalOnHideCallback();
+        }
+    });
     divDialogButtonLine.children('a').on('click', function () {
         return handleCmdClick($(this));
     });
@@ -376,6 +383,10 @@ function hideDialog() {
     // hideDialogBackground();
     divDeviceList.hide();
     divTransferList.hide();
+}
+
+function setOnHideDialogCallback(callback) {
+    modalOnHideCallback = callback;
 }
 
 function showDialogBase(title) {
@@ -826,7 +837,10 @@ function handleCmdClick(cmdLink) {
         break;
     case CMD_SELECT_DEVICE:
         const device = adbCmdParam;
-        selectDeviceAndRefreshRootDir(device);
+        setOnHideDialogCallback(function () {
+            setOnHideDialogCallback(null);
+            selectDeviceAndRefreshRootDir(device);
+        });
         hideDialog();
         break;
     case CMD_SHOW_HIDDEN:
