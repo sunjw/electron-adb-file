@@ -344,6 +344,8 @@ function initDialog() {
         backdrop: 'static'
     });
     divDialogWrapper.on('hidden.bs.modal', function () {
+        divDeviceList.hide();
+        divTransferList.hide();
         if (modalOnHideCallback) {
             modalOnHideCallback();
         }
@@ -355,8 +357,6 @@ function initDialog() {
 
 function hideDialog() {
     modalDialogWrapper.hide();
-    divDeviceList.hide();
-    divTransferList.hide();
 }
 
 function setOnHideDialogCallback(callback) {

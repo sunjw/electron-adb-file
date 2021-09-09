@@ -200,7 +200,7 @@ ul {
 #divDialogWrapper {
     display: none;
 }
-#divDialogWrapper .modal-dialog {
+#divDialogWrapper .modal-content {
     background-color: white;
     padding: 20px 30px;
     border-radius: 10px;
