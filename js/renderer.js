@@ -477,9 +477,15 @@ function refreshDeviceList() {
     });
 }
 
-function refreshDeviceAndShowDeviceDialog() {
+function refreshDeviceAndShowDeviceDialog(asyncShowDialog) {
     refreshDeviceList();
-    showDeviceListDialog();
+    if (asyncShowDialog) {
+        setTimeout(() => {
+            showDeviceListDialog();
+        }, 500);
+    } else {
+        showDeviceListDialog();
+    }
 }
 
 function setCurrentDir(path) {
@@ -804,7 +810,7 @@ function handleCmdClick(cmdLink) {
         hideDialog();
         break;
     case CMD_SHOW_DEVICE:
-        refreshDeviceAndShowDeviceDialog();
+        refreshDeviceAndShowDeviceDialog(false);
         break;
     case CMD_SELECT_DEVICE:
         const device = adbCmdParam;
@@ -879,5 +885,5 @@ function handleCmdClick(cmdLink) {
 $(function () {
     init();
 
-    refreshDeviceAndShowDeviceDialog();
+    refreshDeviceAndShowDeviceDialog(true);
 });
