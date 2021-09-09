@@ -14,10 +14,14 @@ Windows and macOS distribution packages are in [dist](dist) directory.
 4. If no error occured in previous steps, then run.
 
 ## Pack
-python3 ./pack-dist-electron.py  
+```
+python3 ./pack-dist-electron.py
+```
 New package will overwrite exists one in [dist](dist) directory.  
-After upgrade Electron, first copy Electron dist from node_modules to dist directory and rename, then using below command to package with new Electron dist:  
-python3 ./pack-dist-electron.py --no-extract-old  
+After upgrade Electron, first copy Electron dist from node_modules to dist directory and rename, then using below command to package with new Electron dist:
+```
+python3 ./pack-dist-electron.py --no-extract-old
+```
 
 ## License
 
