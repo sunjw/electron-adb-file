@@ -57,7 +57,6 @@ let divDialogTitle = null;
 let divDeviceList = null;
 let divTransferList = null;
 let divDialogButtonLine = null;
-let divDialogBackground = null;
 let divToast = null;
 
 let modalDialogWrapper = null;
@@ -116,7 +115,6 @@ function init() {
     divDeviceList = $('#divDeviceList');
     divTransferList = $('#divTransferList');
     divDialogButtonLine = $('.divDialogButtonLine');
-    divDialogBackground = $('#divDialogBackground');
     divToast = $('#divToast');
 
     initToolbar();
@@ -138,7 +136,6 @@ function onWindowResize() {
     fitToolbarPath();
     fitDirWrapperHeight();
     fitFileNameWidth();
-    fitDialogPosition();
 }
 
 function initToolbar() {
@@ -356,31 +353,8 @@ function initDialog() {
     });
 }
 
-function showDialogBackground() {
-    divDialogBackground.show();
-}
-
-function hideDialogBackground() {
-    divDialogBackground.hide();
-}
-
-function fitDialogPosition(ignoreHidden = false) {
-    if (!ignoreHidden && divDialogWrapper.is(":hidden")) {
-        return;
-    }
-
-    let windowWidth = $(window).width();
-    let divDialogWrapperLeft = (windowWidth - divDialogWrapper.outerWidth()) / 2;
-    if (divDialogWrapperLeft < 0) {
-        divDialogWrapperLeft = 0;
-    }
-    divDialogWrapper.css('left', divDialogWrapperLeft + 'px');
-}
-
 function hideDialog() {
-    // divDialogWrapper.hide();
     modalDialogWrapper.hide();
-    // hideDialogBackground();
     divDeviceList.hide();
     divTransferList.hide();
 }
@@ -391,9 +365,6 @@ function setOnHideDialogCallback(callback) {
 
 function showDialogBase(title) {
     divDialogTitle.text(title)
-    // fitDialogPosition(true);
-    // showDialogBackground();
-    // divDialogWrapper.show();
     modalDialogWrapper.show();
 }
 

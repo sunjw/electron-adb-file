@@ -197,23 +197,10 @@ ul {
 /* Toolbar */
 
 /* Dialog */
-#divDialogBackground {
-    display: none;
-    width: 100%;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    z-index: 1000;
-    background-color: rgba(0,0,0,0.5);
-}
 #divDialogWrapper {
     display: none;
 }
 #divDialogWrapper .modal-dialog {
-    /* position: absolute;
-    top: 120px;
-    left: 100px;
-    z-index: 1005; */
     background-color: white;
     padding: 20px 30px;
     border-radius: 10px;
