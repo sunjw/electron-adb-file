@@ -7,7 +7,7 @@ const remote = require('@electron/remote');
 const Path = require('path');
 
 window.$ = window.jQuery = require('jquery');
-require('bootstrap');
+const bootstrap = require('bootstrap');
 const fixPath = require('fix-path')();
 
 const Utils = require('./utils');
@@ -67,6 +67,7 @@ let transferTitle = 'Transfer';
 let transferring = false;
 let transferPendingFinish = false;
 
+let modalDialogWrapper = null;
 let dirListFilter = new ListFilter.ListFilter(remote.getCurrentWebContents());
 
 ipcRenderer.on('on-find', (e, args) => {
@@ -340,6 +341,9 @@ function fitDirWrapperHeight() {
 }
 
 function initDialog() {
+    modalDialogWrapper = new bootstrap.Modal(divDialogWrapper[0], {
+        backdrop: 'static'
+    });
     divDialogButtonLine.children('a').on('click', function () {
         return handleCmdClick($(this));
     });
@@ -367,17 +371,19 @@ function fitDialogPosition(ignoreHidden = false) {
 }
 
 function hideDialog() {
-    divDialogWrapper.hide();
-    hideDialogBackground();
+    // divDialogWrapper.hide();
+    modalDialogWrapper.hide();
+    // hideDialogBackground();
     divDeviceList.hide();
     divTransferList.hide();
 }
 
 function showDialogBase(title) {
     divDialogTitle.text(title)
-    fitDialogPosition(true);
-    showDialogBackground();
-    divDialogWrapper.show();
+    // fitDialogPosition(true);
+    // showDialogBackground();
+    // divDialogWrapper.show();
+    modalDialogWrapper.show();
 }
 
 function showDeviceListDialog() {

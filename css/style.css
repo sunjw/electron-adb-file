@@ -208,10 +208,12 @@ ul {
 }
 #divDialogWrapper {
     display: none;
-    position: absolute;
+}
+#divDialogWrapper .modal-dialog {
+    /* position: absolute;
     top: 120px;
     left: 100px;
-    z-index: 1005;
+    z-index: 1005; */
     background-color: white;
     padding: 20px 30px;
     border-radius: 10px;
