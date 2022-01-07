@@ -205,8 +205,9 @@ def main():
         for exec_file in EXEC_FIX_PATHS:
             st = os.stat(exec_file)
             os.chmod(exec_file, st.st_mode | stat.S_IEXEC)
-    run_cmd('npm rebuild')
-    run_cmd('npm run %s' % (REBUILD_CMD))
+    if REBUILD_CMD:
+        run_cmd('npm rebuild')
+        run_cmd('npm run %s' % (REBUILD_CMD))
     remove_dir('./node_modules/electron/dist')
     rebuild_clean_paths = REBUILD_CLEAN_PATHS_WIN
     if is_macos_sys():
