@@ -410,14 +410,10 @@ class ADBHelper {
 
             if (transferProcess.mode == 'pull') {
                 let fileSize = 0;
-                let statPromise = sync.stat(filePath, (err, stats) => {
-                    if (err != null) {
-                        Utils.log('adbkitTransferFile, [' + filePath + '] error: [' + err.name + ']');
-                    } else {
-                        fileSize = stats.size;
-                    }
+                let statPromise = sync.stat(filePath).then((stats) => {
+                    fileSize = stats.size;
                 });
-                //await Promise.join(statPromise).catch(e => {});
+                Promise.join(statPromise).catch(e => {});
 
                 if (adbTransferResult.code != 0 || fileSize == 0) {
                     onFinishedCallback(adbTransferResult);
