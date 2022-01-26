@@ -277,6 +277,7 @@ class ADBHelper {
     }
 
     transferFile(transferMode, filePath, destPath, onProgressCallback, onFinishedCallback) {
+        let that = this;
         const transferRandId = Utils.getRandomInt(1000);
         let transferProcessList = this.transferProcessList;
         transferProcessList[transferRandId] = {};
@@ -284,6 +285,9 @@ class ADBHelper {
         transferProcessList[transferRandId].percent = 0;
 
         let onFinishedCallbackWrapper = function (adbTransferResult) {
+            if (that.usingAdbkit && transferProcessList[transferRandId].sync) {
+                transferProcessList[transferRandId].sync.end();
+            }
             delete transferProcessList[transferRandId];
             onFinishedCallback(adbTransferResult);
         };
