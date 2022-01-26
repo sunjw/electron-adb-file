@@ -37,7 +37,7 @@ class ADBHelper {
         this.adbkitClient = null;
         this.usingAdbkit = Utils.isWindows();
         if (this.usingAdbkit) {
-            this.adbkitClient = Adbkit.createClient();
+            this.adbkitClient = Adbkit.Adb.createClient();
             Utils.log('using Adbkit...');
         }
 
@@ -399,18 +399,12 @@ class ADBHelper {
     }
 
     adbkitTransferFile(transferProcess, filePath, destPath, onProgressCallback, onFinishedCallback) {
-        this.adbkitClient.syncService(this.curDevice, async(err, sync) => {
+        let adbkitDeviceClient = this.adbkitClient.getDevice(this.curDevice);
+        adbkitDeviceClient.syncService().then((sync) => {
             let adbTransferResult = {};
             adbTransferResult.code = 0;
             adbTransferResult.err = '';
             adbTransferResult.message = '';
-
-            if (err != null) {
-                adbTransferResult.code = err.name;
-                adbTransferResult.err = 'adbkitTransferFile, mode=[' + transferProcess.mode + '], [' + filePath + '] failed';
-                onFinishedCallback(adbTransferResult);
-                return;
-            }
 
             transferProcess.sync = sync;
 
@@ -423,7 +417,7 @@ class ADBHelper {
                         fileSize = stats.size;
                     }
                 });
-                await Promise.join(statPromise).catch(e => {});
+                //await Promise.join(statPromise).catch(e => {});
 
                 if (adbTransferResult.code != 0 || fileSize == 0) {
                     onFinishedCallback(adbTransferResult);
