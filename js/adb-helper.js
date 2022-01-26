@@ -410,59 +410,58 @@ class ADBHelper {
 
             if (transferProcess.mode == 'pull') {
                 let fileSize = 0;
-                let statPromise = sync.stat(filePath).then((stats) => {
+                sync.stat(filePath).then((stats) => {
                     fileSize = stats.size;
-                });
-                Promise.join(statPromise).catch(e => {});
 
-                if (adbTransferResult.code != 0 || fileSize == 0) {
-                    onFinishedCallback(adbTransferResult);
-                    return;
-                }
+                    if (adbTransferResult.code != 0 || fileSize == 0) {
+                        onFinishedCallback(adbTransferResult);
+                        return;
+                    }
 
-                transferProcess.totalSize = fileSize;
-                transferProcess.startTime = Date.now();
+                    transferProcess.totalSize = fileSize;
+                    transferProcess.startTime = Date.now();
 
-                let pullTransfer = sync.pull(filePath);
-                pullTransfer.on('progress', (stats) => {
-                    let curTime = Date.now();
-                    if (stats.bytesTransferred > transferProcess.totalSize) {
-                        // adbkit cannot handle 4GB
-                        transferProcess.totalSize = transferProcess.totalSize + 4 * 1024 * 1024 * 1024;
-                        Utils.log('adbkitTransferFile, fix adbkit cannot handle 4GB');
-                    }
-                    let progressPercent = Math.floor((stats.bytesTransferred * 100) / transferProcess.totalSize);
-                    transferProcess.percent = progressPercent;
-                    let transferSpeed = '';
-                    let hasSpeed = false;
-                    let transferTime = (curTime - transferProcess.startTime) / 1000.0;
-                    if (transferTime > 3) {
-                        hasSpeed = true;
-                        transferSpeed = stats.bytesTransferred / transferTime;
-                        //Utils.log('adbkitTransferFile, ' + transferTime + 's @ ' + transferSpeed + 'B/s');
-                        transferSpeed = Utils.byteSizeToShortSize(transferSpeed) + 'B/s';
-                        transferProcess.transferSpeed = transferSpeed;
-                    }
-                    let progressString = progressPercent + '%';
-                    if (hasSpeed) {
-                        progressString = progressString + ' (' + transferSpeed + ')';
-                    }
-                    onProgressCallback(progressString);
-                });
-                pullTransfer.on('end', () => {
-                    if (transferProcess.transferSpeed && transferProcess.transferSpeed != '') {
-                        adbTransferResult.message = ' (' + transferProcess.transferSpeed + ')';
-                    }
-                    onFinishedCallback(adbTransferResult);
-                });
-                pullTransfer.on('error', (err) => {
-                    adbTransferResult.code = err.name;
-                    adbTransferResult.err = 'adbkitTransferFile, mode=[' + transferProcess.mode + '], [' + filePath + '] failed';
-                });
+                    let pullTransfer = sync.pull(filePath);
+                    pullTransfer.on('progress', (stats) => {
+                        let curTime = Date.now();
+                        if (stats.bytesTransferred > transferProcess.totalSize) {
+                            // adbkit cannot handle 4GB
+                            transferProcess.totalSize = transferProcess.totalSize + 4 * 1024 * 1024 * 1024;
+                            Utils.log('adbkitTransferFile, fix adbkit cannot handle 4GB');
+                        }
+                        let progressPercent = Math.floor((stats.bytesTransferred * 100) / transferProcess.totalSize);
+                        transferProcess.percent = progressPercent;
+                        let transferSpeed = '';
+                        let hasSpeed = false;
+                        let transferTime = (curTime - transferProcess.startTime) / 1000.0;
+                        if (transferTime > 3) {
+                            hasSpeed = true;
+                            transferSpeed = stats.bytesTransferred / transferTime;
+                            //Utils.log('adbkitTransferFile, ' + transferTime + 's @ ' + transferSpeed + 'B/s');
+                            transferSpeed = Utils.byteSizeToShortSize(transferSpeed) + 'B/s';
+                            transferProcess.transferSpeed = transferSpeed;
+                        }
+                        let progressString = progressPercent + '%';
+                        if (hasSpeed) {
+                            progressString = progressString + ' (' + transferSpeed + ')';
+                        }
+                        onProgressCallback(progressString);
+                    });
+                    pullTransfer.on('end', () => {
+                        if (transferProcess.transferSpeed && transferProcess.transferSpeed != '') {
+                            adbTransferResult.message = ' (' + transferProcess.transferSpeed + ')';
+                        }
+                        onFinishedCallback(adbTransferResult);
+                    });
+                    pullTransfer.on('error', (err) => {
+                        adbTransferResult.code = err.name;
+                        adbTransferResult.err = 'adbkitTransferFile, mode=[' + transferProcess.mode + '], [' + filePath + '] failed';
+                    });
 
-                let basename = Path.basename(filePath);
-                let fullDestPath = Path.join(destPath, basename);
-                pullTransfer.pipe(Fs.createWriteStream(fullDestPath));
+                    let basename = Path.basename(filePath);
+                    let fullDestPath = Path.join(destPath, basename);
+                    pullTransfer.pipe(Fs.createWriteStream(fullDestPath));
+                });
             } else if (transferProcess.mode == 'push') {
                 let fileSize = 0;
                 let fileStats = Fs.statSync(filePath);
