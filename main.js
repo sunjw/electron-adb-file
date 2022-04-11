@@ -1,4 +1,5 @@
-require('@electron/remote/main').initialize()
+const remoteMain = require('@electron/remote/main')
+remoteMain.initialize()
 
 const fs = require('fs')
 const path = require('path')
@@ -47,6 +48,8 @@ function createWindow() {
       enableRemoteModule: true
     }
   })
+
+  remoteMain.enable(mainWindow.webContents)
 
   if (mainWindowState.isMaximized) {
     mainWindow.maximize()
