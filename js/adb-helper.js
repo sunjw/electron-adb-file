@@ -409,8 +409,8 @@ class ADBHelper {
 
             if (transferProcess.mode == 'pull') {
                 let fileSize = 0;
-                sync.stat(filePath).then((stats) => {
-                    fileSize = stats.size;
+                sync.sta2(filePath).then((stats) => {
+                    fileSize = stats.size64;
 
                     if (adbTransferResult.code != 0 || fileSize == 0) {
                         onFinishedCallback(adbTransferResult);
