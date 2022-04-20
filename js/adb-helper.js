@@ -87,7 +87,7 @@ class ADBHelper {
                     continue;
                 }
 
-                let[id, status] = line.split('\t');
+                let [id, status] = line.split('\t');
                 if (status === undefined) {
                     continue;
                 }
@@ -317,13 +317,8 @@ class ADBHelper {
         let cmdArgs = this.getCurDeviceCmdBase().concat([transferCmd, filePath, destPath]);
         let cmd = new ChildProcessHelper.ChildProcessHelper(this.adbPath, cmdArgs);
 
-        let runFunction = 'runUnbuffer';
-        let cmdNewline = '[K';
-        if (Utils.isWindows()) {
-            // Windows PTY is broken...
-            runFunction = 'run';
-            cmdNewline = '\n';
-        }
+        // runFunction = 'run';
+        cmdNewline = '\n';
 
         if (transferProcess.mode == 'pull') {
             transferProcess.totalSize = this.nativeGetFileSize(filePath);
@@ -331,7 +326,7 @@ class ADBHelper {
             transferProcess.transferSpeed = '';
         }
 
-        cmd[runFunction]((child, data) => {
+        cmd.run((child, data) => {
             // On process output...
             let progressOutput = data.toString();
             //Utils.log(progressOutput);
