@@ -35,7 +35,7 @@ class ADBHelper {
         this.transferProcessList = {};
 
         this.adbkitClient = null;
-        this.usingAdbkit = Utils.isWindows();
+        this.usingAdbkit = true; // Utils.isWindows();
         if (this.usingAdbkit) {
             this.adbkitClient = Adbkit.Adb.createClient();
             Utils.log('using Adbkit...');
