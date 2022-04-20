@@ -4,9 +4,7 @@
   "description": "An ADB file tool built on Electron",
   "main": "main.js",
   "scripts": {
-    "start": "electron .",
-    "rebuild-node-pty": "electron-rebuild -f -w node-pty",
-    "rebuild-all": "npm run rebuild-node-pty"
+    "start": "electron ."
   },
   "repository": "https://github.com/sunjw/electron-adb-file",
   "keywords": [
