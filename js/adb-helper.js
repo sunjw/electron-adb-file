@@ -410,7 +410,7 @@ class ADBHelper {
             if (transferProcess.mode == 'pull') {
                 let fileSize = 0;
                 sync.sta2(filePath).then((stats) => {
-                    fileSize = Number(stats.size64);
+                    fileSize = Number(stats.sizeBig);
                     // Utils.log('adbkitTransferFile, fileSize=' + fileSize);
 
                     if (adbTransferResult.code != 0 || fileSize == 0) {
