@@ -1,6 +1,5 @@
 const {
-    ipcRenderer,
-    shell
+    ipcRenderer
 } = require('electron');
 const remote = require('@electron/remote');
 
@@ -853,7 +852,7 @@ function handleCmdClick(cmdLink) {
         break;
     case CMD_SHOW_PULL:
         const pullFilePath = Utils.fixWindowsPath(adbCmdParam);
-        shell.showItemInFolder(pullFilePath);
+        remote.shell.showItemInFolder(pullFilePath);
         break;
     case CMD_FILTER_DIR:
         let filterVal = dirListFilter.getFilterVal();
