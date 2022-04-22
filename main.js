@@ -1,4 +1,5 @@
-require('@electron/remote/main').initialize()
+const remoteMain = require('@electron/remote/main')
+remoteMain.initialize()
 
 const fs = require('fs')
 const path = require('path')
@@ -47,6 +48,8 @@ function createWindow() {
       enableRemoteModule: true
     }
   })
+
+  remoteMain.enable(mainWindow.webContents)
 
   if (mainWindowState.isMaximized) {
     mainWindow.maximize()
@@ -124,9 +127,6 @@ ipcMain.on('set-transfer-progress', (event, arg) => {
   let transferProgress = arg / 100
   mainWindow.setProgressBar(transferProgress)
 })
-
-// Fix for electron-9.
-app.allowRendererProcessReuse = false
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
