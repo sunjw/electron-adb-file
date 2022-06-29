@@ -297,6 +297,13 @@ class ADBHelper {
                     filePath, destPath, onProgressCallback, onFinishedCallbackWrapper);
             transferProcessList[transferRandId].cmd = cmd;
         } else {
+            transferProcessList[transferRandId].onEnd = function () {
+                let adbTransferResult = {};
+                adbTransferResult.code = -1;
+                adbTransferResult.err = 'adbkitTransferFile, mode=[' + transferMode + '], [' + filePath + '] stopped';
+                adbTransferResult.message = '';
+                onFinishedCallbackWrapper(adbTransferResult);
+            };
             this.adbkitTransferFile(transferProcessList[transferRandId],
                 filePath, destPath, onProgressCallback, onFinishedCallbackWrapper);
         }
@@ -514,8 +521,7 @@ class ADBHelper {
                 let transferCmd = this.transferProcessList[transferId].cmd;
                 transferCmd.stop();
             } else {
-                let transferSync = this.transferProcessList[transferId].sync;
-                transferSync.end();
+                this.transferProcessList[transferId].onEnd();
             }
         }
     }
@@ -526,8 +532,7 @@ class ADBHelper {
                 let transferCmd = this.transferProcessList[transferId].cmd;
                 transferCmd.stop();
             } else {
-                let transferSync = this.transferProcessList[transferId].sync;
-                transferSync.end();
+                this.transferProcessList[transferId].onEnd();
             }
         }
     }
