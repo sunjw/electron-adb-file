@@ -115,8 +115,6 @@ REBUILD_CLEAN_PATHS_WIN = []
 REBUILD_CLEAN_PATHS_MACOS = []
 
 def main():
-    extract_old = False # Always using new Electron
-
     exe_7z_sys = EXE_7Z_WIN # 7z is not supported on macOS
     tar_ext = 'gz'
     tar_param = '-czvf'
