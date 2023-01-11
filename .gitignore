@@ -6,3 +6,4 @@ node_modules
 dist/electron-adb-file.app/*
 dist/electron-adb-file/*
 dist/electron-adb-file.x86_64.tar.xz
+dist/electron-adb-file.armv7l.tar.xz
