@@ -240,6 +240,10 @@ def main():
         electron_exe_dir = './Contents/MacOS/'
         electron_exe_name = 'Electron'
         electron_exe_app_name = '%s%s' % (electron_exe_dir, APP_TITLE)
+    elif is_linux_sys():
+        electron_exe_dir = './'
+        electron_exe_name = 'electron'
+        electron_exe_app_name = '%s%s' % (electron_exe_dir, APP_TITLE)
     electron_exe_path = '%s%s' % (electron_exe_dir, electron_exe_name)
     if os.path.exists(electron_exe_path):
         os.rename(electron_exe_path, electron_exe_app_name)
