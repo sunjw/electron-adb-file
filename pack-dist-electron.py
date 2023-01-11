@@ -38,6 +38,9 @@ def is_windows_sys():
 def is_macos_sys():
     return (platform.system() == 'Darwin')
 
+def is_linux_sys():
+    return (platform.system() == 'Linux')
+
 def fix_win_path(path):
     if is_windows_sys():
         return path.replace('/', '\\')
