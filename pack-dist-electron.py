@@ -143,45 +143,36 @@ def main():
     if not os.path.exists(DIST_DIR):
         os.mkdir(DIST_DIR)
 
-    if extract_old:
-        log_stage('Extract old package and remove old app...')
+    log_stage('No extract old package and copy from electron dist...')
+    electron_node_module_dir = 'node_modules/electron'
+    electron_dist_dir = 'dist'
+    os.chdir(electron_node_module_dir)
+    if is_windows_sys():
+        electron_dist_package = 'dist.7z'
+        run_cmd('%s -t7z a %s %s' % (exe_7z_sys, electron_dist_package, electron_dist_dir))
+        os.chdir(cwd)
+        electron_dist_package_path = os.path.join(electron_node_module_dir, electron_dist_package)
+        copy_file(electron_dist_package_path, os.path.join(DIST_DIR, electron_dist_package))
+        remove_file(electron_dist_package_path)
         os.chdir(DIST_DIR)
-        if is_windows_sys():
-            run_cmd('%s -t7z x %s.7z' % (exe_7z_sys, app_name))
-        else:
-            run_cmd('tar -xvf %s.tar.%s' % (app_name, tar_ext))
-        remove_dir(app_path_relative)
-        os.chdir(cwd)
+        run_cmd('%s -t7z x %s' % (exe_7z_sys, electron_dist_package))
+        remove_file(electron_dist_package)
+        os.rename(electron_dist_dir, app_name)
     else:
-        log_stage('No extract old package and copy from electron dist...')
-        electron_node_module_dir = 'node_modules/electron'
-        electron_dist_dir = 'dist'
-        os.chdir(electron_node_module_dir)
-        if is_windows_sys():
-            electron_dist_package = 'dist.7z'
-            run_cmd('%s -t7z a %s %s' % (exe_7z_sys, electron_dist_package, electron_dist_dir))
-            os.chdir(cwd)
-            electron_dist_package_path = os.path.join(electron_node_module_dir, electron_dist_package)
-            copy_file(electron_dist_package_path, os.path.join(DIST_DIR, electron_dist_package))
-            remove_file(electron_dist_package_path)
-            os.chdir(DIST_DIR)
-            run_cmd('%s -t7z x %s' % (exe_7z_sys, electron_dist_package))
-            remove_file(electron_dist_package)
-            os.rename(electron_dist_dir, app_name)
-        else:
-            os.chdir(electron_dist_dir)
-            electron_dist_app_name = 'Electron.app'
-            electron_dist_package = '%s.tar.%s' % (electron_dist_app_name, tar_ext)
-            run_cmd('tar %s %s %s' % (tar_param, electron_dist_package, electron_dist_app_name))
-            os.chdir(cwd)
-            electron_dist_package_path = os.path.join(electron_node_module_dir, electron_dist_dir, electron_dist_package)
-            copy_file(electron_dist_package_path, os.path.join(DIST_DIR, electron_dist_package))
-            remove_file(electron_dist_package_path)
-            os.chdir(DIST_DIR)
-            run_cmd('tar -xvf %s' % (electron_dist_package))
-            remove_file(electron_dist_package)
-            os.rename(electron_dist_app_name, app_name)
+        os.chdir(electron_dist_dir)
+        electron_dist_app_name = 'Electron.app'
+        electron_dist_package = '%s.tar.%s' % (electron_dist_app_name, tar_ext)
+        run_cmd('tar %s %s %s' % (tar_param, electron_dist_package, electron_dist_app_name))
         os.chdir(cwd)
+        electron_dist_package_path = os.path.join(electron_node_module_dir, electron_dist_dir, electron_dist_package)
+        copy_file(electron_dist_package_path, os.path.join(DIST_DIR, electron_dist_package))
+        remove_file(electron_dist_package_path)
+        os.chdir(DIST_DIR)
+        run_cmd('tar -xvf %s' % (electron_dist_package))
+        remove_file(electron_dist_package)
+        os.rename(electron_dist_app_name, app_name)
+    os.chdir(cwd)
+
     os.chdir(DIST_DIR)
     os.mkdir(app_path_relative)
     os.chdir(cwd)
