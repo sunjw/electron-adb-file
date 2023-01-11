@@ -156,7 +156,7 @@ def main():
         run_cmd('%s -t7z x %s' % (exe_7z_sys, electron_dist_package))
         remove_file(electron_dist_package)
         os.rename(electron_dist_dir, app_name)
-    else:
+    elif is_macos_sys():
         os.chdir(electron_dist_dir)
         electron_dist_app_name = 'Electron.app'
         electron_dist_package = '%s.tar.%s' % (electron_dist_app_name, tar_ext)
@@ -169,6 +169,20 @@ def main():
         run_cmd('tar -xvf %s' % (electron_dist_package))
         remove_file(electron_dist_package)
         os.rename(electron_dist_app_name, app_name)
+    elif is_linux_sys():
+        electron_dist_package = 'dist.tar.%s' % (tar_ext)
+        run_cmd('tar %s %s %s' % (tar_param, electron_dist_package, electron_dist_dir))
+        os.chdir(cwd)
+        electron_dist_package_path = os.path.join(electron_node_module_dir, electron_dist_package)
+        copy_file(electron_dist_package_path, os.path.join(DIST_DIR, electron_dist_package))
+        remove_file(electron_dist_package_path)
+        os.chdir(DIST_DIR)
+        run_cmd('tar -xvf %s' % (electron_dist_package))
+        remove_file(electron_dist_package)
+        os.rename(electron_dist_dir, app_name)
+    else:
+        log_stage('Not supported system.')
+        exit()
     os.chdir(cwd)
 
     os.chdir(DIST_DIR)
