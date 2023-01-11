@@ -113,6 +113,7 @@ EXEC_FIX_PATHS = ['./node_modules/.bin/electron-rebuild',
 REBUILD_CMD = ''
 REBUILD_CLEAN_PATHS_WIN = []
 REBUILD_CLEAN_PATHS_MACOS = []
+REBUILD_CLEAN_PATHS_LINUX = []
 
 def main():
     exe_7z_sys = EXE_7Z_WIN # 7z is not supported on macOS
@@ -208,7 +209,7 @@ def main():
     # Rebuild and clean.
     log_stage('Rebuild and clean...')
     os.chdir(os.path.join(DIST_DIR, app_path_relative))
-    if is_macos_sys():
+    if is_macos_sys() or is_linux_sys():
         for exec_file in EXEC_FIX_PATHS:
             st = os.stat(exec_file)
             os.chmod(exec_file, st.st_mode | stat.S_IEXEC)
@@ -219,6 +220,8 @@ def main():
     rebuild_clean_paths = REBUILD_CLEAN_PATHS_WIN
     if is_macos_sys():
         rebuild_clean_paths = REBUILD_CLEAN_PATHS_MACOS
+    if is_linux_sys():
+        rebuild_clean_paths = REBUILD_CLEAN_PATHS_LINUX
     for rebuild_clean_path in rebuild_clean_paths:
         remove_dir(rebuild_clean_path)
     os.chdir(cwd)
