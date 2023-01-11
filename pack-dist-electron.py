@@ -261,11 +261,13 @@ def main():
     log_stage('Package and clean up...')
     os.chdir(DIST_DIR)
     if is_windows_sys():
-        remove_file('%s.7z' % (app_name))
-        run_cmd('%s -t7z -mx9 a %s.7z %s' % (exe_7z_sys, app_name, app_name))
+        app_package_file = '%s.7z' % (app_name)
+        remove_file(app_package_file)
+        run_cmd('%s -t7z -mx9 a %s %s' % (exe_7z_sys, app_package_file, app_name))
     else:
+        app_package_file = '%s.%s.tar.%s' % (app_name, machine_name, tar_ext)
         remove_file('%s.%s.tar.%s' % (app_name, machine_name, tar_ext))
-        run_cmd('tar %s %s.%s.tar.%s %s' % (tar_param, app_name, machine_name, tar_ext, app_name))
+        run_cmd('tar %s %s %s' % (tar_param, app_package_file, app_name))
     remove_dir(app_name)
 
 if __name__ == '__main__':
