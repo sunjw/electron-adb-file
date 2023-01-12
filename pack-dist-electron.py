@@ -96,6 +96,7 @@ def log_stage(stage_message):
 
 EXE_7Z_WIN = '7z'
 USING_XZ_MACOS = True
+SUPPORT_LINUX = True
 
 APP_TITLE = 'electron-adb-file'
 PACKAGE_NAME = 'electron-adb-file'
@@ -122,6 +123,9 @@ def main():
     if USING_XZ_MACOS:
         tar_ext = 'xz'
         tar_param = '-cJvf'
+    if is_linux_sys() and (not SUPPORT_LINUX):
+        log_stage('Not supported Linux.')
+        exit()
 
     app_name = PACKAGE_NAME
     app_dir_path_relative = 'resources/app'
