@@ -270,7 +270,7 @@ def main():
         run_cmd('%s -t7z -mx9 a %s %s' % (exe_7z_sys, app_package_file, app_name))
     else:
         app_package_file = '%s.%s.tar.%s' % (app_name, machine_name, tar_ext)
-        remove_file('%s.%s.tar.%s' % (app_name, machine_name, tar_ext))
+        remove_file(app_package_file)
         run_cmd('tar %s %s %s' % (tar_param, app_package_file, app_name))
     remove_dir(app_name)
 
