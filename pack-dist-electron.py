@@ -127,14 +127,20 @@ def main():
         log_stage('Not supported Linux.')
         exit()
 
+    system_name = 'win'
+    if is_macos_sys():
+        system_name = 'macos'
+    elif is_linux_sys():
+        system_name = 'linux'
+    machine_name = platform.machine()
+    machine_name = machine_name.lower()
+
     app_name = PACKAGE_NAME
     app_dir_path_relative = 'resources/app'
     if is_macos_sys():
         app_name = PACKAGE_NAME + '.app'
         app_dir_path_relative = 'Contents/Resources/app'
     app_path_relative = os.path.join(app_name, app_dir_path_relative)
-
-    machine_name = platform.machine()
 
     cwd = os.getcwd()
 
@@ -264,12 +270,13 @@ def main():
     # Package and clean up.
     log_stage('Package and clean up...')
     os.chdir(DIST_DIR)
+    app_package_file = '%s.%s.%s' % (app_name, system_name, machine_name)
     if is_windows_sys():
-        app_package_file = '%s.7z' % (app_name)
+        app_package_file = '%s.7z' % (app_package_file)
         remove_file(app_package_file)
         run_cmd('%s -t7z -mx9 a %s %s' % (exe_7z_sys, app_package_file, app_name))
     else:
-        app_package_file = '%s.%s.tar.%s' % (app_name, machine_name, tar_ext)
+        app_package_file = '%s.tar.%s' % (app_package_file, tar_ext)
         remove_file(app_package_file)
         run_cmd('tar %s %s %s' % (tar_param, app_package_file, app_name))
     remove_dir(app_name)
