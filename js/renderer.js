@@ -7,7 +7,6 @@ const Path = require('path');
 
 window.$ = window.jQuery = require('jquery');
 const bootstrap = require('bootstrap');
-const fixPath = require('fix-path')();
 
 const Utils = require('./utils');
 const ADBHelper = require('./adb-helper');
