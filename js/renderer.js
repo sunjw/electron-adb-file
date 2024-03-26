@@ -8,7 +8,7 @@ const Path = require('path');
 window.$ = window.jQuery = require('jquery');
 const bootstrap = require('bootstrap');
 const fixPath = require('fix-esm').require('@sunjw8888/fix-path-cjs-wrapper');
-fixPath.fixPathWrapper();
+fixPath.fixPathWrapper(); // fix-path is important for packed electron app
 
 const Utils = require('./utils');
 const ADBHelper = require('./adb-helper');
