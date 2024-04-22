@@ -22,6 +22,7 @@ const CMD_DELIMITER = '/';
 const CMD_CLOSE_DIALOG = 'close-dialog';
 const CMD_SHOW_DEVICE = 'show-device';
 const CMD_SELECT_DEVICE = 'select-device';
+const CMD_SHOW_FIND = 'show-find';
 const CMD_SHOW_HIDDEN = 'show-hidden';
 const CMD_SHOW_TRANSFER = 'show-transfer';
 const CMD_CLICK_FILENAME = 'click-filename';
@@ -47,6 +48,7 @@ let downloadsDirPath = null;
 
 let aBtnUp = null;
 let aBtnRefresh = null;
+let aBtnFind = null;
 let aBtnHiddenFile = null;
 let aBtnAndroid = null;
 let aBtnSdcard = null;
@@ -75,8 +77,12 @@ let transferPendingFinish = false;
 
 let dirListFilter = new ListFilter.ListFilter(remote.getCurrentWebContents());
 
-ipcRenderer.on('on-find', (e, args) => {
+function showFilter() {
     dirListFilter.openFilterBox();
+}
+
+ipcRenderer.on('on-find', (e, args) => {
+    showFilter();
 })
 
 ipcRenderer.on('set-downloads-path', (event, arg) => {
@@ -104,6 +110,7 @@ function init() {
 
     aBtnUp = $('#divToolbarWrapper #aBtnUp');
     aBtnRefresh = $('#divToolbarWrapper #aBtnRefresh');
+    aBtnFind = $('#divToolbarWrapper #aBtnFind');
     aBtnHiddenFile = $('#divToolbarWrapper #aBtnHiddenFile');
     aBtnAndroid = $('#divToolbarWrapper #aBtnAndroid');
     aBtnSdcard = $('#divToolbarWrapper #aBtnSdcard');
@@ -196,6 +203,9 @@ function initToolbar() {
         return handleCmdClick($(this));
     });
     aBtnRefresh.addClass('disabled').on('click', function () {
+        return handleCmdClick($(this));
+    });
+    aBtnFind.addClass('disabled').on('click', function () {
         return handleCmdClick($(this));
     });
     aBtnHiddenFile.addClass('disabled').on('click', function () {
@@ -682,8 +692,10 @@ function selectDeviceAndRefreshRootDir(device) {
     let lsRootCmd = CMD_LS_DIR + CMD_DELIMITER + '/';
     let lsAndroidCmd = CMD_LS_DIR + CMD_DELIMITER + '/sdcard/Android/';
     let lsSdcardCmd = CMD_LS_DIR + CMD_DELIMITER + '/sdcard/';
+    let showFindCmd = CMD_SHOW_FIND;
     let showHiddenCmd = CMD_SHOW_HIDDEN;
     let showTransferCmd = CMD_SHOW_TRANSFER;
+    aBtnFind.attr('href', showFindCmd).removeClass('disabled');
     aBtnHiddenFile.attr('href', showHiddenCmd).removeClass('disabled');
     aBtnAndroid.attr('href', lsAndroidCmd).removeClass('disabled');
     aBtnSdcard.attr('href', lsSdcardCmd).removeClass('disabled');
@@ -823,6 +835,9 @@ function handleCmdClick(cmdLink) {
             selectDeviceAndRefreshRootDir(device);
         });
         hideDialog();
+        break;
+    case CMD_SHOW_FIND:
+        showFilter();
         break;
     case CMD_SHOW_HIDDEN:
         showHidden();
