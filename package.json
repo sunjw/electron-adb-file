@@ -17,9 +17,9 @@
   "author": "Sun Junwen",
   "license": "GPL-2.0",
   "devDependencies": {
-    "@babel/core": "^7.24.4",
-    "@babel/plugin-transform-export-namespace-from": "^7.24.1",
-    "@babel/plugin-transform-modules-commonjs": "^7.24.1",
+    "@babel/core": "^7.25.2",
+    "@babel/plugin-transform-export-namespace-from": "^7.24.7",
+    "@babel/plugin-transform-modules-commonjs": "^7.24.8",
     "@electron/rebuild": "^3.6.0",
     "@electron/remote": "^2.1.2",
     "clear-module": "^4.1.2",
