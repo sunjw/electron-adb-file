@@ -1,5 +1,6 @@
 const {
-    ipcRenderer
+    ipcRenderer,
+    webUtils
 } = require('electron');
 const remote = require('@electron/remote');
 
@@ -314,7 +315,7 @@ function initDirList() {
         divDirWrapper.removeClass('dropFile');
         e.preventDefault();
         for (let f of e.dataTransfer.files) {
-            pushFile(f.path);
+            pushFile(webUtils.getPathForFile(f));
         }
         return false;
     };
