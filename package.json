@@ -17,11 +17,11 @@
   "author": "Sun Junwen",
   "license": "GPL-2.0",
   "devDependencies": {
-    "@electron/rebuild": "^3.7.0",
+    "@electron/rebuild": "^3.7.1",
     "@electron/remote": "^2.1.2",
     "clear-module": "^4.1.2",
     "electron": "^34.2.0",
-    "node-abi": "^3.71.0",
+    "node-abi": "^3.74.0",
     "p-defer": "^4.0.1"
   },
   "dependencies": {
@@ -31,6 +31,6 @@
     "electron-localshortcut": "^3.2.1",
     "electron-window-state": "^5.0.3",
     "jquery": "^3.7.1",
-    "material-icons": "^1.13.12"
+    "material-icons": "^1.13.14"
   }
 }
