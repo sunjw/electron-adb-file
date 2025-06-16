@@ -1,6 +1,6 @@
 {
   "name": "electron-adb-file",
-  "version": "2.504.0",
+  "version": "2.506.0",
   "description": "An ADB file tool built on Electron",
   "main": "main.js",
   "scripts": {
