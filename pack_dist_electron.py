@@ -111,9 +111,9 @@ SUPPORT_LINUX = True
 APP_TITLE = 'electron-adb-file'
 PACKAGE_NAME = 'electron-adb-file'
 
-RESOURCE_HACKER_SCRIPT = ''
+RESOURCE_HACKER_SCRIPT = 'rh_script_upd_icons.txt'
 APP_BUNDLE_ID_MACOS = 'org.sunjw.ElectronAdbFile'
-APP_ICNS_MACOS = ''
+APP_ICNS_MACOS = 'icons/mac/icon.icns'
 
 DIST_DIR = 'dist'
 APP_DIRS = ['node_modules', 'assets', 'css', 'js']
