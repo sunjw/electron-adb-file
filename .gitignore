@@ -2,7 +2,9 @@
 .DS_Store
 *.bak
 node_modules
+ResourceHacker.log
+
+icons/png/*
 dist/electron-adb-file.app/*
 dist/electron-adb-file/*
 dist/electron-adb-file.linux.*.tar.xz
-ResourceHacker.log
