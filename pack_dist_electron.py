@@ -103,12 +103,17 @@ def log_stage(stage_message):
     log('\n%s\n' % (stage_message))
 
 EXE_7Z_WIN = '7z'
+EXE_RESOURCE_HACKER_WIN = 'ResourceHacker.exe'
+
 USING_XZ_MACOS = True
 SUPPORT_LINUX = True
 
 APP_TITLE = 'electron-adb-file'
 PACKAGE_NAME = 'electron-adb-file'
+
+RESOURCE_HACKER_SCRIPT = ''
 APP_BUNDLE_ID_MACOS = 'org.sunjw.ElectronAdbFile'
+APP_ICNS_MACOS = ''
 
 DIST_DIR = 'dist'
 APP_DIRS = ['node_modules', 'assets', 'css', 'js']
@@ -120,8 +125,8 @@ EXEC_FIX_PATHS = ['./node_modules/.bin/electron-rebuild',
                 './node_modules/.bin/rimraf']
 
 REBUILD_CMD = ''
-REBUILD_CLEAN_PATHS_WIN = []
-REBUILD_CLEAN_PATHS_MACOS = []
+REBUILD_CLEAN_PATHS_WIN = ['./node_modules/@img', './node_modules/@jimp']
+REBUILD_CLEAN_PATHS_MACOS = ['./node_modules/@img', './node_modules/@jimp']
 REBUILD_CLEAN_PATHS_LINUX = []
 
 def main():
@@ -149,6 +154,8 @@ def main():
         app_name = PACKAGE_NAME + '.app'
         app_dir_path_relative = 'Contents/Resources/app'
     app_path_relative = os.path.join(app_name, app_dir_path_relative)
+
+    new_icns_name_mac = ''
 
     cwd = os.getcwd()
 
@@ -244,6 +251,17 @@ def main():
         remove_dir(rebuild_clean_path)
     os.chdir(cwd)
 
+    # Update icon.
+    log_stage('Update icon...')
+    if is_windows_sys() and RESOURCE_HACKER_SCRIPT != '':
+        run_cmd('ResourceHacker.exe -script %s' % (RESOURCE_HACKER_SCRIPT))
+    elif is_macos_sys() and APP_ICNS_MACOS != '':
+        electron_default_icns_path = os.path.join(DIST_DIR, app_name, 'Contents/Resources/electron.icns')
+        new_icns_name_mac = APP_TITLE + '.icns'
+        new_icns_path = os.path.join(DIST_DIR, app_name, 'Contents/Resources', new_icns_name_mac)
+        remove_file(electron_default_icns_path)
+        copy_file(APP_ICNS_MACOS, new_icns_path)
+
     # Rename electron files.
     log_stage('Rename electron files...')
     os.chdir(os.path.join(DIST_DIR, app_name))
@@ -265,6 +283,8 @@ def main():
     electron_exe_path = '%s%s' % (electron_exe_dir, electron_exe_name)
     if os.path.exists(electron_exe_path):
         os.rename(electron_exe_path, electron_exe_app_name)
+
+    # Update Info.plist.
     if is_macos_sys():
         info_plist_path = './Contents/Info.plist'
         info_plist_content = read_file_content(info_plist_path)
@@ -272,7 +292,11 @@ def main():
                                 bytes('>%s<' % (APP_TITLE), encoding='utf8'))
         info_plist_content = info_plist_content.replace(b'>com.github.Electron<',
                                 bytes('>%s<' % (APP_BUNDLE_ID_MACOS), encoding='utf8'))
+        if new_icns_name_mac != '':
+            info_plist_content = info_plist_content.replace(b'>electron.icns<',
+                                    bytes('>%s<' % (new_icns_name_mac), encoding='utf8'))
         write_file_content(info_plist_path, info_plist_content)
+
     os.chdir(cwd)
 
     # Package and clean up.
