@@ -20,7 +20,7 @@
     "@electron/rebuild": "^3.7.2",
     "@electron/remote": "^2.1.2",
     "clear-module": "^4.1.2",
-    "electron": "^36.8.1",
+    "electron": "^38.6.0",
     "node-abi": "^3.75.0",
     "p-defer": "^4.0.1"
   },
