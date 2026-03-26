@@ -10,9 +10,9 @@ const Utils = require('./utils');
 const ADBHelper = require('./adb-helper');
 const ListFilter = require('./listfilter');
 
-const fixPathCjs = require('@sunjw8888/fix-path-cjs');
+const fixPath = require('fix-path').default;
 //Utils.log('PATH=[' + process.env.PATH + ']');
-fixPathCjs.fixPath(); // fix-path is important for packed electron app
+fixPath(); // fix-path is important for packed electron app
 //Utils.log('PATH=[' + process.env.PATH + ']');
 
 const CMD_DELIMITER = '/';
