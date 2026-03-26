@@ -122,8 +122,7 @@ APP_FILES = ['index.html', 'main.js',
             'package.json', 'package-lock.json',
             'README.md', 'LICENSE']
 
-EXEC_FIX_PATHS = ['./node_modules/.bin/electron-rebuild',
-                './node_modules/.bin/rimraf']
+EXEC_FIX_PATHS = ['./node_modules/.bin/electron-rebuild']
 
 REBUILD_CMD = ''
 REBUILD_CLEAN_PATHS_WIN = ['./node_modules/@img', './node_modules/@jimp']
