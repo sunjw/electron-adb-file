@@ -26,6 +26,7 @@
     "yargs": "^18.0.0"
   },
   "dependencies": {
+    "@fontsource/google-sans": "^5.2.1",
     "@sunjw8888/adbkit": "^3.3.19",
     "bootstrap": "^5.3.8",
     "electron-localshortcut": "^3.2.1",
