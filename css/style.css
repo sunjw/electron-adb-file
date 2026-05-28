@@ -1,11 +1,4 @@
 /* Defines */
-@font-face {
-    font-family: 'Product Sans';
-    font-style: normal;
-    font-weight: 400;
-    src: url(../assets/GoogleSans-Regular.ttf) format('truetype');
-}
-
 :root {
     --color-android: #006ee8;
     --color-android-light: #2196F3;
@@ -26,7 +19,7 @@
 }
 body {
     line-height: 1.4em;
-    font-family: 'Product Sans',Arial,Helvetica,sans-serif;
+    font-family: 'Google Sans',Arial,Helvetica,sans-serif;
     font-size: 16px;
     cursor: default;
 }
