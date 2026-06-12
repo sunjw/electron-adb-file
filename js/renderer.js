@@ -51,7 +51,6 @@ let downloadsDirPath = null;
 
 let aBtnBack = null;
 let aBtnForward = null;
-let aBtnUp = null;
 let aBtnRefresh = null;
 let aBtnFind = null;
 let aBtnHiddenFile = null;
@@ -162,7 +161,6 @@ function init() {
 
     aBtnBack = $('#divToolbarWrapper #aBtnBack');
     aBtnForward = $('#divToolbarWrapper #aBtnForward');
-    aBtnUp = $('#divToolbarWrapper #aBtnUp');
     aBtnRefresh = $('#divToolbarWrapper #aBtnRefresh');
     aBtnFind = $('#divToolbarWrapper #aBtnFind');
     aBtnHiddenFile = $('#divToolbarWrapper #aBtnHiddenFile');
@@ -261,9 +259,6 @@ function initToolbar() {
         return handleCmdClick($(this));
     });
     aBtnForward.addClass('disabled').on('click', function () {
-        return handleCmdClick($(this));
-    });
-    aBtnUp.addClass('disabled').on('click', function () {
         return handleCmdClick($(this));
     });
     aBtnRefresh.addClass('disabled').on('click', function () {
@@ -679,14 +674,8 @@ function refreshDirList() {
     let curDir = adbHelper.getCurDir();
     curDir = curDir.substr(0, curDir.length - 1);
     let pathDelimIdx = curDir.lastIndexOf('/');
-    if (pathDelimIdx >= 0) {
-        // Not root
-        let parentDir = Utils.getParentDir(curDir);
-        let lsUpDirCmd = CMD_LS_DIR + CMD_DELIMITER + parentDir;
-        aBtnUp.attr('href', lsUpDirCmd).removeClass('disabled');
-    } else {
+    if (pathDelimIdx < 0) {
         // Root
-        aBtnUp.attr('href', '').addClass('disabled');
         let refreshRootCmd = CMD_REFRESH_DIR + CMD_DELIMITER + '/';
         aBtnRefresh.attr('href', refreshRootCmd);
     }
