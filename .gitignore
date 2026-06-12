@@ -8,3 +8,5 @@ icons/png/*
 dist/electron-adb-file.app/*
 dist/electron-adb-file/*
 dist/electron-adb-file.linux.*.tar.xz
+dist/electron-adb-file.win.*.7z
+dist/electron-adb-file.app.macos.*.tar.xz
