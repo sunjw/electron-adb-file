@@ -94,7 +94,7 @@ function makeLsPathHash(path) {
 
 function onHashChange() {
     let locationHash = window.location.hash;
-    Utils.log('current hash: [%s].', locationHash);
+    Utils.log('onHashChange, locationHash=[%s].', locationHash);
     if (!locationHash.startsWith(HASH_PREFIX + CMD_DELIMITER)) {
         return;
     }
@@ -102,7 +102,7 @@ function onHashChange() {
     let hashBody = locationHash.slice((HASH_PREFIX + CMD_DELIMITER).length);
     let hashParts = hashBody.split(CMD_DELIMITER);
     let action = hashParts[0];
-    Utils.log('hash action=[%s].', action);
+    Utils.log('onHashChange, action=[%s].', action);
 
     if (action == HASH_ACTION_LS) {
         let encodedPath = hashParts.slice(1).join(CMD_DELIMITER).trim();
@@ -111,7 +111,7 @@ function onHashChange() {
         }
 
         let decodedPath = decodeURIComponent(encodedPath);
-        Utils.log('hash ls path=[%s].', decodedPath);
+        Utils.log('onHashChange, decodedPath=[%s].', decodedPath);
         setCurrentDir(decodedPath);
         refreshDirList();
     }
