@@ -24,6 +24,7 @@ const CMD_SHOW_HIDDEN = 'show-hidden';
 const CMD_SHOW_TRANSFER = 'show-transfer';
 const CMD_CLICK_FILENAME = 'click-filename';
 const CMD_LS_DIR = 'ls';
+const CMD_REFRESH_DIR = 'refresh';
 const CMD_STOP_TRANSFER = 'stop-transfer';
 const CMD_PULL = 'pull';
 const CMD_SHOW_PULL = 'show-pull';
@@ -675,8 +676,8 @@ function refreshDirList() {
     } else {
         // Root
         aBtnUp.attr('href', '').addClass('disabled');
-        let lsRootCmd = CMD_LS_DIR + CMD_DELIMITER + '/';
-        aBtnRefresh.attr('href', lsRootCmd);
+        let refreshRootCmd = CMD_REFRESH_DIR + CMD_DELIMITER + '/';
+        aBtnRefresh.attr('href', refreshRootCmd);
     }
 
     // Path bar
@@ -703,7 +704,8 @@ function refreshDirList() {
         } else {
             // Last one
             divToolbarPathContainer.append($('<span/>').html(pathDirHtml));
-            aBtnRefresh.attr('href', lsPathCmd);
+            let refreshPathCmd = CMD_REFRESH_DIR + CMD_DELIMITER + pathPostfix;
+            aBtnRefresh.attr('href', refreshPathCmd);
         }
     }
 
@@ -902,6 +904,7 @@ function handleCmdClick(cmdLink) {
         aFileLink.trigger('click');
         break;
     case CMD_LS_DIR:
+    case CMD_REFRESH_DIR:
         let path = '';
         if (!adbCmdParam.startsWith('/')) {
             // Relative path
@@ -910,7 +913,12 @@ function handleCmdClick(cmdLink) {
             // Absolute path
             path = adbCmdParam;
         }
-        navToPathByHash(path);
+        if (adbCmd == CMD_LS_DIR) {
+            navToPathByHash(path);
+        } else if (adbCmd == CMD_REFRESH_DIR) {
+            setCurrentDir(path);
+            refreshDirList();
+        }
         break;
     case CMD_STOP_TRANSFER:
         const transferId = adbCmdParam;
