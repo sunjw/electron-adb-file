@@ -25,6 +25,8 @@ const CMD_SHOW_TRANSFER = 'show-transfer';
 const CMD_CLICK_FILENAME = 'click-filename';
 const CMD_LS_DIR = 'ls';
 const CMD_REFRESH_DIR = 'refresh';
+const CMD_HISTORY_BACK = 'history-back';
+const CMD_HISTORY_FORWARD = 'history-forward';
 const CMD_STOP_TRANSFER = 'stop-transfer';
 const CMD_PULL = 'pull';
 const CMD_SHOW_PULL = 'show-pull';
@@ -250,6 +252,23 @@ function initToolbar() {
     if (Utils.isMacOS()) {
         divToolbarFunc.addClass('toolbarFuncFramelessMac');
     }
+
+    let aBtnHistoryBack = $('<a/>').attr({
+        'id': 'aBtnHistoryBack',
+        'href': CMD_HISTORY_BACK,
+        'title': 'Back'
+    }).addClass('toolbarButton').text('Back').on('click', function () {
+        return handleCmdClick($(this));
+    });
+    let aBtnHistoryForward = $('<a/>').attr({
+        'id': 'aBtnHistoryForward',
+        'href': CMD_HISTORY_FORWARD,
+        'title': 'Forward'
+    }).addClass('toolbarButton').text('Forward').on('click', function () {
+        return handleCmdClick($(this));
+    });
+    $('#divToolbarFuncLeftPart').prepend(aBtnHistoryForward);
+    $('#divToolbarFuncLeftPart').prepend(aBtnHistoryBack);
 
     aBtnUp.addClass('disabled').on('click', function () {
         return handleCmdClick($(this));
@@ -897,6 +916,12 @@ function handleCmdClick(cmdLink) {
     case CMD_SHOW_TRANSFER:
         showTransferListDialog();
         break;
+    case CMD_HISTORY_BACK:
+        history.back();
+        return false;
+    case CMD_HISTORY_FORWARD:
+        history.forward();
+        return false;
     case CMD_CLICK_FILENAME:
         // Actually click link
         const aFileLink = cmdLink.find('a');
