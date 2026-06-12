@@ -49,6 +49,8 @@ let adbHelper = null;
 
 let downloadsDirPath = null;
 
+let aBtnBack = null;
+let aBtnForward = null;
 let aBtnUp = null;
 let aBtnRefresh = null;
 let aBtnFind = null;
@@ -158,6 +160,8 @@ ipcRenderer.on('leave-full-screen', (event, arg) => {
 function init() {
     adbHelper = new ADBHelper.ADBHelper('adb');
 
+    aBtnBack = $('#divToolbarWrapper #aBtnBack');
+    aBtnForward = $('#divToolbarWrapper #aBtnForward');
     aBtnUp = $('#divToolbarWrapper #aBtnUp');
     aBtnRefresh = $('#divToolbarWrapper #aBtnRefresh');
     aBtnFind = $('#divToolbarWrapper #aBtnFind');
@@ -253,23 +257,12 @@ function initToolbar() {
         divToolbarFunc.addClass('toolbarFuncFramelessMac');
     }
 
-    let aBtnHistoryBack = $('<a/>').attr({
-        'id': 'aBtnHistoryBack',
-        'href': CMD_HISTORY_BACK,
-        'title': 'Back'
-    }).addClass('toolbarButton').text('Back').on('click', function () {
+    aBtnBack.addClass('disabled').on('click', function () {
         return handleCmdClick($(this));
     });
-    let aBtnHistoryForward = $('<a/>').attr({
-        'id': 'aBtnHistoryForward',
-        'href': CMD_HISTORY_FORWARD,
-        'title': 'Forward'
-    }).addClass('toolbarButton').text('Forward').on('click', function () {
+    aBtnForward.addClass('disabled').on('click', function () {
         return handleCmdClick($(this));
     });
-    $('#divToolbarFuncLeftPart').prepend(aBtnHistoryForward);
-    $('#divToolbarFuncLeftPart').prepend(aBtnHistoryBack);
-
     aBtnUp.addClass('disabled').on('click', function () {
         return handleCmdClick($(this));
     });
@@ -764,6 +757,9 @@ function selectDeviceAndRefreshRootDir(device) {
     let showFindCmd = CMD_SHOW_FIND;
     let showHiddenCmd = CMD_SHOW_HIDDEN;
     let showTransferCmd = CMD_SHOW_TRANSFER;
+
+    aBtnBack.attr('href', CMD_HISTORY_BACK).removeClass('disabled');
+    aBtnForward.attr('href', CMD_HISTORY_FORWARD).removeClass('disabled');
     aBtnFind.attr('href', showFindCmd).removeClass('disabled');
     aBtnHiddenFile.attr('href', showHiddenCmd).removeClass('disabled');
     aBtnAndroid.attr('href', lsAndroidCmd).removeClass('disabled');
