@@ -111,21 +111,28 @@ function onHashChange() {
 
         let decodedPath = decodeURIComponent(encodedPath);
         Utils.log('onHashChange, decodedPath=[%s].', decodedPath);
-        setCurrentDir(decodedPath);
-        refreshDirList();
+        showDirList(decodedPath);
     }
 }
 
-function navToPathByHash(path) {
+function navToPathByHash(path, refreshOnSamePath = false) {
     const dirPath = normalizeDirPath(path);
     let hash = HASH_PREFIX + CMD_DELIMITER +
         HASH_ACTION_LS + CMD_DELIMITER +
         encodeURIComponent(dirPath);
     if (window.location.hash == hash) {
+        if (refreshOnSamePath) {
+            showDirList(dirPath);
+        }
         return;
     }
     Utils.log('navToPathByHash, path=[%s], hash=[%s].', path, hash);
     Utils.navToHash(hash);
+}
+
+function showDirList(path) {
+    setCurrentDir(path);
+    refreshDirList();
 }
 
 function showFilter() {
@@ -925,8 +932,7 @@ function handleCmdClick(cmdLink) {
         if (adbCmd == CMD_LS_DIR) {
             navToPathByHash(path);
         } else if (adbCmd == CMD_REFRESH_DIR) {
-            setCurrentDir(path);
-            refreshDirList();
+            showDirList(path);
         }
         break;
     case CMD_STOP_TRANSFER:
