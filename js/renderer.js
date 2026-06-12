@@ -122,6 +122,7 @@ function navToPathByHash(path, refreshOnSamePath = false) {
         encodeURIComponent(dirPath);
     if (window.location.hash == hash) {
         if (refreshOnSamePath) {
+            Utils.log('navToPathByHash, refreshOnSamePath, path=[%s], hash=[%s].', path, hash);
             showDirList(dirPath);
         }
         return;
@@ -782,7 +783,7 @@ function selectDeviceAndRefreshRootDir(device) {
 
     fitToolbarPath();
 
-    navToPathByHash('/');
+    navToPathByHash('/', true);
 }
 
 function transferFile(mode, path) {
