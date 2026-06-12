@@ -769,6 +769,8 @@ function selectDeviceAndRefreshRootDir(device) {
     divToolbarPathDevice.append(aDeviceRootLink);
 
     fitToolbarPath();
+
+    navToPathByHash('/');
 }
 
 function transferFile(mode, path) {
