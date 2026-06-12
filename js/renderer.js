@@ -34,6 +34,9 @@ const CMD_WINDOW_MAX = 'window-max';
 const CMD_WINDOW_RESTORE = 'window-restore';
 const CMD_WINDOW_CLOSE = 'window-close';
 
+const HASH_PREFIX = '#!';
+const HASH_ACTION_LS = 'ls';
+
 const IMGSET_WINDOW_MIN = 'assets/min-k-10.png 1x, assets/min-k-12.png 1.25x, assets/min-k-15.png 1.5x, assets/min-k-15.png 1.75x, assets/min-k-20.png 2x, assets/min-k-20.png 2.25x, assets/min-k-24.png 2.5x, assets/min-k-30.png 3x, assets/min-k-30.png 3.5x';
 const IMGSET_WINDOW_MAX = 'assets/max-k-10.png 1x, assets/max-k-12.png 1.25x, assets/max-k-15.png 1.5x, assets/max-k-15.png 1.75x, assets/max-k-20.png 2x, assets/max-k-20.png 2.25x, assets/max-k-24.png 2.5x, assets/max-k-30.png 3x, assets/max-k-30.png 3.5x';
 const IMGSET_WINDOW_RESTORE = 'assets/restore-k-10.png 1x, assets/restore-k-12.png 1.25x, assets/restore-k-15.png 1.5x, assets/restore-k-15.png 1.75x, assets/restore-k-20.png 2x, assets/restore-k-20.png 2.25x, assets/restore-k-24.png 2.5x, assets/restore-k-30.png 3x, assets/restore-k-30.png 3.5x';
@@ -73,6 +76,54 @@ let transferring = false;
 let transferPendingFinish = false;
 
 let dirListFilter = new ListFilter.ListFilter(remote.getCurrentWebContents());
+
+function normalizeDirPath(path) {
+    if (!path || path.trim() == '') {
+        return '/';
+    }
+    if (!path.endsWith('/')) {
+        return path + '/';
+    }
+    return path;
+}
+
+function makeLsPathHash(path) {
+    const dirPath = normalizeDirPath(path);
+    return HASH_PREFIX + CMD_DELIMITER + HASH_ACTION_LS + CMD_DELIMITER + encodeURIComponent(dirPath);
+}
+
+function onHashChange() {
+    let locationHash = window.location.hash;
+    Utils.log('current hash: [%s].', locationHash);
+    if (!locationHash.startsWith(HASH_PREFIX + CMD_DELIMITER)) {
+        return;
+    }
+
+    let hashBody = locationHash.slice((HASH_PREFIX + CMD_DELIMITER).length);
+    let hashParts = hashBody.split(CMD_DELIMITER);
+    let action = hashParts[0];
+    Utils.log('hash action=[%s].', action);
+
+    if (action == HASH_ACTION_LS) {
+        let encodedPath = hashParts.slice(1).join(CMD_DELIMITER).trim();
+        if (encodedPath == '') {
+            return;
+        }
+
+        let decodedPath = decodeURIComponent(encodedPath);
+        Utils.log('hash ls path=[%s].', decodedPath);
+        setCurrentDir(decodedPath);
+        refreshDirList();
+    }
+}
+
+function navToPathByHash(path) {
+    let hash = makeLsPathHash(path);
+    if (window.location.hash == hash) {
+        return;
+    }
+    Utils.navToHash(hash);
+}
 
 function showFilter() {
     dirListFilter.openFilterBox();
@@ -130,6 +181,10 @@ function init() {
     initDialog();
     initDirList();
     initFilter();
+
+    $(window).on('hashchange', function () {
+        onHashChange();
+    });
 
     clearDeviceList();
     clearDirList();
@@ -682,9 +737,6 @@ function filterDirList(toFilter) {
 function selectDeviceAndRefreshRootDir(device) {
     adbHelper.setCurDevice(device);
 
-    setCurrentDir('/');
-    refreshDirList();
-
     // Enable buttons
     let lsRootCmd = CMD_LS_DIR + CMD_DELIMITER + '/';
     let lsAndroidCmd = CMD_LS_DIR + CMD_DELIMITER + '/sdcard/Android/';
@@ -856,8 +908,7 @@ function handleCmdClick(cmdLink) {
             // Absolute path
             path = adbCmdParam;
         }
-        setCurrentDir(path);
-        refreshDirList();
+        navToPathByHash(path);
         break;
     case CMD_STOP_TRANSFER:
         const transferId = adbCmdParam;
@@ -900,6 +951,7 @@ function handleCmdClick(cmdLink) {
 
 $(function () {
     init();
+    onHashChange();
 
     refreshDeviceAndShowDeviceDialog(true);
 });
