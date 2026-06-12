@@ -88,11 +88,6 @@ function normalizeDirPath(path) {
     return path;
 }
 
-function makeLsPathHash(path) {
-    const dirPath = normalizeDirPath(path);
-    return HASH_PREFIX + CMD_DELIMITER + HASH_ACTION_LS + CMD_DELIMITER + encodeURIComponent(dirPath);
-}
-
 function onHashChange() {
     let locationHash = window.location.hash;
     Utils.log('onHashChange, locationHash=[%s].', locationHash);
@@ -119,10 +114,14 @@ function onHashChange() {
 }
 
 function navToPathByHash(path) {
-    let hash = makeLsPathHash(path);
+    const dirPath = normalizeDirPath(path);
+    let hash = HASH_PREFIX + CMD_DELIMITER +
+        HASH_ACTION_LS + CMD_DELIMITER +
+        encodeURIComponent(dirPath);
     if (window.location.hash == hash) {
         return;
     }
+    Utils.log('navToPathByHash, path=[%s], hash=[%s].', path, hash);
     Utils.navToHash(hash);
 }
 
