@@ -146,5 +146,16 @@ app.on('activate', function () {
   }
 })
 
+// Fix for macOS 27.
+if (utils.isMacOS()) {
+  app.on('did-become-active', function () {
+    app.setActivationPolicy('regular')
+  })
+
+  app.on('will-quit', function () {
+    app.setActivationPolicy('accessory')
+  })
+}
+
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
