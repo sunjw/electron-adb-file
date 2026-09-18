@@ -482,16 +482,16 @@ class ADBHelper {
                 transferProcess.totalSize = fileSize;
                 let basename = Path.basename(filePath);
                 let fullDestPath = destPath + basename;
-                let pullTransfer = sync.pushFile(filePath, fullDestPath);
-                pullTransfer.on('progress', (stats) => {
+                let pushTransfer = sync.pushFile(filePath, fullDestPath);
+                pushTransfer.on('progress', (stats) => {
                     let progressPercent = Math.floor((stats.bytesTransferred * 100) / transferProcess.totalSize);
                     transferProcess.percent = progressPercent;
                     onProgressCallback(progressPercent + '%');
                 });
-                pullTransfer.on('end', () => {
+                pushTransfer.on('end', () => {
                     onFinishedCallback(adbTransferResult);
                 });
-                pullTransfer.on('error', (err) => {
+                pushTransfer.on('error', (err) => {
                     adbTransferResult.code = err.name;
                     adbTransferResult.err = 'adbkitTransferFile, mode=[' + transferProcess.mode + '], [' + filePath + '] failed';
                 });
