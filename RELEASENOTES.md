@@ -1,16 +1,12 @@
-# electron-adb-file 26.7.10 Release Notes
+# electron-adb-file 26.9.11 Release Notes
 
-## Changes in electron-adb-file 26.7.10
-- **Improved Navigation:** 
-  - Implemented **Back and Forward** history support.
-  - Removed the "Up" button in favor of standard browser-like navigation.
-  - Added URL hash-based navigation for better handling of deep links and page refreshes.
-- **Dependency Updates:** 
-  - Upgraded **Electron to 42.4.0**.
+## Changes in electron-adb-file 26.9.11
+- **New feature:**
+- **Fixes & tweaks:**
+  - On macOS, hide the Dock icon when the app terminates.
+- **Dependency Updates:**
+  - Upgraded **Electron to 42.11.4**.
   - Updated various npm packages for improved stability and security.
-- **Enhancements & Fixes:** 
-  - Fixed Electron console warnings.
-  - Performed internal code refactoring for better maintenance.
 
 ---
-*Full Changelog since 26.6.8: [56842f3...64d96b8]*
+*Full Changelog since 26.7.10: [af1aae4...72a17cb]*
