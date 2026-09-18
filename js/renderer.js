@@ -820,6 +820,8 @@ function transferFile(mode, path) {
                 let spanShowIcon = $('<span/>').addClass('materialIcons material-icons-round').text('search');
                 aShowPullLink.append(spanShowIcon);
                 divTransferStop.append(aShowPullLink);
+            } else if (mode == 'push') {
+                refreshDirList();
             }
         } else {
             divTransferProgress.text(modeText + ': failed');
