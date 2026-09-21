@@ -8,6 +8,8 @@ const Utils = require('./utils.js');
 const ChildProcessHelper = require('./child_process-helper.js');
 
 const MODE_PERMISSION_DENIED = 'Permission denied';
+const SPEED_START_INTERVAL = 2; // s
+const SPEED_REFRESH_INTERVAL = 500; // ms
 
 function isFileDir(file) {
     if (file.mode.startsWith('d')) {
@@ -283,6 +285,7 @@ class ADBHelper {
         transferProcessList[transferRandId] = {};
         transferProcessList[transferRandId].mode = transferMode;
         transferProcessList[transferRandId].percent = 0;
+        transferProcessList[transferRandId].lastSpeedTime = 0;
 
         let onFinishedCallbackWrapper = function (adbTransferResult) {
             if (that.usingAdbkit && transferProcessList[transferRandId].sync) {
@@ -354,23 +357,23 @@ class ADBHelper {
             if (progressPercent != '') {
                 let percentInt = parseInt(progressPercent.substr(0, progressPercent.length - 1));
                 transferProcess.percent = percentInt;
-                let hasSpeed = false;
                 let transferSpeed = '';
                 if (transferProcess.mode == 'pull') {
                     let curTime = Date.now();
                     let transferTime = (curTime - transferProcess.startTime) / 1000.0;
-                    if (transferTime > 3) {
-                        hasSpeed = true;
+                    if (transferTime > SPEED_START_INTERVAL &&
+                        (curTime - transferProcess.lastSpeedTime) >= SPEED_REFRESH_INTERVAL) {
                         let bytesTransferred = (percentInt / 100.0) * transferProcess.totalSize;
                         transferSpeed = bytesTransferred / transferTime;
                         //Utils.log('nativeTransferFile, ' + transferTime + 's @ ' + transferSpeed + 'B/s');
                         transferSpeed = Utils.byteSizeToShortSize(transferSpeed) + 'B/s';
                         transferProcess.transferSpeed = transferSpeed;
+                        transferProcess.lastSpeedTime = curTime;
                     }
                 }
                 let progressString = progressPercent;
-                if (hasSpeed) {
-                    progressString = progressString + ' (' + transferSpeed + ')';
+                if (transferProcess.lastSpeedTime > 0) {
+                    progressString = progressString + ' (' + transferProcess.transferSpeed + ')';
                 }
                 onProgressCallback(progressString);
             }
@@ -439,18 +442,18 @@ class ADBHelper {
                         let progressPercent = Math.floor((stats.bytesTransferred * 100) / transferProcess.totalSize);
                         transferProcess.percent = progressPercent;
                         let transferSpeed = '';
-                        let hasSpeed = false;
                         let transferTime = (curTime - transferProcess.startTime) / 1000.0;
-                        if (transferTime > 3) {
-                            hasSpeed = true;
+                        if (transferTime > SPEED_START_INTERVAL &&
+                            (curTime - transferProcess.lastSpeedTime) >= SPEED_REFRESH_INTERVAL) {
                             transferSpeed = stats.bytesTransferred / transferTime;
                             //Utils.log('adbkitTransferFile, ' + transferTime + 's @ ' + transferSpeed + 'B/s');
                             transferSpeed = Utils.byteSizeToShortSize(transferSpeed) + 'B/s';
                             transferProcess.transferSpeed = transferSpeed;
+                            transferProcess.lastSpeedTime = curTime;
                         }
                         let progressString = progressPercent + '%';
-                        if (hasSpeed) {
-                            progressString = progressString + ' (' + transferSpeed + ')';
+                        if (transferProcess.lastSpeedTime > 0) {
+                            progressString = progressString + ' (' + transferProcess.transferSpeed + ')';
                         }
                         onProgressCallback(progressString);
                     });
