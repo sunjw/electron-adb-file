@@ -15,7 +15,7 @@ Windows and macOS distribution packages are in [dist](dist) directory.
 ## Update Electron
 After update Electron version, download Electron binary manually.
 ```
-npm run start
+npm start
 ```
 
 ## Update icons
