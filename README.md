@@ -12,6 +12,12 @@ Windows and macOS distribution packages are in [dist](dist) directory.
 2. npm rebuild
 3. If no error occured in previous steps, then run.
 
+## Update Electron
+After update Electron version, download Electron binary manually.
+```
+npm run start
+```
+
 ## Update icons
 ```
 # with @sunjw8888/electron-icon-builder
