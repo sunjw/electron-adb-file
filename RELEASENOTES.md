@@ -1,12 +1,13 @@
-# electron-adb-file 26.9.11 Release Notes
+# electron-adb-file 26.10.13 Release Notes
 
-## Changes in electron-adb-file 26.9.11
+## Changes in electron-adb-file 26.10.13
 - **New feature:**
+  - Directory list refreshes automatically after a push finishes.
 - **Fixes & tweaks:**
-  - On macOS, hide the Dock icon when the app terminates.
+  - Smoother transfer speed display during file pulls.
 - **Dependency Updates:**
-  - Upgraded **Electron to 42.11.4**.
+  - Upgraded **Electron to 44.4.3**.
   - Updated various npm packages for improved stability and security.
 
 ---
-*Full Changelog since 26.7.10: [af1aae4...72a17cb]*
+*Full Changelog since 26.9.11: [db23fca...f1f6573]*
