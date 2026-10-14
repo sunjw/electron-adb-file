@@ -9,6 +9,7 @@ const bootstrap = require('bootstrap');
 const Utils = require('./utils');
 const ADBHelper = require('./adb-helper');
 const ListFilter = require('./listfilter');
+const eleUtils = require('./eleUtils');
 
 const fixPath = require('fix-path').default;
 //Utils.log('PATH=[' + process.env.PATH + ']');
@@ -610,6 +611,19 @@ function refreshDirList() {
             }
             let fileNameHtml = Utils.escapeHtml(fileName);
             let divFileLine = $('<div/>').addClass('fileLine');
+            divFileLine.on('contextmenu', function (e) {
+                eleUtils.stopBubble(e);
+                let toCopyName = divFileName.attr('data-ref');
+                if (!toCopyName) {
+                    return;
+                }
+                ipcRenderer.invoke('clipboard-write-text', toCopyName).then(() => {
+                    Utils.log('copyFileName, fileName=[%s]', toCopyName);
+                    showToast('Copied "' + Utils.escapeHtml(toCopyName) + '".');
+                }).catch((err) => {
+                    Utils.log('copyFileName failed, fileName=[%s], err=%s', toCopyName, err);
+                });
+            });
 
             let divFileName = $('<div/>').addClass('fileName')
                 .attr({

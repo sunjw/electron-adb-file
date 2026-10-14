@@ -5,7 +5,7 @@ const fs = require('fs')
 const path = require('path')
 
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, dialog, ipcMain } = require('electron')
+const { app, BrowserWindow, clipboard, dialog, ipcMain } = require('electron')
 
 const electronLocalshortcut = require('electron-localshortcut')
 const windowStateKeeper = require('electron-window-state')
@@ -126,6 +126,10 @@ ipcMain.on('set-transfer-count', (event, arg) => {
 ipcMain.on('set-transfer-progress', (event, arg) => {
   let transferProgress = arg / 100
   mainWindow.setProgressBar(transferProgress)
+})
+
+ipcMain.handle('clipboard-write-text', (event, text) => {
+  clipboard.writeText(String(text ?? ''))
 })
 
 // This method will be called when Electron has finished
