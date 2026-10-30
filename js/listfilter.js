@@ -73,7 +73,7 @@ class ListFilter {
         this.inputToFilter = $('<input/>').attr({
             'id': 'inputToFilter',
             'type': 'text',
-            'placeholder': 'Filter files',
+            'placeholder': 'Find files',
             'autocomplete': 'off',
             'spellcheck': 'false'
         });
@@ -86,7 +86,7 @@ class ListFilter {
 
         this.divFilterSearchBar.append(this.divFilterSearchField);
 
-        this.aFilter = $('<a/>').attr('id', 'filterBtnFilter').text('Filter');
+        this.aFilter = $('<a/>').attr('id', 'filterBtnFilter').text('Find');
         this.aFilter.addClass('filterButton').addClass('filterBtnTonal');
         this.aFilter.on('click', function () {
             if (that.filterHandler) {
