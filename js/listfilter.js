@@ -62,19 +62,32 @@ class ListFilter {
 
         this.divFilterBox = $('<div/>').attr('id', this.filterBoxId).addClass('filterBox');
 
+        this.divFilterSearchBar = $('<div/>').addClass('filterSearchBar');
+
+        this.divFilterSearchField = $('<div/>').addClass('filterSearchField');
+
+        let spanSearchIcon = $('<span/>').addClass('materialIcons material-icons-round filterSearchIcon')
+            .text('search');
+        this.divFilterSearchField.append(spanSearchIcon);
+
         this.inputToFilter = $('<input/>').attr({
             'id': 'inputToFilter',
-            'type': 'text'
+            'type': 'text',
+            'placeholder': 'Filter files',
+            'autocomplete': 'off',
+            'spellcheck': 'false'
         });
         this.inputToFilter.on('keydown', function (e) {
             if (e.code == 'Enter' || e.code == 'NumpadEnter') {
                 that.aFilter.trigger('click');
             }
         });
-        this.divFilterBox.append(this.inputToFilter);
+        this.divFilterSearchField.append(this.inputToFilter);
+
+        this.divFilterSearchBar.append(this.divFilterSearchField);
 
         this.aFilter = $('<a/>').attr('id', 'filterBtnFilter').text('Filter');
-        this.aFilter.addClass('filterButton');
+        this.aFilter.addClass('filterButton').addClass('filterBtnTonal');
         this.aFilter.on('click', function () {
             if (that.filterHandler) {
                 return that.filterHandler($(this));
@@ -84,9 +97,10 @@ class ListFilter {
         if (this.filterButtonAttrs) {
             this.aFilter.attr(this.filterButtonAttrs);
         }
-        this.divFilterBox.append(this.aFilter);
+        this.divFilterSearchBar.append(this.aFilter);
 
         this.aClose = $('<a/>').attr('id', 'filterBtnClose').addClass('filterButton');
+        this.aClose.addClass('filterBtnIcon').attr('title', 'Close');
         this.aClose.on('click', function () {
             that.closeFilterBox();
             return false;
@@ -96,7 +110,9 @@ class ListFilter {
         if (this.closeButtonAttrs) {
             this.aClose.attr(this.closeButtonAttrs);
         }
-        this.divFilterBox.append(this.aClose);
+        this.divFilterSearchBar.append(this.aClose);
+
+        this.divFilterBox.append(this.divFilterSearchBar);
 
         this.containerElem.append(this.divFilterBox);
 

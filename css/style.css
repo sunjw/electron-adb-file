@@ -6,6 +6,14 @@
     --color-gray: #666666;
     --color-light-gray: #e0e0e0;
     --file-name-width: 400px;
+
+    /* Material 3 tokens */
+    --md-surface: #ffffff;
+    --md-on-surface: #1a1c1e;
+    --md-on-surface-variant: #44474e;
+    --md-surface-variant: #e3e2e6;
+    --md-surface-container-high: #eef1f6;
+    --md-elevation-3: 0 1px 3px 0 rgba(0,0,0,0.30), 0 4px 8px 3px rgba(0,0,0,0.15);
 }
 /* Defines */
 
@@ -339,55 +347,102 @@ ul {
 /* Filter */
 .filterBox {
     position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 275px;
-    height: 48px;
-    line-height: 48px;
-    background-color: white;
-    border-radius: 6px 0 0 0;
-    box-shadow: 0 0 30px rgba(0,0,0,0.6);
+    bottom: 16px;
+    right: 16px;
+    width: 360px;
+    background-color: var(--md-surface);
+    border-radius: 16px;
+    box-shadow: var(--md-elevation-3);
     user-select: none;
-    overflow: hidden;
     display: none;
 }
 .filterBox.filterShow {
     display: block;
 }
+.filterBox .filterSearchBar {
+    display: flex;
+    align-items: center;
+    height: 56px;
+    padding: 0 8px 0 8px;
+    gap: 4px;
+}
+.filterBox .filterSearchField {
+    display: flex;
+    align-items: center;
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 40px;
+    padding: 0 12px 0 14px;
+    gap: 10px;
+    border-radius: 20px;
+    background-color: var(--md-surface-container-high);
+    transition: background-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+.filterBox .filterSearchField:focus-within {
+    background-color: var(--md-surface);
+    box-shadow: inset 0 0 0 2px var(--color-android);
+}
+.filterBox .filterSearchIcon {
+    font-size: 22px;
+    color: var(--md-on-surface-variant);
+    flex: none;
+}
 .filterBox input[type='text'] {
-    float: left;
-    width: 160px;
-    height: 20px;
-    margin: 14px 10px 0 16px;
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 100%;
+    padding: 0;
     border: 0;
-    border-bottom: 1px solid var(--color-light-gray);
     border-radius: 0;
     outline: none;
-    font-size: 16px;
+    background: transparent;
+    font-family: inherit;
+    font-size: 15px;
+    color: var(--md-on-surface);
 }
-.filterBox input[type='text']:focus {
-    border-color: var(--color-android);
+.filterBox input[type='text']::placeholder {
+    color: var(--md-on-surface-variant);
+    opacity: 1;
 }
 .filterBox .filterButton {
-    display: block;
-    float: left;
-    height: 20px;
-    line-height: 20px;
-    margin: 14px 10px 0 0;
+    flex: none;
     cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
 }
-.filterBox .filterButton .materialIcons {
-    font-size: 20px;
+.filterBox .filterBtnTonal {
+    height: 40px;
+    padding: 0 12px;
+    font-size: 15px;
+    font-weight: normal;
+    color: var(--color-android);
+    background-color: transparent;
 }
-.filterBox #filterBtnClose {
-    margin-left: 10px;
-    color: var(--color-gray);
-}
-.filterBox #filterBtnClose:hover {
+.filterBox .filterBtnTonal:hover {
+    background-color: transparent;
     color: var(--color-android-light);
 }
-.filterBox #filterBtnClose:active {
+.filterBox .filterBtnTonal:active {
+    background-color: transparent;
     color: var(--color-android-dark);
+}
+.filterBox .filterBtnIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    color: var(--md-on-surface-variant);
+}
+.filterBox .filterBtnIcon .materialIcons {
+    font-size: 20px;
+}
+.filterBox .filterBtnIcon:hover {
+    background-color: var(--md-surface-variant);
+    color: var(--md-on-surface);
+}
+.filterBox .filterBtnIcon:active {
+    background-color: #d3d2d6;
 }
 /* Filter */
 
