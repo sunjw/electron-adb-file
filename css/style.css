@@ -13,6 +13,7 @@
     --md-on-surface-variant: #44474e;
     --md-surface-variant: #e3e2e6;
     --md-surface-container-high: #eef1f6;
+    --md-corner-large: 16px;
     --md-elevation-3: 0 1px 3px 0 rgba(0,0,0,0.30), 0 4px 8px 3px rgba(0,0,0,0.15);
 }
 /* Defines */
@@ -208,7 +209,7 @@ ul {
 #divDialogWrapper .modal-content {
     background-color: white;
     padding: 20px 30px;
-    border-radius: 10px;
+    border-radius: var(--md-corner-large);
     border: 0;
     box-shadow: var(--md-elevation-3);
     top: -100px;
@@ -351,7 +352,7 @@ ul {
     right: 16px;
     width: 360px;
     background-color: var(--md-surface);
-    border-radius: 16px;
+    border-radius: var(--md-corner-large);
     box-shadow: var(--md-elevation-3);
     user-select: none;
     display: none;
