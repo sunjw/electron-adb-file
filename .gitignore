@@ -5,6 +5,8 @@ node_modules
 ResourceHacker.log
 
 icons/png/*
+working/
+
 dist/electron-adb-file/*
 dist/electron-adb-file.app/*
 dist/electron-adb-file*.linux.*.tar.xz
