@@ -356,6 +356,8 @@ ul {
     user-select: none;
     display: none;
 }
+/* Bootstrap's .fade utility drives the opacity transition; .show is added
+   on open and removed on close. */
 .filterBox.filterShow {
     display: block;
 }
