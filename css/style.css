@@ -18,6 +18,30 @@
 }
 /* Defines */
 
+/* Material icon button, shared by the find box and the dialog close
+   buttons. */
+.mdIconButton {
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--md-on-surface-variant);
+    transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+}
+.mdIconButton .materialIcons {
+    font-size: 20px;
+}
+.mdIconButton:hover {
+    background-color: var(--md-surface-variant);
+    color: var(--md-on-surface);
+}
+.mdIconButton:active {
+    background-color: #d3d2d6;
+}
+
 /* Common */
 * {
     padding: 0;
@@ -207,6 +231,7 @@ ul {
     max-width: 600px !important;
 }
 #divDialogWrapper .modal-content {
+    position: relative;
     background-color: white;
     padding: 20px 30px;
     border-radius: var(--md-corner-large);
@@ -214,14 +239,16 @@ ul {
     box-shadow: var(--md-elevation-3);
     top: -100px;
 }
+#divDialogWrapper .dialogCloseButton {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+}
 #divDialogWrapper .modal-body {
     padding: 0 !important;
 }
 #divDialogTitle {
     margin-bottom: 20px;
-}
-.divDialogButtonLine {
-    margin-top: 10px;
 }
 #divDeviceList,#divTransferList {
     max-height: 200px;
@@ -430,22 +457,6 @@ ul {
 .filterBox .filterBtnTonal:active {
     background-color: transparent;
     color: var(--color-android-dark);
-}
-.filterBox .filterBtnIcon {
-    width: 40px;
-    height: 40px;
-    border-radius: 20px;
-    color: var(--md-on-surface-variant);
-}
-.filterBox .filterBtnIcon .materialIcons {
-    font-size: 20px;
-}
-.filterBox .filterBtnIcon:hover {
-    background-color: var(--md-surface-variant);
-    color: var(--md-on-surface);
-}
-.filterBox .filterBtnIcon:active {
-    background-color: #d3d2d6;
 }
 /* Filter */
 

@@ -67,7 +67,7 @@ let divDialogWrapper = null;
 let divDialogTitle = null;
 let divDeviceList = null;
 let divTransferList = null;
-let divDialogButtonLine = null;
+let aBtnDialogClose = null;
 let divToast = null;
 
 let modalDialogWrapper = null;
@@ -186,7 +186,7 @@ function init() {
     divDialogTitle = $('#divDialogTitle');
     divDeviceList = $('#divDeviceList');
     divTransferList = $('#divTransferList');
-    divDialogButtonLine = $('.divDialogButtonLine');
+    aBtnDialogClose = $('#aBtnDialogClose');
     divToast = $('#divToast');
 
     initToolbar();
@@ -432,7 +432,7 @@ function initDialog() {
             modalOnHideCallback();
         }
     });
-    divDialogButtonLine.children('a').on('click', function () {
+    aBtnDialogClose.on('click', function () {
         return handleCmdClick($(this));
     });
 }

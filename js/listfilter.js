@@ -106,7 +106,7 @@ class ListFilter {
         this.divFilterSearchBar.append(this.aFilter);
 
         this.aClose = $('<a/>').attr('id', 'filterBtnClose').addClass('filterButton');
-        this.aClose.addClass('filterBtnIcon').attr('title', 'Close');
+        this.aClose.addClass('mdIconButton').attr('title', 'Close');
         this.aClose.on('click', function () {
             that.closeFilterBox();
             return false;
