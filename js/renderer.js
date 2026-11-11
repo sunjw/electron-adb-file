@@ -352,9 +352,14 @@ function updateTransferButton() {
             aBtnTransfer.addClass('pendingFinish');
         }
     }
-    aBtnTransfer.html(btnTransferText);
-    if (transferPendingFinish) {
-        aBtnTransfer.append(spanFinishIcon);
+    // Only touch the DOM when the content changes, rewriting it makes the cursor flicker.
+    const btnTransferKey = btnTransferText + (transferPendingFinish ? '|finish' : '');
+    if (aBtnTransfer.data('contentKey') !== btnTransferKey) {
+        aBtnTransfer.data('contentKey', btnTransferKey);
+        aBtnTransfer.html(btnTransferText);
+        if (transferPendingFinish) {
+            aBtnTransfer.append(spanFinishIcon);
+        }
     }
     ipcRenderer.send('set-transfer-count', count);
 }
@@ -465,6 +470,7 @@ function showHidden() {
 function showTransferListDialog() {
     if (transferPendingFinish) {
         aBtnTransfer.html(transferTitle);
+        aBtnTransfer.data('contentKey', transferTitle);
         transferPendingFinish = false;
         aBtnTransfer.removeClass('pendingFinish');
     }
@@ -818,7 +824,10 @@ function transferFile(mode, path) {
 
     const destPath = (mode == 'pull') ? downloadsDirPath : adbHelper.getCurDir();
     const transferId = adbHelper.transferFile(mode, path, destPath, (progressPercent) => {
-        divTransferProgress.text(modeText + ': ' + progressPercent);
+        const progressText = modeText + ': ' + progressPercent;
+        if (divTransferProgress.text() !== progressText) {
+            divTransferProgress.text(progressText);
+        }
         updateTransferButton();
     }, (adbTransferResult) => {
         if (adbTransferResult.code == 0) {
