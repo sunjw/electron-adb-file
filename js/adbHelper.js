@@ -4,7 +4,7 @@ const Path = require('path');
 const Adbkit = require('@sunjw8888/adbkit');
 
 const Utils = require('./utils.js');
-const ChildProcessHelper = require('./child_process-helper.js');
+const ChildProcessHelper = require('./childProcessHelper.js');
 
 const MODE_PERMISSION_DENIED = 'Permission denied';
 const SPEED_START_INTERVAL = 2; // s
