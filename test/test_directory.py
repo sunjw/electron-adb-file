@@ -2,7 +2,7 @@
 
 import adb
 import paths
-from base import (BTN_BACK, BTN_HIDDEN, BTN_REFRESH, BTN_SDCARD, DIR_LINE,
+from base import (BTN_BACK, BTN_HIDDEN, BTN_REFRESH, BTN_SDCARD,
                   Suite, expect_contains, expect_eq, expect_true)
 
 suite = Suite('directory')
@@ -12,26 +12,40 @@ suite = Suite('directory')
 KNOWN_SUBDIRS = ('Download', 'Android', 'DCIM', 'Pictures')
 
 
-def _open_sdcard(app):
-    """Select the phone and open /sdcard/ with the SDCARD button."""
-    app.select_device()
-    app.click(BTN_SDCARD)
-    app.wait_for_path('sdcard')
-    app.wait_ready(DIR_LINE)
-
-
 def _known_subdir(device_id):
     """The names of the known directories that exist on the phone."""
     entries = adb.list_remote(device_id, '/sdcard')
     return [name for name in entries if name in KNOWN_SUBDIRS]
 
 
+def _open_sdcard(app):
+    """Select the phone and open /sdcard/ with the SDCARD button.
+
+    `select_device` already waits for the root listing, so the mark is taken
+    after it and only covers the SDCARD listing.
+    """
+    app.select_device()
+    mark = app.listing_mark()
+    app.click(BTN_SDCARD)
+    app.wait_for_listing(mark)
+    app.wait_for_path('sdcard')
+
+
+def _open_subdir(app, name):
+    """Open a subdirectory of the current one and wait for its rows."""
+    mark = app.listing_mark()
+    app.click_dir_entry(name)
+    app.wait_for_listing(mark)
+    app.wait_for_path(name)
+
+
 @suite.case('the SDCARD button opens the sdcard root')
 def _(app):
     app.select_device()
+    mark = app.listing_mark()
     app.click(BTN_SDCARD)
+    app.wait_for_listing(mark)
     app.wait_for_path('sdcard')
-    app.wait_ready(DIR_LINE)
 
     names = app.dir_names()
     expect_contains(names, 'Download', 'the sdcard listing has no Download entry')
@@ -53,11 +67,11 @@ def _(app):
     directories = _known_subdir(device_id)
     expect_true(directories, 'the sdcard directory has no known subdirectory')
 
-    app.click_dir_entry(directories[0])
-    app.wait_for_path(directories[0])
-    app.wait_ready(DIR_LINE)
+    _open_subdir(app, directories[0])
     expect_contains(app.path_text(), directories[0],
                     'the path bar does not show the directory that was opened')
+    expect_true(directories[0] not in app.dir_names(),
+                'the listing still shows the directory that was opened')
 
 
 @suite.case('the scratch directory on the phone can be opened')
@@ -66,13 +80,8 @@ def _(app):
     adb.ensure_temp_dir(device_id)
 
     _open_sdcard(app)
-    app.click_dir_entry('Download')
-    app.wait_for_path('Download')
-    app.wait_ready(DIR_LINE)
-
-    app.click_dir_entry('temp')
-    app.wait_for_path('temp')
-    app.wait_ready(DIR_LINE)
+    _open_subdir(app, 'Download')
+    _open_subdir(app, 'temp')
 
     # The listing must match what adb reports for the same directory.
     listed = app.dir_names()
@@ -106,13 +115,12 @@ def _(app):
     directories = _known_subdir(device_id)
     expect_true(directories, 'the sdcard directory has no known subdirectory')
 
-    app.click_dir_entry(directories[0])
-    app.wait_for_path(directories[0])
-    app.wait_ready(DIR_LINE)
+    _open_subdir(app, directories[0])
 
+    mark = app.listing_mark()
     app.click(BTN_BACK)
+    app.wait_for_listing(mark)
     app.wait_for_path('sdcard')
-    app.wait_ready(DIR_LINE)
 
     names = app.dir_names()
     expect_true(any(name in names for name in KNOWN_SUBDIRS),
@@ -124,9 +132,10 @@ def _(app):
     _open_sdcard(app)
 
     before = app.dir_names()
+    mark = app.listing_mark()
     app.click(BTN_REFRESH)
+    app.wait_for_listing(mark)
     app.wait_for_path('sdcard')
-    app.wait_ready(DIR_LINE)
 
     after = app.dir_names()
     expect_eq(after, before, 'refreshing changed the directory listing')
@@ -139,14 +148,16 @@ def _(app):
     expect_eq(app.text(BTN_HIDDEN).strip(), 'Show Hidden',
               'unexpected label of the hidden file button')
 
+    mark = app.listing_mark()
     app.click(BTN_HIDDEN)
+    app.wait_for_listing(mark)
     app.wait_for_path('sdcard')
-    app.wait_ready(DIR_LINE)
     expect_eq(app.text(BTN_HIDDEN).strip(), 'Hide Hidden',
               'the hidden file button did not change its label')
 
+    mark = app.listing_mark()
     app.click(BTN_HIDDEN)
+    app.wait_for_listing(mark)
     app.wait_for_path('sdcard')
-    app.wait_ready(DIR_LINE)
     expect_eq(app.text(BTN_HIDDEN).strip(), 'Show Hidden',
               'the hidden file button did not change its label back')

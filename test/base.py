@@ -66,6 +66,14 @@ PATH_BAR = '#divToolbarPathContainer'
 PATH_DEVICE = '#divToolbarPathDevice'
 DIALOG_TITLE = '#divDialogTitle'
 
+# The app shows this hint while an adb command is running.
+WAITING_TIP = '#divTipsWaiting'
+
+# The app logs this line once a directory listing has been rendered. It is
+# the precise "the rows are the new ones" signal: the path bar is rebuilt
+# before the adb call returns, so it changes too early to be useful.
+LISTING_DONE_LOG = 'refreshDirList, fileLineCount='
+
 # Buttons of the toolbar.
 BTN_ANDROID = '#aBtnAndroid'
 BTN_SDCARD = '#aBtnSdcard'
@@ -148,6 +156,8 @@ class ElectronApp:
         self.port = None
         # Every renderer failure seen since launch; the app must stay empty.
         self.errors = []
+        # Every console line the app logged, in order.
+        self.logs = []
         # A test that provokes errors on purpose registers them here so the
         # per-case zero-error assertion does not fire on its own fixtures.
         self.expected_errors = []
@@ -241,6 +251,7 @@ class ElectronApp:
 
     def _on_console(self, message):
         text = message.text
+        self.logs.append(text)
         if message.type == 'error' or _looks_like_error(text):
             self.errors.append('console.%s: %s' % (message.type, text))
 
@@ -287,11 +298,11 @@ class ElectronApp:
     # -- waiting -----------------------------------------------------------
 
     def wait_for_device_line(self, timeout=READY_TIMEOUT_MS):
-        """Wait until the device dialog lists at least one device."""
+        """Wait until the device dialog lists at least one visible device."""
         mark = self.error_mark()
         deadline = time.time() + timeout / 1000.0
         while time.time() < deadline:
-            if self.count(DEVICE_LINE) > 0:
+            if self.count(DEVICE_LINE) > 0 and self.is_visible(DEVICE_LINE):
                 return
             self._abort_on_renderer_error(mark, 'the device list')
             self.page.wait_for_timeout(150)
@@ -429,8 +440,8 @@ class ElectronApp:
     def wait_for_path(self, expected, timeout=READY_TIMEOUT_MS):
         """Wait until the path bar shows the given path.
 
-        The path bar is rebuilt after the file list arrived, so it is the
-        reliable signal that a directory listing has finished.
+        The path bar is rebuilt before the adb call returns, so it changes
+        too early. Use `wait_for_listing` to wait for the rows themselves.
         """
         self.wait_until(
             """expected => {
@@ -441,23 +452,74 @@ class ElectronApp:
             arg=expected, timeout=timeout,
             what='the path bar to show %r' % expected)
 
+    def listing_mark(self):
+        """A marker for the directory listings logged so far."""
+        return len(self.logs)
+
+    def wait_for_listing(self, mark=None, timeout=READY_TIMEOUT_MS):
+        """Wait until a directory listing has been rendered.
+
+        The app logs `refreshDirList, fileLineCount=N` right after it has
+        filled the file list, so that log line is the exact moment the rows
+        are the new ones. Waiting for the path bar instead would return too
+        early, because the app rebuilds the path bar before the adb call
+        comes back.
+        """
+        if mark is None:
+            mark = 0
+        deadline = time.time() + timeout / 1000.0
+        while time.time() < deadline:
+            for line in self.logs[mark:]:
+                if LISTING_DONE_LOG in line:
+                    return
+            self.page.wait_for_timeout(100)
+        raise TestFailure('no directory listing was rendered within %dms' % timeout)
+
+    def dialog_open(self):
+        """Whether the modal is currently shown."""
+        return self.page.evaluate(
+            """() => {
+                 const modal = document.querySelector('#divDialogWrapper');
+                 return !!modal && modal.classList.contains('show');
+             }""")
+
+    def wait_for_dialog_closed(self, timeout=READY_TIMEOUT_MS):
+        """Wait until the modal and its backdrop are gone.
+
+        Bootstrap fades the dialog out and removes the backdrop afterwards.
+        The backdrop keeps swallowing clicks while it is around, so every
+        action that follows a dialog has to wait for it.
+        """
+        self.wait_until(
+            """() => {
+                 const modal = document.querySelector('#divDialogWrapper');
+                 const backdrop = document.querySelector('.modal-backdrop');
+                 const modalOpen = modal && modal.classList.contains('show');
+                 return !modalOpen && !backdrop;
+             }""",
+            timeout=timeout, what='the dialog to close')
+
     def open_device_dialog(self, timeout=READY_TIMEOUT_MS):
         """Make sure the device dialog is open.
 
         The app opens the dialog on start-up, but closes it again once a
-        device is chosen, so the dialog link in the path bar is used to
+        device is chosen, so the device link in the path bar is used to
         bring it back.
         """
-        if self.count(DEVICE_LINE) > 0 and self.is_visible(DEVICE_LINE):
+        if self.dialog_open() and self.count(DEVICE_LINE) > 0:
+            self.wait_for_device_line(timeout=timeout)
             return
-        self.page.locator('#divToolbarPathDevice a').first.click(timeout=timeout)
-        self.wait_ready(DEVICE_LINE, timeout=timeout)
+
+        # A dialog that is on its way out still has a backdrop around, and
+        # that backdrop swallows the click on the path bar.
         self.wait_until(
-            """() => {
-                 const el = document.querySelector('#divDeviceList .deviceLine');
-                 return !!el && el.offsetParent !== null;
-             }""",
-            timeout=timeout, what='the device dialog to open')
+            """() => !document.querySelector('.modal-backdrop')""",
+            timeout=timeout, what='the dialog backdrop to go away')
+
+        self.page.locator('#divToolbarPathDevice a').first.click(timeout=timeout)
+        self.wait_for_device_line(timeout=timeout)
+
+
 
     def is_visible(self, selector):
         return self.page.locator(selector).first.is_visible()
@@ -478,9 +540,13 @@ class ElectronApp:
 
         index = ids.index(device_id)
         link = self.page.locator(DEVICE_ID).nth(index).locator('a')
+        # Selecting a device loads the root directory, so the listing that
+        # follows has to be waited for as well.
+        mark = self.listing_mark()
         link.click(timeout=timeout)
 
         # The dialog is hidden first, the device is selected afterwards.
+        self.wait_for_dialog_closed(timeout=timeout)
         self.wait_until(
             """device => {
                  const el = document.querySelector('#divToolbarPathDevice');
@@ -488,6 +554,7 @@ class ElectronApp:
              }""",
             arg=device_id, timeout=timeout,
             what='device %r to be selected' % device_id)
+        self.wait_for_listing(mark, timeout=timeout)
         return device_id
 
 

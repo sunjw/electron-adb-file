@@ -1,7 +1,7 @@
 """Device list and device selection."""
 
 import adb
-from base import (DEVICE_LINE, DIALOG_TITLE, DIR_LINE, PATH_DEVICE,
+from base import (DEVICE_LINE, DIALOG_TITLE, PATH_DEVICE,
                   BTN_ANDROID, BTN_SDCARD, BTN_REFRESH, Suite,
                   expect_contains, expect_eq, expect_true)
 
@@ -59,9 +59,10 @@ def _(app):
 
 @suite.case('selecting a device loads the root directory')
 def _(app):
+    mark = app.listing_mark()
     app.select_device()
     # The root of the phone holds the well known top level directories.
-    app.wait_ready(DIR_LINE)
+    app.wait_for_listing(mark)
     names = app.dir_names()
     expect_true('sdcard' in names,
                 'the root listing has no sdcard entry: %r' % names)
@@ -73,7 +74,7 @@ def _(app):
 
     # The device link in the path bar opens the dialog again.
     app.page.locator('#divToolbarPathDevice a').first.click()
-    app.wait_ready(DEVICE_LINE)
+    app.wait_for_device_line()
     expect_eq(app.text(DIALOG_TITLE).strip(), 'Devices',
               'the device dialog did not reopen')
     expect_true(app.device_ids(), 'the reopened device dialog lists no device')
