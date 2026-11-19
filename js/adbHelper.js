@@ -35,12 +35,8 @@ class ADBHelper {
         this.curDir = '';
         this.transferProcessList = {};
 
-        this.adbkitClient = null;
-        this.usingAdbkit = true; // Utils.isWindows();
-        if (this.usingAdbkit) {
-            this.adbkitClient = Adbkit.Adb.createClient();
-            Utils.log('using Adbkit...');
-        }
+        this.adbkitClient = Adbkit.Adb.createClient();
+        Utils.log('using Adbkit...');
 
         //Utils.log('adb=[' + this.adbPath + ']');
     }
@@ -263,7 +259,6 @@ class ADBHelper {
     }
 
     transferFile(transferMode, filePath, destPath, onProgressCallback, onFinishedCallback) {
-        let that = this;
         const transferRandId = Utils.getRandomInt(1000);
         let transferProcessList = this.transferProcessList;
         transferProcessList[transferRandId] = {};
@@ -272,7 +267,7 @@ class ADBHelper {
         transferProcessList[transferRandId].lastSpeedTime = 0;
 
         let onFinishedCallbackWrapper = function (adbTransferResult) {
-            if (that.usingAdbkit && transferProcessList[transferRandId].sync) {
+            if (transferProcessList[transferRandId].sync) {
                 transferProcessList[transferRandId].sync.end();
             }
             delete transferProcessList[transferRandId];
@@ -405,17 +400,13 @@ class ADBHelper {
 
     stopTransferFile(transferId) {
         if (transferId in this.transferProcessList) {
-            if (this.usingAdbkit) {
-                this.transferProcessList[transferId].onEnd();
-            }
+            this.transferProcessList[transferId].onEnd();
         }
     }
 
     stopAllTransferFile() {
         for (const transferId of Object.keys(this.transferProcessList)) {
-            if (this.usingAdbkit) {
-                this.transferProcessList[transferId].onEnd();
-            }
+            this.transferProcessList[transferId].onEnd();
         }
     }
 }
