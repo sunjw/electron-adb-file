@@ -327,23 +327,36 @@ class ElectronApp:
         saying that there are none. Either way the list is ready; whether a
         device is needed is decided by the case, not by the wait.
 
-        The app opens the dialog half a second after it starts the adb
-        command, so the dialog is waited for as well.
+        The list is filled whether the dialog is open or not, so this does
+        not wait for the dialog. The app hides the list again once a device
+        has been chosen.
         """
         mark = self.error_mark()
         deadline = time.time() + timeout / 1000.0
         while time.time() < deadline:
-            if self.dialog_open():
-                if self.count(DEVICE_LINE) > 0 and self.is_visible(DEVICE_LINE):
-                    return
-                tip = self.text(DEVICE_TIP)
-                if tip and 'Waiting for command running' not in tip:
-                    # The app reports that it found no device, or that the
-                    # command failed. The list is settled either way.
-                    return
+            if self.count(DEVICE_LINE) > 0:
+                return
+            tip = self.text(DEVICE_TIP)
+            if tip and 'Waiting for command running' not in tip:
+                # The app reports that it found no device, or that the
+                # command failed. The list is settled either way.
+                return
             self._abort_on_renderer_error(mark, 'the device list')
             self.page.wait_for_timeout(150)
         raise TestFailure('the device list did not settle within %dms' % timeout)
+
+    def wait_for_dialog_open(self, timeout=READY_TIMEOUT_MS):
+        """Wait until the device dialog is on screen.
+
+        The app opens the dialog half a second after it starts the adb
+        command, so the dialog comes up after the list is already filled.
+        """
+        self.wait_until(
+            """() => {
+                 const modal = document.querySelector('#divDialogWrapper');
+                 return !!modal && modal.classList.contains('show');
+             }""",
+            timeout=timeout, what='the device dialog to open')
 
     def require_device(self):
         """The identifier of a phone the app can work with.
@@ -512,6 +525,19 @@ class ElectronApp:
              }""",
             arg=expected, timeout=timeout,
             what='the path bar to show %r' % expected)
+
+    def wait_for_dir_entry(self, name, timeout=READY_TIMEOUT_MS):
+        """Wait until a file with the given name is in the file list."""
+        self.wait_until(
+            """name => {
+                 const rows = [...document.querySelectorAll('#divDirList .fileLine')];
+                 return rows.some(row => {
+                     const el = row.querySelector('.fileName');
+                     return el && el.getAttribute('data-ref') === name;
+                 });
+             }""",
+            arg=name, timeout=timeout,
+            what='the file %r to show up in the file list' % name)
 
     def open_dir(self, path, timeout=READY_TIMEOUT_MS):
         """Walk into a directory by clicking through it.
@@ -707,7 +733,7 @@ class ElectronApp:
         device is chosen, so the device link in the path bar is used to
         bring it back.
         """
-        if self.dialog_open() and self.count(DEVICE_LINE) > 0:
+        if self.dialog_open():
             self.wait_for_device_list(timeout=timeout)
             return
 
@@ -718,6 +744,7 @@ class ElectronApp:
             timeout=timeout, what='the dialog backdrop to go away')
 
         self.page.locator('#divToolbarPathDevice a').first.click(timeout=timeout)
+        self.wait_for_dialog_open(timeout=timeout)
         self.wait_for_device_list(timeout=timeout)
 
     def is_visible(self, selector):

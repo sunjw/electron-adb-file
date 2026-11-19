@@ -31,6 +31,9 @@ def _(app):
 
 @suite.case('the device dialog is titled "Devices"')
 def _(app):
+    # The app opens the dialog half a second after it starts the adb
+    # command, so the title is only there once the dialog is up.
+    app.wait_for_dialog_open()
     expect_eq(app.text(DIALOG_TITLE).strip(), 'Devices',
               'unexpected device dialog title')
 

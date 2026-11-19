@@ -85,6 +85,10 @@ def push_package(app, timeout=TRANSFER_TIMEOUT_MS):
     row = app.wait_for_transfer(name, timeout=timeout, only_new=True)
     elapsed = time.time() - started
 
+    # The app reloads the directory after an upload, so the rows are still
+    # being replaced when the transfer is done.
+    app.wait_for_dir_entry(name)
+
     row['seconds'] = elapsed
     row['bytes'] = size
     row['speed'] = size / elapsed if elapsed > 0 else 0
@@ -105,6 +109,10 @@ def pull_package(app, timeout=TRANSFER_TIMEOUT_MS):
     name = package_name()
     check_pull_target(name)
     size = os.path.getsize(local_package())
+
+    # The upload reloads the directory, so the rows are still being
+    # replaced when the transfer is done.
+    app.wait_for_dir_entry(name)
 
     app.transfer_mark()
     started = time.time()
