@@ -502,7 +502,7 @@ function hideToast() {
 }
 
 function showWaiting() {
-    lastWaitingTipsTime = Date.now();
+    lastWaitingTipsTime = Utils.getCurTimestamp();
     divTipsWaiting.show();
 }
 
@@ -511,7 +511,7 @@ function hideWaitingNow() {
 }
 
 function hideWaiting() {
-    let curTime = Date.now();
+    let curTime = Utils.getCurTimestamp();
     let gap = curTime - lastWaitingTipsTime;
     // Utils.log('gap=' + gap + 'ms');
     if (gap > 800) {

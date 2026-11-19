@@ -309,11 +309,11 @@ class ADBHelper {
                     }
 
                     transferProcess.totalSize = fileSize;
-                    transferProcess.startTime = Date.now();
+                    transferProcess.startTime = Utils.getCurTimestamp();
 
                     let pullTransfer = sync.pull(filePath);
                     pullTransfer.on('progress', (stats) => {
-                        let curTime = Date.now();
+                        let curTime = Utils.getCurTimestamp();
                         if (stats.bytesTransferred > transferProcess.totalSize) {
                             // adbkit cannot handle 4GB
                             transferProcess.totalSize = transferProcess.totalSize + 4 * 1024 * 1024 * 1024;
