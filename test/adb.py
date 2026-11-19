@@ -112,6 +112,15 @@ def list_remote(device_id, path):
     return [name for name in output.splitlines() if name.strip()]
 
 
+def remote_size(device_id, path):
+    """The size of a file on the phone, in bytes, or None when it is gone."""
+    output = shell(device_id, 'stat -c %%s "%s"' % path).strip()
+    try:
+        return int(output)
+    except ValueError:
+        return None
+
+
 def ensure_temp_dir(device_id):
     """Make sure the scratch directory exists on the phone.
 

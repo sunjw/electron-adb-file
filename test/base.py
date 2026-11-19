@@ -153,6 +153,7 @@ class ElectronApp:
         self.pw = None
         self.browser = None
         self.page = None
+        self.cdp = None
         self.port = None
         # Every renderer failure seen since launch; the app must stay empty.
         self.errors = []
@@ -184,6 +185,9 @@ class ElectronApp:
         self.browser = self.pw.chromium.connect_over_cdp('http://127.0.0.1:%d' % self.port)
         self.page = self._renderer_page()
         self.page.bring_to_front()
+
+        # A CDP session is needed to hand a real file to the app.
+        self.cdp = self.browser.contexts[0].new_cdp_session(self.page)
 
         self.page.on('console', self._on_console)
         self.page.on('pageerror', self._on_pageerror)
@@ -451,6 +455,100 @@ class ElectronApp:
              }""",
             arg=expected, timeout=timeout,
             what='the path bar to show %r' % expected)
+
+    def open_dir(self, path, timeout=READY_TIMEOUT_MS):
+        """Walk into a directory by clicking through it.
+
+        The app has no "go to path" box, so the directory is opened the way
+        a person would: by clicking each part of the path in turn. Every
+        step waits for the listing of the new directory.
+        """
+        parts = [part for part in path.split('/') if part]
+        for part in parts:
+            mark = self.listing_mark()
+            self.click_dir_entry(part)
+            self.wait_for_listing(mark, timeout=timeout)
+            self.wait_for_path(part, timeout=timeout)
+
+    def drop_file(self, path, timeout=ACTION_TIMEOUT_MS):
+        """Drop a local file onto the file list, the way the app is used.
+
+        The app reads the native path of the dropped file, so a synthetic
+        drag event is not enough: the file has to come from the file system.
+        A hidden file input is filled with the real path over CDP and the
+        resulting file is then handed to the app in a drop event.
+        """
+        if self.cdp is None:
+            raise TestFailure('no CDP session, cannot drop a file')
+
+        # Fill a file input with the real file. Playwright refuses to upload
+        # files over 50 MB, and the packages in dist/ are much larger, so the
+        # input is filled over CDP instead, which only needs the path.
+        self.page.evaluate(
+            """() => {
+                 let input = document.querySelector('#testFileInput');
+                 if (!input) {
+                     input = document.createElement('input');
+                     input.type = 'file';
+                     input.id = 'testFileInput';
+                     input.style.display = 'none';
+                     document.body.appendChild(input);
+                 }
+                 input.value = '';
+             }""")
+        root = self.cdp.send('DOM.getDocument')['root']['nodeId']
+        node_id = self.cdp.send('DOM.querySelector',
+                                {'nodeId': root, 'selector': '#testFileInput'})['nodeId']
+        self.cdp.send('DOM.setFileInputFiles', {'files': [path], 'nodeId': node_id})
+
+        # Hand the file to the app the way a drag from the file manager does.
+        self.page.evaluate(
+            """() => {
+                 const input = document.querySelector('#testFileInput');
+                 const file = input.files[0];
+                 if (!file) { throw new Error('the file input holds no file'); }
+                 const transfer = new DataTransfer();
+                 transfer.items.add(file);
+                 const target = document.querySelector('#divDirWrapper');
+                 for (const type of ['dragenter', 'dragover']) {
+                     target.dispatchEvent(new DragEvent(type, {
+                         bubbles: true, cancelable: true, dataTransfer: transfer,
+                     }));
+                 }
+                 target.dispatchEvent(new DragEvent('drop', {
+                     bubbles: true, cancelable: true, dataTransfer: transfer,
+                 }));
+                 input.remove();
+             }""")
+
+    def transfer_rows(self):
+        """The rows of the transfer list, as plain dictionaries."""
+        return self.page.evaluate(
+            """() => [...document.querySelectorAll('#divTransferList .transferLine')].map(row => ({
+                   name: (row.querySelector('.fileName') || {}).textContent || '',
+                   progress: (row.querySelector('.transferProgress') || {}).textContent || '',
+                   finished: !!row.querySelector('.transferProgress.finished'),
+               }))""")
+
+    def transfer_row(self, name):
+        """The transfer row of the given file, or None."""
+        for row in self.transfer_rows():
+            if row['name'] == name:
+                return row
+        return None
+
+    def wait_for_transfer(self, name, timeout=READY_TIMEOUT_MS):
+        """Wait until a transfer of the given file has finished."""
+        mark = self.error_mark()
+        deadline = time.time() + timeout / 1000.0
+        while time.time() < deadline:
+            row = self.transfer_row(name)
+            if row is not None and row['finished']:
+                return row
+            self._abort_on_renderer_error(mark, 'the transfer of %r' % name)
+            self.page.wait_for_timeout(200)
+        raise TestFailure('the transfer of %r did not finish within %dms'
+                          % (name, timeout))
 
     def listing_mark(self):
         """A marker for the directory listings logged so far."""

@@ -1,8 +1,8 @@
 """Locations the suite needs, every one of them derived at run time.
 
 Nothing here encodes a particular machine: the app directory comes from this
-file's location, the download directory from the user's home directory, and
-the device directory is a fixed path on the phone.
+file's location, the dist directory is a folder of the project, and the
+device directory is a fixed path on the phone.
 """
 
 import glob
@@ -36,11 +36,6 @@ def reset_output_dir():
     return OUTPUT_DIR
 
 
-def downloads_dir():
-    """The download directory the operating system gives the app."""
-    return os.path.join(os.path.expanduser('~'), 'Downloads')
-
-
 def dist_packages():
     """The packaged builds in dist/, newest first.
 
@@ -69,21 +64,3 @@ def dist_package():
         return None
     return packages[0]
 
-
-
-def unique_path(directory, name):
-    """A path inside `directory` that does not exist yet.
-
-    The suite never overwrites a file the user already has, so every
-    download gets a name of its own.
-    """
-    candidate = os.path.join(directory, name)
-    if not os.path.exists(candidate):
-        return candidate
-    root, ext = os.path.splitext(name)
-    index = 1
-    while True:
-        candidate = os.path.join(directory, '%s-%d%s' % (root, index, ext))
-        if not os.path.exists(candidate):
-            return candidate
-        index += 1
