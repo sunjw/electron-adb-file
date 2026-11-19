@@ -7,7 +7,7 @@ window.$ = window.jQuery = require('jquery');
 const bootstrap = require('bootstrap');
 
 const Utils = require('./utils');
-const ADBHelper = require('./adb-helper');
+const ADBHelper = require('./adbHelper');
 const ListFilter = require('./listfilter');
 const eleUtils = require('./eleUtils');
 
