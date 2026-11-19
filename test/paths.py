@@ -36,6 +36,15 @@ def reset_output_dir():
     return OUTPUT_DIR
 
 
+def downloads_dir():
+    """The download directory the operating system gives the app.
+
+    The app pulls into this directory, so the suite has to look there for
+    what it downloaded.
+    """
+    return os.path.join(os.path.expanduser('~'), 'Downloads')
+
+
 def dist_packages():
     """The packaged builds in dist/, newest first.
 

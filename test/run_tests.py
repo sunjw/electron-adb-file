@@ -23,8 +23,9 @@ from base import Runner, main                  # noqa: E402
 import test_device                             # noqa: E402
 import test_directory                          # noqa: E402
 import test_upload                             # noqa: E402
+import test_pull                               # noqa: E402
 
-MODULES = [test_device, test_directory, test_upload]
+MODULES = [test_device, test_directory, test_upload, test_pull]
 
 
 def parse_args(argv):

@@ -521,34 +521,80 @@ class ElectronApp:
                  input.remove();
              }""")
 
+    def transfer_mark(self):
+        """Mark the transfer rows that exist, so a new one can be picked out.
+
+        The app inserts a new transfer at the top of the list, and an
+        upload and a pull of the same file produce two rows with the same
+        name, so the rows are marked here and the new one is the row
+        without the mark.
+        """
+        self.page.evaluate(
+            """() => {
+                 document.querySelectorAll('#divTransferList .transferLine')
+                     .forEach(row => row.setAttribute('data-test-seen', '1'));
+             }""")
+
     def transfer_rows(self):
-        """The rows of the transfer list, as plain dictionaries."""
+        """The rows of the transfer list, as plain dictionaries.
+
+        The `seen` flag tells whether a row was already there when the last
+        `transfer_mark` was taken.
+        """
         return self.page.evaluate(
             """() => [...document.querySelectorAll('#divTransferList .transferLine')].map(row => ({
                    name: (row.querySelector('.fileName') || {}).textContent || '',
                    progress: (row.querySelector('.transferProgress') || {}).textContent || '',
                    finished: !!row.querySelector('.transferProgress.finished'),
+                   seen: row.hasAttribute('data-test-seen'),
                }))""")
 
-    def transfer_row(self, name):
-        """The transfer row of the given file, or None."""
+    def transfer_row(self, name, only_new=False):
+        """The transfer row of the given file, or None.
+
+        With `only_new`, the rows that were already there when the last
+        `transfer_mark` was taken are skipped, so a new transfer is not
+        confused with an earlier one of the same file.
+        """
         for row in self.transfer_rows():
+            if only_new and row['seen']:
+                continue
             if row['name'] == name:
                 return row
         return None
 
-    def wait_for_transfer(self, name, timeout=READY_TIMEOUT_MS):
+    def wait_for_transfer(self, name, timeout=READY_TIMEOUT_MS, only_new=False):
         """Wait until a transfer of the given file has finished."""
-        mark = self.error_mark()
+        error_mark = self.error_mark()
         deadline = time.time() + timeout / 1000.0
         while time.time() < deadline:
-            row = self.transfer_row(name)
+            row = self.transfer_row(name, only_new=only_new)
             if row is not None and row['finished']:
                 return row
-            self._abort_on_renderer_error(mark, 'the transfer of %r' % name)
+            self._abort_on_renderer_error(error_mark, 'the transfer of %r' % name)
             self.page.wait_for_timeout(200)
         raise TestFailure('the transfer of %r did not finish within %dms'
                           % (name, timeout))
+
+    def click_file_entry(self, name, timeout=ACTION_TIMEOUT_MS):
+        """Click the link of a file in the file list.
+
+        Clicking a file is what starts a download in the app, so this is
+        how a pull is started.
+        """
+        index = self.page.evaluate(
+            """name => {
+                 const rows = [...document.querySelectorAll('#divDirList .fileLine')];
+                 return rows.findIndex(row => {
+                     const el = row.querySelector('.fileName');
+                     return el && el.getAttribute('data-ref') === name;
+                 });
+             }""", name)
+        if index < 0:
+            raise TestFailure('no file list row named %r (rows: %r)'
+                              % (name, self.dir_names()))
+        link = self.page.locator(DIR_LINE).nth(index).locator('.fileNameLink a')
+        link.click(timeout=timeout)
 
     def listing_mark(self):
         """A marker for the directory listings logged so far."""
