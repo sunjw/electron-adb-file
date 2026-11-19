@@ -262,21 +262,6 @@ class ADBHelper {
         });
     }
 
-    nativeGetFileSize(filePath) {
-        let fileSize = 0;
-        const fixedAdbShellPath = Utils.escapeShellPath(filePath);
-        let cmdArgs = this.getCurDeviceCmdBase().concat(['shell', 'stat', '-c', '%s', fixedAdbShellPath]);
-        let cmdSync = new ChildProcessHelper.ChildProcessHelper(this.adbPath, cmdArgs);
-        let cmdResult = cmdSync.runSync();
-        let fileSizeStr = cmdResult.stdout.trim();
-        fileSize = Number(fileSizeStr);
-        if (isNaN(fileSize)) {
-            fileSize = 0;
-        }
-        //Utils.log('nativeGetFileSize, [' + fileSizeStr + ']');
-        return fileSize;
-    }
-
     transferFile(transferMode, filePath, destPath, onProgressCallback, onFinishedCallback) {
         let that = this;
         const transferRandId = Utils.getRandomInt(1000);
@@ -294,116 +279,17 @@ class ADBHelper {
             onFinishedCallback(adbTransferResult);
         };
 
-        if (!this.usingAdbkit) {
-            let cmd = this.nativeTransferFile(transferProcessList[transferRandId],
-                    filePath, destPath, onProgressCallback, onFinishedCallbackWrapper);
-            transferProcessList[transferRandId].cmd = cmd;
-        } else {
-            transferProcessList[transferRandId].onEnd = function () {
-                let adbTransferResult = {};
-                adbTransferResult.code = -1;
-                adbTransferResult.err = 'adbkitTransferFile, mode=[' + transferMode + '], [' + filePath + '] stopped';
-                adbTransferResult.message = '';
-                onFinishedCallbackWrapper(adbTransferResult);
-            };
-            this.adbkitTransferFile(transferProcessList[transferRandId],
-                filePath, destPath, onProgressCallback, onFinishedCallbackWrapper);
-        }
+        transferProcessList[transferRandId].onEnd = function () {
+            let adbTransferResult = {};
+            adbTransferResult.code = -1;
+            adbTransferResult.err = 'adbkitTransferFile, mode=[' + transferMode + '], [' + filePath + '] stopped';
+            adbTransferResult.message = '';
+            onFinishedCallbackWrapper(adbTransferResult);
+        };
+        this.adbkitTransferFile(transferProcessList[transferRandId],
+            filePath, destPath, onProgressCallback, onFinishedCallbackWrapper);
 
         return transferRandId;
-    }
-
-    nativeTransferFile(transferProcess, filePath, destPath, onProgressCallback, onFinishedCallback) {
-        let transferCmd = '';
-        switch (transferProcess.mode) {
-        case 'pull':
-            transferCmd = 'pull';
-            break;
-        case 'push':
-            transferCmd = 'push';
-            break;
-        }
-        let cmdArgs = this.getCurDeviceCmdBase().concat([transferCmd, filePath, destPath]);
-        let cmd = new ChildProcessHelper.ChildProcessHelper(this.adbPath, cmdArgs);
-
-        // runFunction = 'run';
-        cmdNewline = '\n';
-
-        if (transferProcess.mode == 'pull') {
-            transferProcess.totalSize = this.nativeGetFileSize(filePath);
-            transferProcess.startTime = Date.now();
-            transferProcess.transferSpeed = '';
-        }
-
-        cmd.run((child, data) => {
-            // On process output...
-            let progressOutput = data.toString();
-            //Utils.log(progressOutput);
-            let progressPercent = '';
-            let progressLines = progressOutput.split(cmdNewline);
-            let lineCount = progressLines.length;
-            for (let i = lineCount; i > 0; --i) {
-                let line = progressLines[i - 1].trim();
-                let prefix = line.substr(0, 6);
-                if (prefix.startsWith('[') && prefix.endsWith(']')) {
-                    // Found
-                    Utils.log('nativeTransferFile, mode=[' + transferProcess.mode + '], progress line=[' + line + ']');
-                    progressPercent = prefix.substr(1, 4);
-                    progressPercent = progressPercent.trim();
-                    break;
-                }
-            }
-            if (progressPercent != '') {
-                let percentInt = parseInt(progressPercent.substr(0, progressPercent.length - 1));
-                transferProcess.percent = percentInt;
-                let transferSpeed = '';
-                if (transferProcess.mode == 'pull') {
-                    let curTime = Date.now();
-                    let transferTime = (curTime - transferProcess.startTime) / 1000.0;
-                    if (transferTime > SPEED_START_INTERVAL &&
-                        (curTime - transferProcess.lastSpeedTime) >= SPEED_REFRESH_INTERVAL) {
-                        let bytesTransferred = (percentInt / 100.0) * transferProcess.totalSize;
-                        transferSpeed = bytesTransferred / transferTime;
-                        //Utils.log('nativeTransferFile, ' + transferTime + 's @ ' + transferSpeed + 'B/s');
-                        transferSpeed = Utils.byteSizeToShortSize(transferSpeed) + 'B/s';
-                        transferProcess.transferSpeed = transferSpeed;
-                        transferProcess.lastSpeedTime = curTime;
-                    }
-                }
-                let progressString = progressPercent;
-                if (transferProcess.lastSpeedTime > 0) {
-                    progressString = progressString + ' (' + transferProcess.transferSpeed + ')';
-                }
-                onProgressCallback(progressString);
-            }
-        }, (child, exitCode, err) => {
-            // On process finished
-            let adbTransferResult = {};
-            adbTransferResult.code = 0;
-            adbTransferResult.err = '';
-            adbTransferResult.message = '';
-
-            if (err != 0) {
-                adbTransferResult.code = exitCode;
-                adbTransferResult.err = 'nativeTransferFile, mode=[' + transferProcess.mode + '], [' + filePath + '] failed';
-                onFinishedCallback(adbTransferResult);
-                return;
-            }
-
-            if (exitCode != 0) {
-                adbTransferResult.code = -1;
-                adbTransferResult.err = err.message;
-                onFinishedCallback(adbTransferResult);
-                return;
-            }
-
-            if (transferProcess.transferSpeed && transferProcess.transferSpeed != '') {
-                adbTransferResult.message = ' (' + transferProcess.transferSpeed + ')';
-            }
-            onFinishedCallback(adbTransferResult);
-        });
-
-        return cmd;
     }
 
     adbkitTransferFile(transferProcess, filePath, destPath, onProgressCallback, onFinishedCallback) {
@@ -519,10 +405,7 @@ class ADBHelper {
 
     stopTransferFile(transferId) {
         if (transferId in this.transferProcessList) {
-            if (!this.usingAdbkit) {
-                let transferCmd = this.transferProcessList[transferId].cmd;
-                transferCmd.stop();
-            } else {
+            if (this.usingAdbkit) {
                 this.transferProcessList[transferId].onEnd();
             }
         }
@@ -530,10 +413,7 @@ class ADBHelper {
 
     stopAllTransferFile() {
         for (const transferId of Object.keys(this.transferProcessList)) {
-            if (!this.usingAdbkit) {
-                let transferCmd = this.transferProcessList[transferId].cmd;
-                transferCmd.stop();
-            } else {
+            if (this.usingAdbkit) {
                 this.transferProcessList[transferId].onEnd();
             }
         }
