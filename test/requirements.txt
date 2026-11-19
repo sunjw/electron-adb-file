@@ -1,0 +1,21 @@
+# Python dependencies for the Electron ADB File test suite.
+#
+# The suite drives the real Electron app over the Chrome DevTools Protocol
+# (Playwright cannot launch Electron directly), so it needs the `playwright`
+# package -- but NOT the bundled Chromium download: the tests attach to the
+# Electron binary that is already in node_modules.
+#
+#     pip install -r test/requirements.txt
+#     python3 test/run_tests.py
+#
+# Everything else the suite uses is in the standard library
+# (os, re, signal, socket, subprocess, sys, time, urllib, traceback, shutil,
+# glob).
+#
+# The suite also needs the `adb` command line tool on the PATH, and a phone
+# connected with USB debugging enabled.
+
+# Drives the Electron renderer over CDP.
+# NOTE: skip `playwright install` -- the suite connects to the Electron binary
+# in node_modules, it does not launch a downloaded browser.
+playwright==1.64.1

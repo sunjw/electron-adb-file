@@ -4,8 +4,10 @@
 node_modules
 ResourceHacker.log
 
-icons/png/*
+__pycache__/
 working/
+
+icons/png/*
 
 dist/electron-adb-file/*
 dist/electron-adb-file.app/*
