@@ -10,6 +10,10 @@ suite = Suite('device')
 
 @suite.case('the device dialog lists the connected phone')
 def _(app):
+    # The list has to hold a phone, so this case fails with a clear message
+    # when there is none.
+    app.require_device()
+
     ids = app.device_ids()
     expect_true(ids, 'the device dialog lists no device')
 
@@ -29,6 +33,15 @@ def _(app):
 def _(app):
     expect_eq(app.text(DIALOG_TITLE).strip(), 'Devices',
               'unexpected device dialog title')
+
+
+@suite.case('a phone can be selected')
+def _(app):
+    # Selecting a phone needs one, so this case fails with a clear message
+    # when there is none.
+    device_id = app.require_device()
+    expect_contains(app.device_ids(), device_id,
+                    'the device to select is not in the list')
 
 
 @suite.case('selecting a device enables the toolbar')
@@ -74,7 +87,7 @@ def _(app):
 
     # The device link in the path bar opens the dialog again.
     app.page.locator('#divToolbarPathDevice a').first.click()
-    app.wait_for_device_line()
+    app.wait_for_device_list()
     expect_eq(app.text(DIALOG_TITLE).strip(), 'Devices',
               'the device dialog did not reopen')
     expect_true(app.device_ids(), 'the reopened device dialog lists no device')

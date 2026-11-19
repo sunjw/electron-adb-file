@@ -63,7 +63,7 @@ def _(app):
     _open_sdcard(app)
 
     # Pick a directory the phone actually has.
-    device_id = adb.require_device()
+    device_id = app.require_device()
     directories = _known_subdir(device_id)
     expect_true(directories, 'the sdcard directory has no known subdirectory')
 
@@ -76,7 +76,7 @@ def _(app):
 
 @suite.case('the scratch directory on the phone can be opened')
 def _(app):
-    device_id = adb.require_device()
+    device_id = app.require_device()
     adb.ensure_temp_dir(device_id)
 
     _open_sdcard(app)
@@ -111,7 +111,7 @@ def _(app):
 def _(app):
     _open_sdcard(app)
 
-    device_id = adb.require_device()
+    device_id = app.require_device()
     directories = _known_subdir(device_id)
     expect_true(directories, 'the sdcard directory has no known subdirectory')
 

@@ -56,6 +56,7 @@ _ERROR_PATTERNS = (
 DEVICE_LINE = '#divDeviceList .deviceLine'
 DEVICE_ID = '#divDeviceList .deviceLine .deviceId'
 DEVICE_STATUS = '#divDeviceList .deviceLine .deviceStatus'
+DEVICE_TIP = '#divDeviceList .tips'
 DEVICE_DIALOG = '#divDialogWrapper'
 DIR_LIST = '#divDirList'
 DIR_LINE = '#divDirList .fileLine'
@@ -91,6 +92,14 @@ ACTION_TIMEOUT_MS = 10000
 
 class TestFailure(AssertionError):
     """Raised by the expect_* helpers when an assertion does not hold."""
+
+
+class NoDeviceError(TestFailure):
+    """Raised when the suite needs a phone and there is none.
+
+    This is not a bug in the app, so it is reported separately from a test
+    that fails.
+    """
 
 
 def expect_true(condition, message):
@@ -195,9 +204,9 @@ class ElectronApp:
         self.page.on('pageerror', self._on_pageerror)
 
         # The app opens the device dialog on start-up; wait until the device
-        # list has been filled in, since that is the first thing the tests
-        # interact with.
-        self.wait_for_device_line()
+        # list has settled, since that is the first thing the tests interact
+        # with. The list may well be empty, and that is not an error here.
+        self.wait_for_device_list()
         return self
 
     def __exit__(self, *exc_info):
@@ -311,16 +320,54 @@ class ElectronApp:
 
     # -- waiting -----------------------------------------------------------
 
-    def wait_for_device_line(self, timeout=READY_TIMEOUT_MS):
-        """Wait until the device dialog lists at least one visible device."""
+    def wait_for_device_list(self, timeout=READY_TIMEOUT_MS):
+        """Wait until the device list has settled.
+
+        The app fills the list with the phones adb reports, or with a tip
+        saying that there are none. Either way the list is ready; whether a
+        device is needed is decided by the case, not by the wait.
+
+        The app opens the dialog half a second after it starts the adb
+        command, so the dialog is waited for as well.
+        """
         mark = self.error_mark()
         deadline = time.time() + timeout / 1000.0
         while time.time() < deadline:
-            if self.count(DEVICE_LINE) > 0 and self.is_visible(DEVICE_LINE):
-                return
+            if self.dialog_open():
+                if self.count(DEVICE_LINE) > 0 and self.is_visible(DEVICE_LINE):
+                    return
+                tip = self.text(DEVICE_TIP)
+                if tip and 'Waiting for command running' not in tip:
+                    # The app reports that it found no device, or that the
+                    # command failed. The list is settled either way.
+                    return
             self._abort_on_renderer_error(mark, 'the device list')
             self.page.wait_for_timeout(150)
-        raise TestFailure('no device showed up in the device dialog within %dms' % timeout)
+        raise TestFailure('the device list did not settle within %dms' % timeout)
+
+    def require_device(self):
+        """The identifier of a phone the app can work with.
+
+        The app shows the phones adb reports, so its list is what decides
+        whether there is a device to test with.
+        """
+        self.wait_for_device_list()
+
+        ids = self.device_ids()
+        statuses = self.device_statuses()
+        for identifier, status in zip(ids, statuses):
+            if status == 'Status: device':
+                return identifier
+
+        if ids:
+            raise NoDeviceError(
+                'the phone %r is not authorised for USB debugging. Unlock it '
+                'and accept the "Allow USB debugging" prompt, then run the '
+                'suite again.' % ids[0])
+        raise NoDeviceError(
+            'no phone is connected. Connect a phone with USB debugging '
+            'enabled and accept the authorisation prompt on the phone, then '
+            'run the suite again.')
 
     def wait_ready(self, selector, timeout=READY_TIMEOUT_MS, state='attached'):
         """Wait for a selector, aborting early if the renderer throws."""
@@ -661,7 +708,7 @@ class ElectronApp:
         bring it back.
         """
         if self.dialog_open() and self.count(DEVICE_LINE) > 0:
-            self.wait_for_device_line(timeout=timeout)
+            self.wait_for_device_list(timeout=timeout)
             return
 
         # A dialog that is on its way out still has a backdrop around, and
@@ -671,9 +718,7 @@ class ElectronApp:
             timeout=timeout, what='the dialog backdrop to go away')
 
         self.page.locator('#divToolbarPathDevice a').first.click(timeout=timeout)
-        self.wait_for_device_line(timeout=timeout)
-
-
+        self.wait_for_device_list(timeout=timeout)
 
     def is_visible(self, selector):
         return self.page.locator(selector).first.is_visible()
@@ -681,15 +726,14 @@ class ElectronApp:
     def select_device(self, device_id=None, timeout=READY_TIMEOUT_MS):
         """Select a device in the device dialog.
 
-        When no device id is given the first listed device is used. Selecting
-        a device closes the dialog and loads the root directory.
+        When no device id is given the first authorised device is used.
+        Selecting a device closes the dialog and loads the root directory.
         """
         self.open_device_dialog(timeout=timeout)
-        self.wait_for_device_line(timeout=timeout)
-        ids = self.device_ids()
-        expect_true(ids, 'the device dialog lists no device')
+        self.wait_for_device_list(timeout=timeout)
         if device_id is None:
-            device_id = ids[0]
+            device_id = self.require_device()
+        ids = self.device_ids()
         expect_contains(ids, device_id, 'device %r is not listed' % device_id)
 
         index = ids.index(device_id)
@@ -785,6 +829,14 @@ class Runner:
                              % (self.RED, self.RESET, title, self.DIM, elapsed, self.RESET))
                         for note in app.notes:
                             emit('    %s%s%s' % (self.DIM, note, self.RESET))
+                        # A missing phone is an environment problem, not a
+                        # problem with the app: every remaining case would
+                        # fail the same way, so stop here instead.
+                        if isinstance(exc, NoDeviceError):
+                            emit('    %sno phone - stopping the run%s'
+                                 % (self.DIM, self.RESET))
+                            aborted = True
+                            break
                         # A renderer exception is systemic, not a one-off: every
                         # remaining case would burn its full timeout and the run
                         # would look hung. Stop here instead.
@@ -808,8 +860,12 @@ class Runner:
                         emit('    %s%s%s' % (self.DIM, note, self.RESET))
 
         emit('')
+        no_device = [entry for entry in failures if isinstance(entry[2], NoDeviceError)]
         if aborted:
-            emit('%saborted after the first failure%s' % (self.RED, self.RESET))
+            if no_device:
+                emit('%saborted: no phone is connected%s' % (self.YELLOW, self.RESET))
+            else:
+                emit('%saborted after the first failure%s' % (self.RED, self.RESET))
         if failures:
             for suite_name, title, exc, tb in failures:
                 emit('%sFAILED%s %s / %s' % (self.RED, self.RESET, suite_name, title))
@@ -817,13 +873,19 @@ class Runner:
                     emit('    %s' % exc)
                 else:
                     emit(self.DIM + tb + self.RESET)
-            emit('\n%s%d passed, %d failed%s'
-                 % (self.RED, passed, len(failures), self.RESET))
+            if no_device and len(no_device) == len(failures):
+                # Every failure was the missing phone, so nothing was really
+                # tested. Say so, rather than reporting a pile of failures.
+                emit('\n%sno phone is connected, so nothing could be tested%s'
+                     % (self.YELLOW, self.RESET))
+            else:
+                emit('\n%s%d passed, %d failed%s'
+                     % (self.RED, passed, len(failures), self.RESET))
         else:
             emit('%sall %d tests passed%s' % (self.GREEN, passed, self.RESET))
 
         self._write_artifacts(log_lines, results, passed, len(failures))
-        return 1 if failures else 0
+        return 2 if no_device and len(no_device) == len(failures) else (1 if failures else 0)
 
     def _write_artifacts(self, log_lines, results, passed, failed):
         """Persist the run under test/output/ for later inspection."""

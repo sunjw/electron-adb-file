@@ -19,10 +19,6 @@ class AdbError(RuntimeError):
     """Raised when adb is missing or a command on the phone fails."""
 
 
-class NoDeviceError(RuntimeError):
-    """Raised when no usable phone is connected."""
-
-
 def adb_path():
     """Locate the adb executable.
 
@@ -76,29 +72,6 @@ def list_devices():
             continue
         devices.append((parts[0], parts[1]))
     return devices
-
-
-def require_device():
-    """The identifier of the connected phone, or explain why there is none.
-
-    The suite needs a real phone: everything it checks happens over adb, so
-    there is nothing meaningful to verify without one.
-    """
-    devices = list_devices()
-    usable = [identifier for identifier, status in devices if status == 'device']
-    if usable:
-        return usable[0]
-    if not devices:
-        raise NoDeviceError(
-            'No phone is connected.\n'
-            'Connect a phone with USB debugging enabled, accept the '
-            'authorisation prompt on the phone, and run the suite again.')
-    details = ', '.join('%s (%s)' % pair for pair in devices)
-    raise NoDeviceError(
-        'No authorised phone is connected.\n'
-        'Unlock the phone and accept the "Allow USB debugging" prompt, then '
-        'run the suite again.\n'
-        'adb sees: %s' % details)
 
 
 def shell(device_id, command, timeout=60):

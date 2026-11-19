@@ -38,7 +38,7 @@ def open_temp_dir(app):
     The upload goes to the directory that is open, so the app has to be
     there before a file is dropped.
     """
-    device_id = adb.require_device()
+    device_id = app.require_device()
     adb.ensure_temp_dir(device_id)
 
     app.select_device()
