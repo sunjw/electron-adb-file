@@ -18,6 +18,19 @@ from base import BTN_SDCARD
 # than a directory listing.
 TRANSFER_TIMEOUT_MS = 600000
 
+# The slowest transfer that is still considered healthy, in bytes per second.
+#
+# The app only reports a speed once a transfer has run for two seconds
+# (SPEED_START_INTERVAL in js/adbHelper.js), and a package over a healthy
+# USB connection is done in well under that, so the app usually reports no
+# speed at all.  The suite therefore measures the throughput itself and
+# compares it against this limit.
+#
+# A package of about 100 MB moves at 100-130 MB/s over USB on a healthy
+# setup, so 50 MB/s leaves room for a busy machine while still catching a
+# connection that cannot keep up.
+MIN_TRANSFER_SPEED = 50 * 1024 * 1024
+
 
 def open_temp_dir(app):
     """Open /sdcard/Download/temp in the app.
@@ -59,13 +72,23 @@ def package_name():
 def push_package(app, timeout=TRANSFER_TIMEOUT_MS):
     """Upload the package to the phone and wait for it to finish.
 
-    Returns the transfer row of the upload.
+    Returns the transfer row of the upload, with the measured speed added
+    to it.
     """
     package = local_package()
     name = os.path.basename(package)
+    size = os.path.getsize(package)
 
+    app.transfer_mark()
+    started = time.time()
     app.drop_file(package)
-    return app.wait_for_transfer(name, timeout=timeout)
+    row = app.wait_for_transfer(name, timeout=timeout, only_new=True)
+    elapsed = time.time() - started
+
+    row['seconds'] = elapsed
+    row['bytes'] = size
+    row['speed'] = size / elapsed if elapsed > 0 else 0
+    return row
 
 
 def pull_package(app, timeout=TRANSFER_TIMEOUT_MS):
@@ -76,14 +99,24 @@ def pull_package(app, timeout=TRANSFER_TIMEOUT_MS):
     upload of the same file as well, so only the row that is new is looked
     at.
 
-    Returns the transfer row of the pull.
+    Returns the transfer row of the pull, with the measured speed added to
+    it.
     """
     name = package_name()
     check_pull_target(name)
+    size = os.path.getsize(local_package())
 
     app.transfer_mark()
+    started = time.time()
     app.click_file_entry(name)
-    return app.wait_for_transfer(name, timeout=timeout, only_new=True)
+    row = app.wait_for_transfer(name, timeout=timeout, only_new=True)
+    elapsed = time.time() - started
+
+    row['seconds'] = elapsed
+    row['bytes'] = size
+    row['speed'] = size / elapsed if elapsed > 0 else 0
+    return row
+
 
 
 def downloaded_file(name):
@@ -147,3 +180,30 @@ def file_digest(path):
         for block in iter(lambda: handle.read(1024 * 1024), b''):
             digest.update(block)
     return digest.hexdigest()
+
+
+def format_speed(speed):
+    """A speed in bytes per second, as a readable string."""
+    if speed >= 1024 * 1024:
+        return '%.1f MB/s' % (speed / (1024.0 * 1024.0))
+    if speed >= 1024:
+        return '%.1f KB/s' % (speed / 1024.0)
+    return '%.0f B/s' % speed
+
+
+def expect_fast_transfer(row, what):
+    """Fail the case when a transfer was too slow.
+
+    The app only reports a speed once a transfer has run for two seconds,
+    so the throughput is measured here instead: the size of the file over
+    the time the transfer took.
+    """
+    speed = row.get('speed', 0)
+    if speed < MIN_TRANSFER_SPEED:
+        raise AssertionError(
+            'the %s was too slow: %s (%s in %.1fs), the limit is %s'
+            % (what, format_speed(speed),
+               format_speed(row.get('bytes', 0)) + ' moved',
+               row.get('seconds', 0), format_speed(MIN_TRANSFER_SPEED)))
+    return speed
+

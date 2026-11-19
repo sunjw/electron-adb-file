@@ -85,3 +85,17 @@ def _(app):
                 'the transfer was not marked as finished')
     expect_contains(row['progress'], 'Push',
                     'the transfer list does not say that this was an upload')
+
+
+@suite.case('the upload is not too slow')
+def _(app):
+    fixtures.open_temp_dir(app)
+
+    row = fixtures.push_package(app)
+
+    # A transfer that crawls points at the cable, the port or the phone
+    # rather than at the app, and it is worth knowing about.
+    speed = fixtures.expect_fast_transfer(row, 'upload')
+    app.note('upload speed: %s (%s in %.1fs)'
+             % (fixtures.format_speed(speed),
+                fixtures.format_speed(row['bytes']) + ' moved', row['seconds']))

@@ -159,6 +159,8 @@ class ElectronApp:
         self.errors = []
         # Every console line the app logged, in order.
         self.logs = []
+        # What the running case wants to report, shown with the result.
+        self.notes = []
         # A test that provokes errors on purpose registers them here so the
         # per-case zero-error assertion does not fire on its own fixtures.
         self.expected_errors = []
@@ -273,6 +275,14 @@ class ElectronApp:
     def allow_errors(self, *needles):
         """Accept renderer errors matching `needles` for the current case."""
         self.expected_errors = list(needles)
+
+    def note(self, message):
+        """Report something about the running case.
+
+        The notes end up in the run log and in the report, so a case can
+        say what it measured without the message being lost.
+        """
+        self.notes.append(message)
 
     def _unexpected_errors(self, mark):
         found = self.errors_since(mark)
@@ -756,6 +766,7 @@ class Runner:
                     # Every case starts without renderer errors left over.
                     mark = app.error_mark()
                     app.allow_errors()
+                    app.notes = []
                     started = time.time()
                     try:
                         fn(app)
@@ -768,9 +779,12 @@ class Runner:
                             'suite': suite.name, 'case': title, 'status': 'fail',
                             'seconds': round(elapsed, 2),
                             'message': str(exc), 'renderer_errors': errors,
+                            'notes': list(app.notes),
                         })
                         emit('  %sFAIL%s %s %s(%.1fs)%s'
                              % (self.RED, self.RESET, title, self.DIM, elapsed, self.RESET))
+                        for note in app.notes:
+                            emit('    %s%s%s' % (self.DIM, note, self.RESET))
                         # A renderer exception is systemic, not a one-off: every
                         # remaining case would burn its full timeout and the run
                         # would look hung. Stop here instead.
@@ -786,9 +800,12 @@ class Runner:
                     results.append({
                         'suite': suite.name, 'case': title, 'status': 'pass',
                         'seconds': round(elapsed, 2),
+                        'notes': list(app.notes),
                     })
                     emit('  %sok%s   %s %s(%.1fs)%s'
                          % (self.GREEN, self.RESET, title, self.DIM, elapsed, self.RESET))
+                    for note in app.notes:
+                        emit('    %s%s%s' % (self.DIM, note, self.RESET))
 
         emit('')
         if aborted:
