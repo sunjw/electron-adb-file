@@ -700,7 +700,7 @@ function refreshDirList() {
 
     // Up
     let curDir = adbHelper.getCurDir();
-    curDir = curDir.substr(0, curDir.length - 1);
+    curDir = curDir.substring(0, curDir.length - 1);
     let pathDelimIdx = curDir.lastIndexOf('/');
     if (pathDelimIdx < 0) {
         // Root
@@ -854,7 +854,7 @@ function transferFile(mode, path) {
         updateTransferButton();
         fileNameHtml = fileName;
         if (fileName.length > 40) {
-            fileNameHtml = fileName.substr(0, 30) + '...';
+            fileNameHtml = fileName.substring(0, 30) + '...';
         }
         fileNameHtml = Utils.escapeHtml(fileNameHtml);
         let toastMessage = modeText + ' "' + fileNameHtml + '" finished.';
@@ -905,8 +905,8 @@ function handleCmdClick(cmdLink) {
     let adbCmd = '';
     let adbCmdParam = '';
     if (delimiterIdx >= 0) {
-        adbCmd = cmd.substr(0, delimiterIdx);
-        adbCmdParam = cmd.substr(delimiterIdx + 1);
+        adbCmd = cmd.substring(0, delimiterIdx);
+        adbCmdParam = cmd.substring(delimiterIdx + 1);
     } else {
         adbCmd = cmd;
     }

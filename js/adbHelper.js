@@ -181,11 +181,11 @@ class ADBHelper {
                     }
                     let fileName = permDetails[1];
                     if (fileName.endsWith(':')) {
-                        fileName = fileName.substr(0, fileName.length - 1);
+                        fileName = fileName.substring(0, fileName.length - 1);
                     }
                     let pathDelimIdx = fileName.lastIndexOf('/');
                     if (pathDelimIdx >= 0) {
-                        fileName = fileName.substr(pathDelimIdx + 1);
+                        fileName = fileName.substring(pathDelimIdx + 1);
                     }
                     file.mode = MODE_PERMISSION_DENIED;
                     file.size = 0;
@@ -220,7 +220,7 @@ class ADBHelper {
                 let partsBeforeName = fixAndroidR ? 6 : 7;
                 for (let i = 0; i < partsBeforeName; ++i) {
                     let detailPart = details[i];
-                    lineNamePart = lineNamePart.substr(lineNamePart.indexOf(detailPart) + detailPart.length);
+                    lineNamePart = lineNamePart.substring(lineNamePart.indexOf(detailPart) + detailPart.length);
                 }
                 file.name = lineNamePart.trim();
                 if (isFileLink(file)) {
