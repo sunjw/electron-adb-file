@@ -13,6 +13,11 @@ const SPEED_REFRESH_INTERVAL = 500; // ms
 class ADBHelper {
     constructor(adbPath) {
         this.adbPath = adbPath;
+        // TODO(refactor): These two are only a fallback for the calls that
+        // have not been moved to the worker yet. The device and the
+        // directory live in js/adbClient.js and are passed in as arguments.
+        // Remove these two fields, and the accessors that go with them,
+        // once the refactor is done.
         this.curDevice = '';
         this.curDir = '';
         this.transferProcessList = {};
@@ -80,11 +85,17 @@ class ADBHelper {
         });
     }
 
+    // TODO(refactor): The accessors below and the two fields they use are
+    // only a fallback. The device and the directory come in as arguments,
+    // see the callers of getDirList and transferFile.
+
     getCurDevice() {
         return this.curDevice;
     }
 
     getCurDeviceCmdBase(curDevice) {
+        // TODO(refactor): Drop the fallback once every caller passes the
+        // device in.
         if (curDevice == null) {
             curDevice = this.curDevice;
         }
@@ -113,6 +124,8 @@ class ADBHelper {
     getDirList(curDevice, curDir, onDirListCallback) {
         // The device and the directory come from the caller. They are still
         // kept here as a fallback, until the renderer always passes them.
+        // TODO(refactor): Drop the fallback once every caller passes the
+        // device and the directory in.
         if (curDevice == null) {
             curDevice = this.curDevice;
         }
@@ -255,6 +268,8 @@ class ADBHelper {
     transferFile(transferMode, filePath, destPath, curDevice, onProgressCallback, onFinishedCallback) {
         // The device comes from the caller. It is still kept here as a
         // fallback, until the renderer always passes it.
+        // TODO(refactor): Drop the fallback once every caller passes the
+        // device in.
         if (curDevice == null) {
             curDevice = this.curDevice;
         }
@@ -288,6 +303,8 @@ class ADBHelper {
     }
 
     adbkitTransferFile(transferProcess, filePath, destPath, curDevice, onProgressCallback, onFinishedCallback) {
+        // TODO(refactor): Drop the fallback once every caller passes the
+        // device in.
         if (curDevice == null) {
             curDevice = this.curDevice;
         }
