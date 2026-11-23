@@ -43,7 +43,7 @@ class ADBClient {
             messageId: messageId,
             reqId: reqId,
         }, options);
-        // Utils.log('adbClient.sendMessage, messageId=[%s], reqId=[%s]', messageId, reqId);
+        // Utils.log('adbClient.sendMessage, messageId=[%s], reqId=[%s]', message.messageId, message.reqId);
         this.worker.postMessage(message);
         return reqId;
     }
