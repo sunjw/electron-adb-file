@@ -8,6 +8,7 @@ const bootstrap = require('bootstrap');
 
 const Utils = require('./utils');
 const ADBHelper = require('./adbHelper');
+const ADBUtils = require('./adbUtils');
 const ListFilter = require('./listfilter');
 const eleUtils = require('./eleUtils');
 
@@ -582,8 +583,8 @@ function setCurrentDir(path) {
 
 function sortDirList(dirList) {
     dirList.sort((file1, file2) => {
-        let file1Dir = ADBHelper.isFileDir(file1);
-        let file2Dir = ADBHelper.isFileDir(file2);
+        let file1Dir = ADBUtils.isFileDir(file1);
+        let file2Dir = ADBUtils.isFileDir(file2);
         if (file1Dir && !file2Dir) {
             return -1;
         }
@@ -640,7 +641,7 @@ function refreshDirList() {
                 });
             let divFileNameIcon = $('<div/>').addClass('fileNameIcon');
             let divFileNameLink = $('<div/>').addClass('fileNameLink');
-            if (ADBHelper.isFileDir(file)) {
+            if (ADBUtils.isFileDir(file)) {
                 // Directory
                 let spanDirIcon = $('<span/>').addClass('materialIcons material-icons-round').text('folder');
                 divFileNameIcon.append(spanDirIcon);
@@ -668,14 +669,14 @@ function refreshDirList() {
             divFileLine.append(divFileName);
 
             let divFileTypeOrSize = $('<div/>').addClass('fileTypeOrSize');
-            if (ADBHelper.isFileDir(file)) {
+            if (ADBUtils.isFileDir(file)) {
                 divFileTypeOrSize.text('Folder');
             } else {
                 divFileTypeOrSize.text(Utils.byteSizeToShortSize(file.size) + 'B');
             }
 
             let divFileModified = $('<div/>').addClass('fileModified');
-            if (!ADBHelper.isPermissionDenied(file)) {
+            if (!ADBUtils.isPermissionDenied(file)) {
                 divFileModified.text(file.modified);
             } else {
                 divFileModified.text('Permission denied');

@@ -5,28 +5,10 @@ const Adbkit = require('@sunjw8888/adbkit');
 
 const Utils = require('./utils.js');
 const ChildProcessHelper = require('./childProcessHelper.js');
+const ADBUtils = require('./adbUtils.js');
 
-const MODE_PERMISSION_DENIED = 'Permission denied';
 const SPEED_START_INTERVAL = 2; // s
 const SPEED_REFRESH_INTERVAL = 500; // ms
-
-function isFileDir(file) {
-    if (file.mode.startsWith('d')) {
-        return true;
-    }
-    if (isFileLink(file) && file.linkMode == 'd') {
-        return true;
-    }
-    return false;
-}
-
-function isFileLink(file) {
-    return file.mode.startsWith('l');
-}
-
-function isPermissionDenied(file) {
-    return (file.mode == MODE_PERMISSION_DENIED);
-}
 
 class ADBHelper {
     constructor(adbPath) {
@@ -187,7 +169,7 @@ class ADBHelper {
                     if (pathDelimIdx >= 0) {
                         fileName = fileName.substring(pathDelimIdx + 1);
                     }
-                    file.mode = MODE_PERMISSION_DENIED;
+                    file.mode = ADBUtils.MODE_PERMISSION_DENIED;
                     file.size = 0;
                     file.modified = '';
                     file.name = fileName;
@@ -223,7 +205,7 @@ class ADBHelper {
                     lineNamePart = lineNamePart.substring(lineNamePart.indexOf(detailPart) + detailPart.length);
                 }
                 file.name = lineNamePart.trim();
-                if (isFileLink(file)) {
+                if (ADBUtils.isFileLink(file)) {
                     file.name = file.name.split('->')[0].trim();
                 }
 
@@ -235,7 +217,7 @@ class ADBHelper {
 
             // Fix link
             for (let file of adbDirListResult.dirList) {
-                if (!isFileLink(file)) {
+                if (!ADBUtils.isFileLink(file)) {
                     continue;
                 }
 
@@ -412,7 +394,4 @@ class ADBHelper {
 }
 
 // exports
-exports.isFileDir = isFileDir;
-exports.isFileLink = isFileLink;
-exports.isPermissionDenied = isPermissionDenied;
 exports.ADBHelper = ADBHelper;
