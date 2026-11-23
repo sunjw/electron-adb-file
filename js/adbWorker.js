@@ -13,6 +13,7 @@ const adbHelper = new ADBHelper.ADBHelper(adbPath);
 // The handler names follow the method names.
 const messageHandlerMap = {
     'getDevices': onGetDevices,
+    'getDirList': onGetDirList,
 };
 
 onmessage = function (e) {
@@ -40,6 +41,17 @@ function onGetDevices(messageData) {
             code: adbDevicesResult.code,
             err: adbDevicesResult.err,
             devices: adbDevicesResult.devices,
+        });
+    });
+}
+
+function onGetDirList(messageData) {
+    adbHelper.getDirList(messageData.curDevice, messageData.curDir, (adbDirListResult) => {
+        reply(messageData, {
+            ok: adbDirListResult.code == 0,
+            code: adbDirListResult.code,
+            err: adbDirListResult.err,
+            dirList: adbDirListResult.dirList,
         });
     });
 }

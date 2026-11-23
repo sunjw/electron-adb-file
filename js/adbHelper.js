@@ -84,8 +84,11 @@ class ADBHelper {
         return this.curDevice;
     }
 
-    getCurDeviceCmdBase() {
-        return ['-s', this.curDevice];
+    getCurDeviceCmdBase(curDevice) {
+        if (curDevice == null) {
+            curDevice = this.curDevice;
+        }
+        return ['-s', curDevice];
     }
 
     setCurDevice(device) {
@@ -107,22 +110,31 @@ class ADBHelper {
         //Utils.log('setCurDir=[' + this.curDir + ']');
     }
 
-    getDirList(onDirListCallback) {
+    getDirList(curDevice, curDir, onDirListCallback) {
+        // The device and the directory come from the caller. They are still
+        // kept here as a fallback, until the renderer always passes them.
+        if (curDevice == null) {
+            curDevice = this.curDevice;
+        }
+        if (curDir == null) {
+            curDir = this.curDir;
+        }
+
         let adbDirListResult = {};
         adbDirListResult.code = 0;
         adbDirListResult.err = '';
         adbDirListResult.dirList = [];
 
         // Check
-        if (!this.curDir.endsWith('/')) {
+        if (!curDir.endsWith('/')) {
             adbDirListResult.code = -1;
-            adbDirListResult.err = 'Current directory error: [' + this.curDir + ']';
+            adbDirListResult.err = 'Current directory error: [' + curDir + ']';
             onDirListCallback(adbDirListResult);
             return;
         }
 
-        const fixedAdbShellPath = Utils.escapeShellPath(this.curDir);
-        let cmdArgs = this.getCurDeviceCmdBase().concat(['shell', 'ls', '-al', fixedAdbShellPath]);
+        const fixedAdbShellPath = Utils.escapeShellPath(curDir);
+        let cmdArgs = this.getCurDeviceCmdBase(curDevice).concat(['shell', 'ls', '-al', fixedAdbShellPath]);
         let cmd = new ChildProcessHelper.ChildProcessHelper(this.adbPath, cmdArgs);
         let outChunks = [];
 
@@ -222,9 +234,9 @@ class ADBHelper {
                 }
 
                 //Utils.log('[' + file.name + '] is a link');
-                let tryPath = this.curDir + file.name + '/';
+                let tryPath = curDir + file.name + '/';
                 // Run some sync child_process in async callback
-                let cmdArgs = this.getCurDeviceCmdBase().concat(['shell', 'cd', tryPath]);
+                let cmdArgs = this.getCurDeviceCmdBase(curDevice).concat(['shell', 'cd', tryPath]);
                 let cmdSync = new ChildProcessHelper.ChildProcessHelper(this.adbPath, cmdArgs);
                 let cmdResult = cmdSync.runSync();
                 if (cmdResult.stdout.length == 0 && cmdResult.stderr.length == 0) {
@@ -240,7 +252,13 @@ class ADBHelper {
         });
     }
 
-    transferFile(transferMode, filePath, destPath, onProgressCallback, onFinishedCallback) {
+    transferFile(transferMode, filePath, destPath, curDevice, onProgressCallback, onFinishedCallback) {
+        // The device comes from the caller. It is still kept here as a
+        // fallback, until the renderer always passes it.
+        if (curDevice == null) {
+            curDevice = this.curDevice;
+        }
+
         const transferRandId = Utils.getRandomInt(1000);
         let transferProcessList = this.transferProcessList;
         transferProcessList[transferRandId] = {};
@@ -264,13 +282,16 @@ class ADBHelper {
             onFinishedCallbackWrapper(adbTransferResult);
         };
         this.adbkitTransferFile(transferProcessList[transferRandId],
-            filePath, destPath, onProgressCallback, onFinishedCallbackWrapper);
+            filePath, destPath, curDevice, onProgressCallback, onFinishedCallbackWrapper);
 
         return transferRandId;
     }
 
-    adbkitTransferFile(transferProcess, filePath, destPath, onProgressCallback, onFinishedCallback) {
-        let adbkitDeviceClient = this.adbkitClient.getDevice(this.curDevice);
+    adbkitTransferFile(transferProcess, filePath, destPath, curDevice, onProgressCallback, onFinishedCallback) {
+        if (curDevice == null) {
+            curDevice = this.curDevice;
+        }
+        let adbkitDeviceClient = this.adbkitClient.getDevice(curDevice);
         adbkitDeviceClient.syncService().then((sync) => {
             let adbTransferResult = {};
             adbTransferResult.code = 0;

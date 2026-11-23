@@ -3,6 +3,10 @@ const Utils = require('./utils.js');
 class ADBClient {
     constructor(adbPath) {
         this.adbPath = adbPath;
+        // The device and the directory the app is working with. They are
+        // kept here, so the worker does not have to remember them.
+        this.curDevice = '';
+        this.curDir = '';
         // The id of the next request, and the callbacks waiting for the
         // replies. A reply carries the request id, so the right callback
         // is found even when several requests are in flight.
@@ -37,12 +41,47 @@ class ADBClient {
         return reqId;
     }
 
+    getCurDevice() {
+        return this.curDevice;
+    }
+
+    setCurDevice(device) {
+        this.curDevice = device;
+        Utils.log('setCurDevice=[' + this.curDevice + ']');
+    }
+
+    getCurDir() {
+        return this.curDir;
+    }
+
+    setCurDir(path) {
+        // Path must end with '/'
+        if (!path.endsWith('/')) {
+            Utils.log('setCurDir=[' + path + '], not end with \'/\'');
+            return;
+        }
+        this.curDir = path;
+    }
+
     getDevices(onDevicesCallback) {
         return this.sendMessage('getDevices', {}, (messageData) => {
             onDevicesCallback({
                 code: messageData.code,
                 err: messageData.err,
                 devices: messageData.devices,
+            });
+        });
+    }
+
+    getDirList(onDirListCallback) {
+        return this.sendMessage('getDirList', {
+            curDevice: this.curDevice,
+            curDir: this.curDir,
+        }, (messageData) => {
+            onDirListCallback({
+                code: messageData.code,
+                err: messageData.err,
+                dirList: messageData.dirList,
             });
         });
     }

@@ -603,7 +603,7 @@ function sortDirList(dirList) {
 function refreshDirList() {
     // setCurDir first!
     showWaiting();
-    adbHelper.getDirList((adbDirListResult) => {
+    adbHelper.getDirList(null, null, (adbDirListResult) => {
         clearDirList();
 
         if (adbDirListResult.code != 0) {
@@ -828,7 +828,7 @@ function transferFile(mode, path) {
     divNoTransfer.after(divTransferLine);
 
     const destPath = (mode == 'pull') ? downloadsDirPath : adbHelper.getCurDir();
-    const transferId = adbHelper.transferFile(mode, path, destPath, (progressPercent) => {
+    const transferId = adbHelper.transferFile(mode, path, destPath, null, (progressPercent) => {
         const progressText = modeText + ': ' + progressPercent;
         if (divTransferProgress.text() !== progressText) {
             divTransferProgress.text(progressText);
