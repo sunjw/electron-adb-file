@@ -8,6 +8,7 @@ const bootstrap = require('bootstrap');
 
 const Utils = require('./utils');
 const ADBHelper = require('./adbHelper');
+const ADBClient = require('./adbClient');
 const ADBUtils = require('./adbUtils');
 const ListFilter = require('./listfilter');
 const eleUtils = require('./eleUtils');
@@ -48,6 +49,8 @@ const IMGSET_WINDOW_RESTORE = 'assets/restore-k-10.png 1x, assets/restore-k-12.p
 const IMGSET_WINDOW_CLOSE = 'assets/close-k-10.png 1x, assets/close-k-12.png 1.25x, assets/close-k-15.png 1.5x, assets/close-k-15.png 1.75x, assets/close-k-20.png 2x, assets/close-k-20.png 2.25x, assets/close-k-24.png 2.5x, assets/close-k-30.png 3x, assets/close-k-30.png 3.5x';
 
 let adbHelper = null;
+
+let adbClient = null;
 
 let downloadsDirPath = null;
 
@@ -168,6 +171,7 @@ ipcRenderer.on('leave-full-screen', (event, arg) => {
 
 function init() {
     adbHelper = new ADBHelper.ADBHelper('adb');
+    adbClient = new ADBClient.ADBClient('adb');
 
     aBtnBack = $('#divToolbarWrapper #aBtnBack');
     aBtnForward = $('#divToolbarWrapper #aBtnForward');

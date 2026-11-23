@@ -12,7 +12,6 @@ const adbHelper = new ADBHelper.ADBHelper(adbPath);
 // Every ADBHelper method the renderer calls has a message of its own.
 // The handler names follow the method names.
 const messageHandlerMap = {
-    'init': onInit,
     'getDevices': onGetDevices,
 };
 
@@ -26,17 +25,17 @@ onmessage = function (e) {
     messageHandler(messageData);
 };
 
-function onInit() {
-    postMessage({
-        messageId: 'init',
-        ok: true,
-    });
+// Every reply carries the request id of the message it answers, so the
+// client can pair it with the callback that is waiting for it.
+function reply(messageData, result) {
+    result.messageId = messageData.messageId;
+    result.reqId = messageData.reqId;
+    postMessage(result);
 }
 
-function onGetDevices() {
+function onGetDevices(messageData) {
     adbHelper.getDevices((adbDevicesResult) => {
-        postMessage({
-            messageId: 'getDevices',
+        reply(messageData, {
             ok: adbDevicesResult.code == 0,
             code: adbDevicesResult.code,
             err: adbDevicesResult.err,
