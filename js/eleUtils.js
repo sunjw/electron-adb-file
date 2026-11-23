@@ -1,5 +1,6 @@
 const { ipcRenderer } = require('electron');
 
+const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 
@@ -40,6 +41,13 @@ function stopBubble(event) {
     event.stopPropagation();
 }
 
+// A short id that is safe to put in an url. It is used as the transfer id,
+// which travels through the url hash and comes back.
+function getShortUuid() {
+    return crypto.randomUUID().replace(/-/g, '').substring(0, 8);
+}
+
 exports.EleConfig = EleConfig;
 exports.sendToMain = sendToMain;
 exports.stopBubble = stopBubble;
+exports.getShortUuid = getShortUuid;

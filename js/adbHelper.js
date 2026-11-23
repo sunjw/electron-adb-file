@@ -265,7 +265,7 @@ class ADBHelper {
         });
     }
 
-    transferFile(transferMode, filePath, destPath, curDevice, onProgressCallback, onFinishedCallback) {
+    transferFile(transferMode, filePath, destPath, curDevice, transferId, onProgressCallback, onFinishedCallback) {
         // The device comes from the caller. It is still kept here as a
         // fallback, until the renderer always passes it.
         // TODO(refactor): Drop the fallback once every caller passes the
@@ -274,32 +274,33 @@ class ADBHelper {
             curDevice = this.curDevice;
         }
 
-        const transferRandId = Utils.getRandomInt(1000);
+        // The transfer id comes from the caller as well. The renderer
+        // generates it, so that it can build the stop link right away.
         let transferProcessList = this.transferProcessList;
-        transferProcessList[transferRandId] = {};
-        transferProcessList[transferRandId].mode = transferMode;
-        transferProcessList[transferRandId].percent = 0;
-        transferProcessList[transferRandId].lastSpeedTime = 0;
+        transferProcessList[transferId] = {};
+        transferProcessList[transferId].mode = transferMode;
+        transferProcessList[transferId].percent = 0;
+        transferProcessList[transferId].lastSpeedTime = 0;
 
         let onFinishedCallbackWrapper = function (adbTransferResult) {
-            if (transferProcessList[transferRandId].sync) {
-                transferProcessList[transferRandId].sync.end();
+            if (transferProcessList[transferId].sync) {
+                transferProcessList[transferId].sync.end();
             }
-            delete transferProcessList[transferRandId];
+            delete transferProcessList[transferId];
             onFinishedCallback(adbTransferResult);
         };
 
-        transferProcessList[transferRandId].onEnd = function () {
+        transferProcessList[transferId].onEnd = function () {
             let adbTransferResult = {};
             adbTransferResult.code = -1;
             adbTransferResult.err = 'adbkitTransferFile, mode=[' + transferMode + '], [' + filePath + '] stopped';
             adbTransferResult.message = '';
             onFinishedCallbackWrapper(adbTransferResult);
         };
-        this.adbkitTransferFile(transferProcessList[transferRandId],
+        this.adbkitTransferFile(transferProcessList[transferId],
             filePath, destPath, curDevice, onProgressCallback, onFinishedCallbackWrapper);
 
-        return transferRandId;
+        return transferId;
     }
 
     adbkitTransferFile(transferProcess, filePath, destPath, curDevice, onProgressCallback, onFinishedCallback) {

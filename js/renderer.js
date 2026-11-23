@@ -831,7 +831,10 @@ function transferFile(mode, path) {
     divNoTransfer.after(divTransferLine);
 
     const destPath = (mode == 'pull') ? downloadsDirPath : adbClient.getCurDir();
-    const transferId = adbHelper.transferFile(mode, path, destPath, null, (progressPercent) => {
+    // The transfer id is generated here, so that the stop link can be
+    // built right away.
+    const transferId = eleUtils.getShortUuid();
+    adbHelper.transferFile(mode, path, destPath, null, transferId, (progressPercent) => {
         const progressText = modeText + ': ' + progressPercent;
         if (divTransferProgress.text() !== progressText) {
             divTransferProgress.text(progressText);
