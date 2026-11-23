@@ -287,6 +287,7 @@ class ADBHelper {
                 transferProcessList[transferId].sync.end();
             }
             delete transferProcessList[transferId];
+            Utils.log('transferFile.onFinishedCallbackWrapper, end, transferId=[' + transferId + ']');
             onFinishedCallback(adbTransferResult);
         };
 
@@ -297,6 +298,7 @@ class ADBHelper {
             adbTransferResult.message = '';
             onFinishedCallbackWrapper(adbTransferResult);
         };
+        Utils.log('transferFile, begin, transferId=[' + transferId + ']');
         this.adbkitTransferFile(transferProcessList[transferId],
             filePath, destPath, curDevice, onProgressCallback, onFinishedCallbackWrapper);
 
@@ -421,6 +423,7 @@ class ADBHelper {
 
     stopTransferFile(transferId) {
         if (transferId in this.transferProcessList) {
+            Utils.log('stopTransferFile, transferId=[' + transferId + ']');
             this.transferProcessList[transferId].onEnd();
         }
     }
