@@ -884,8 +884,8 @@ function transferFile(mode, path) {
     updateTransferButton();
 }
 
-function stopTransferFile(pullId) {
-    adbHelper.stopTransferFile(pullId);
+function stopTransferFile(transferId) {
+    adbHelper.stopTransferFile(transferId);
 }
 
 function pullFile(path) {
