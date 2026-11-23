@@ -44,6 +44,7 @@ function createWindow() {
     titleBarStyle: titleBarStyleOS,
     webPreferences: {
       nodeIntegration: true,
+      nodeIntegrationInWorker: true,
       contextIsolation: false,
       enableRemoteModule: true
     }
