@@ -6,12 +6,14 @@ const fixPath = require('fix-path').default;
 fixPath(); // fix-path is important for packed electron app
 //Utils.log('PATH=[' + process.env.PATH + ']');
 
-const adbPath = 'adb';
-const adbHelper = new ADBHelper.ADBHelper(adbPath);
+// The helper is created when the client sends the init message, because
+// the adb path comes from there.
+let adbHelper = null;
 
 // Every ADBHelper method the renderer calls has a message of its own.
 // The handler names follow the method names.
 const messageHandlerMap = {
+    'init': onInit,
     'getDevices': onGetDevices,
     'getDirList': onGetDirList,
 };
@@ -32,6 +34,13 @@ function reply(messageData, result) {
     result.messageId = messageData.messageId;
     result.reqId = messageData.reqId;
     postMessage(result);
+}
+
+function onInit(messageData) {
+    adbHelper = new ADBHelper.ADBHelper(messageData.adbPath);
+    reply(messageData, {
+        ok: true,
+    });
 }
 
 function onGetDevices(messageData) {

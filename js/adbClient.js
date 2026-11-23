@@ -27,6 +27,11 @@ class ADBClient {
         this.worker.onerror = (e) => {
             Utils.log('adbClient.worker.onerror, err=%s', e.message);
         };
+
+        // The worker needs the adb path before it can do anything.
+        this.sendMessage('init', { adbPath: this.adbPath }, (messageData) => {
+            Utils.log('adbClient.init, ok=%s', messageData.ok);
+        });
     }
 
     // Send a message to the worker and wait for its reply.
