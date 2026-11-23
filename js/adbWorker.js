@@ -55,6 +55,9 @@ function onGetDevices(messageData) {
 }
 
 function onGetDirList(messageData) {
+    // The device and the directory come with the message. The helper keeps
+    // them as member variables too, but that is only a fallback for the
+    // calls that have not been moved yet.
     adbHelper.getDirList(messageData.curDevice, messageData.curDir, (adbDirListResult) => {
         reply(messageData, {
             ok: adbDirListResult.code == 0,

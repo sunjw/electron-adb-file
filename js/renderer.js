@@ -533,7 +533,7 @@ function refreshDeviceList() {
     let divTips = $('<div/>').addClass('tips');
     divDeviceList.append(divTips.text('Waiting for command running...'));
     // Run command
-    adbHelper.getDevices((adbDevicesResult) => {
+    adbClient.getDevices((adbDevicesResult) => {
         clearDeviceList();
 
         if (adbDevicesResult.code != 0) {
@@ -582,7 +582,7 @@ function refreshDeviceAndShowDeviceDialog(asyncShowDialog) {
 }
 
 function setCurrentDir(path) {
-    adbHelper.setCurDir(path);
+    adbClient.setCurDir(path);
 }
 
 function sortDirList(dirList) {
@@ -603,7 +603,7 @@ function sortDirList(dirList) {
 function refreshDirList() {
     // setCurDir first!
     showWaiting();
-    adbHelper.getDirList(null, null, (adbDirListResult) => {
+    adbClient.getDirList((adbDirListResult) => {
         clearDirList();
 
         if (adbDirListResult.code != 0) {
@@ -704,7 +704,7 @@ function refreshDirList() {
     });
 
     // Up
-    let curDir = adbHelper.getCurDir();
+    let curDir = adbClient.getCurDir();
     curDir = curDir.substring(0, curDir.length - 1);
     let pathDelimIdx = curDir.lastIndexOf('/');
     if (pathDelimIdx < 0) {
@@ -770,6 +770,9 @@ function filterDirList(toFilter) {
 }
 
 function selectDeviceAndRefreshRootDir(device) {
+    // The client keeps the device and sends it along with every request.
+    adbClient.setCurDevice(device);
+    // The transfers still run in this process, so they need it too.
     adbHelper.setCurDevice(device);
 
     // Enable buttons
@@ -827,7 +830,7 @@ function transferFile(mode, path) {
     divNoTransfer.hide();
     divNoTransfer.after(divTransferLine);
 
-    const destPath = (mode == 'pull') ? downloadsDirPath : adbHelper.getCurDir();
+    const destPath = (mode == 'pull') ? downloadsDirPath : adbClient.getCurDir();
     const transferId = adbHelper.transferFile(mode, path, destPath, null, (progressPercent) => {
         const progressText = modeText + ': ' + progressPercent;
         if (divTransferProgress.text() !== progressText) {
@@ -955,7 +958,7 @@ function handleCmdClick(cmdLink) {
         let path = '';
         if (!adbCmdParam.startsWith('/')) {
             // Relative path
-            path = adbHelper.getCurDir() + adbCmdParam + '/';
+            path = adbClient.getCurDir() + adbCmdParam + '/';
         } else {
             // Absolute path
             path = adbCmdParam;
@@ -971,7 +974,7 @@ function handleCmdClick(cmdLink) {
         stopTransferFile(transferId);
         break;
     case CMD_PULL:
-        const filePath = adbHelper.getCurDir() + adbCmdParam;
+        const filePath = adbClient.getCurDir() + adbCmdParam;
         pullFile(filePath);
         break;
     case CMD_SHOW_PULL:

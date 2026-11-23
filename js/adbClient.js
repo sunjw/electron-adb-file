@@ -4,7 +4,7 @@ class ADBClient {
     constructor(adbPath) {
         this.adbPath = adbPath;
         // The device and the directory the app is working with. They are
-        // kept here, so the worker does not have to remember them.
+        // kept here and sent along with every request that needs them.
         this.curDevice = '';
         this.curDir = '';
         // The id of the next request, and the callbacks waiting for the
