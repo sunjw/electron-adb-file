@@ -16,6 +16,8 @@ class ADBClient {
         this.worker = new Worker('js/adbWorker.js');
         this.worker.onmessage = (e) => {
             let messageData = e.data;
+            Utils.log('adbClient.onmessage, messageId=[%s], reqId=[%s], ok=%s',
+                messageData.messageId, messageData.reqId, messageData.ok);
             let callback = this.callbackMap[messageData.reqId];
             if (!callback) {
                 Utils.log('adbClient.onmessage, no callback for reqId=[%s]', messageData.reqId);
@@ -29,9 +31,7 @@ class ADBClient {
         };
 
         // The worker needs the adb path before it can do anything.
-        this.sendMessage('init', { adbPath: this.adbPath }, (messageData) => {
-            Utils.log('adbClient.init, ok=%s', messageData.ok);
-        });
+        this.sendMessage('init', { adbPath: this.adbPath }, (messageData) => {});
     }
 
     // Send a message to the worker and wait for its reply.
@@ -39,10 +39,12 @@ class ADBClient {
         this.reqId = this.reqId + 1;
         let reqId = this.reqId;
         this.callbackMap[reqId] = callback;
-        this.worker.postMessage(Object.assign({
+        let message = Object.assign({
             messageId: messageId,
             reqId: reqId,
-        }, options));
+        }, options);
+        // Utils.log('adbClient.sendMessage, messageId=[%s], reqId=[%s]', messageId, reqId);
+        this.worker.postMessage(message);
         return reqId;
     }
 

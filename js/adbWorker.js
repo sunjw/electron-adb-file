@@ -20,6 +20,8 @@ const messageHandlerMap = {
 
 onmessage = function (e) {
     let messageData = e.data;
+    Utils.log('adbWorker.onmessage, messageId=[%s], reqId=[%s]',
+        messageData.messageId, messageData.reqId);
     let messageHandler = messageHandlerMap[messageData.messageId];
     if (!messageHandler) {
         Utils.log('adbWorker.onmessage, unknown messageId=[%s]', messageData.messageId);
