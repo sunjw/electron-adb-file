@@ -8,7 +8,10 @@ const ChildProcessHelper = require('./childProcessHelper.js');
 const ADBComm = require('./adbComm.js');
 
 const SPEED_START_INTERVAL = 2; // s
-const SPEED_REFRESH_INTERVAL = 500; // ms
+// The progress is reported to the caller at most this often. The speed
+// does not have an interval of its own: it is computed whenever the
+// progress is reported.
+const PROGRESS_CALLBACK_INTERVAL = 500; // ms
 
 class ADBHelper {
     constructor(adbPath) {
@@ -222,7 +225,9 @@ class ADBHelper {
         transferProcessList[transferId] = {};
         transferProcessList[transferId].mode = transferMode;
         transferProcessList[transferId].percent = 0;
-        transferProcessList[transferId].lastSpeedTime = 0;
+        // When the progress was reported the last time. The first chunk
+        // of data is always reported, no matter how soon it arrives.
+        transferProcessList[transferId].lastReportTime = 0;
 
         let onFinishedCallbackWrapper = function (adbTransferResult) {
             // A transfer can finish twice: the stop and the end of the
@@ -288,18 +293,26 @@ class ADBHelper {
                         }
                         let progressPercent = Math.floor((stats.bytesTransferred * 100) / transferProcess.totalSize);
                         transferProcess.percent = progressPercent;
+
+                        // The progress is not reported on every chunk of
+                        // data, only every PROGRESS_CALLBACK_INTERVAL.
+                        if ((curTime - transferProcess.lastReportTime) < PROGRESS_CALLBACK_INTERVAL) {
+                            return;
+                        }
+                        transferProcess.lastReportTime = curTime;
+
+                        // The speed is computed whenever the progress is
+                        // reported, it has no interval of its own.
                         let transferSpeed = '';
                         let transferTime = (curTime - transferProcess.startTime) / 1000.0;
-                        if (transferTime > SPEED_START_INTERVAL &&
-                            (curTime - transferProcess.lastSpeedTime) >= SPEED_REFRESH_INTERVAL) {
+                        if (transferTime > SPEED_START_INTERVAL) {
                             transferSpeed = stats.bytesTransferred / transferTime;
                             //Utils.log('adbkitTransferFile, ' + transferTime + 's @ ' + transferSpeed + 'B/s');
                             transferSpeed = Utils.byteSizeToShortSize(transferSpeed) + 'B/s';
                             transferProcess.transferSpeed = transferSpeed;
-                            transferProcess.lastSpeedTime = curTime;
                         }
                         let progressString = progressPercent + '%';
-                        if (transferProcess.lastSpeedTime > 0) {
+                        if (transferProcess.transferSpeed && transferProcess.transferSpeed != '') {
                             progressString = progressString + ' (' + transferProcess.transferSpeed + ')';
                         }
                         onProgressCallback(progressPercent, progressString);
@@ -334,8 +347,17 @@ class ADBHelper {
                 let fullDestPath = destPath + basename;
                 let pushTransfer = sync.pushFile(filePath, fullDestPath);
                 pushTransfer.on('progress', (stats) => {
+                    let curTime = Utils.getCurTimestamp();
                     let progressPercent = Math.floor((stats.bytesTransferred * 100) / transferProcess.totalSize);
                     transferProcess.percent = progressPercent;
+
+                    // The progress is not reported on every chunk of
+                    // data, only every PROGRESS_CALLBACK_INTERVAL.
+                    if ((curTime - transferProcess.lastReportTime) < PROGRESS_CALLBACK_INTERVAL) {
+                        return;
+                    }
+                    transferProcess.lastReportTime = curTime;
+
                     onProgressCallback(progressPercent, progressPercent + '%');
                 });
                 pushTransfer.on('end', () => {
