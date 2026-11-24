@@ -17,7 +17,7 @@ const messageHandlerMap = {
     [ADBComm.MESSAGE_INIT]: onInit,
     [ADBComm.MESSAGE_GET_DEVICES]: onGetDevices,
     [ADBComm.MESSAGE_GET_DIR_LIST]: onGetDirList,
-    [ADBComm.MESSAGE_TRANSFER]: onTransfer,
+    [ADBComm.MESSAGE_START_TRANSFER]: onTransfer,
     [ADBComm.MESSAGE_STOP_TRANSFER]: onStopTransfer,
 };
 
@@ -86,7 +86,7 @@ function onTransfer(messageData) {
         messageData.transferId,
         (progressPercent, progressText) => {
             postMessage({
-                messageId: ADBComm.MESSAGE_PROGRESS,
+                messageId: ADBComm.MESSAGE_TRANSFER_PROGRESS,
                 transferId: messageData.transferId,
                 percent: progressPercent,
                 text: progressText,

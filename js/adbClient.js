@@ -23,7 +23,7 @@ class ADBClient {
         this.worker.onmessage = (e) => {
             let messageData = e.data;
             let messageId = messageData.messageId;
-            if (messageId == ADBComm.MESSAGE_PROGRESS ||
+            if (messageId == ADBComm.MESSAGE_TRANSFER_PROGRESS ||
                 messageId == ADBComm.MESSAGE_TRANSFER_FINISHED) {
                 // The messages of a transfer. They carry the transfer id
                 // instead of the request id.
@@ -122,7 +122,7 @@ class ADBClient {
             onProgress: onProgressCallback,
             onFinished: onFinishedCallback,
         };
-        return this.sendMessage(ADBComm.MESSAGE_TRANSFER, {
+        return this.sendMessage(ADBComm.MESSAGE_START_TRANSFER, {
             transferId: transferId,
             mode: transferMode,
             curDevice: this.curDevice,
@@ -170,7 +170,7 @@ class ADBClient {
                 messageData.transferId);
             return;
         }
-        if (messageData.messageId == ADBComm.MESSAGE_PROGRESS) {
+        if (messageData.messageId == ADBComm.MESSAGE_TRANSFER_PROGRESS) {
             transfer.percent = messageData.percent;
             transfer.onProgress(messageData.percent, messageData.text);
             return;
