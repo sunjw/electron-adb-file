@@ -25,8 +25,8 @@ class ADBClient {
             if (messageId == 'progress' || messageId == 'transferFinished') {
                 // The messages of a transfer. They carry the transfer id
                 // instead of the request id.
-                Utils.log('adbClient.onmessage, messageId=[%s], transferId=[%s]',
-                    messageId, messageData.transferId);
+                // Utils.log('adbClient.onmessage, messageId=[%s], transferId=[%s]',
+                //     messageId, messageData.transferId);
                 this.onTransferMessage(messageData);
                 return;
             }
