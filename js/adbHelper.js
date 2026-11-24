@@ -283,8 +283,15 @@ class ADBHelper {
         transferProcessList[transferId].lastSpeedTime = 0;
 
         let onFinishedCallbackWrapper = function (adbTransferResult) {
-            if (transferProcessList[transferId].sync) {
-                transferProcessList[transferId].sync.end();
+            // A transfer can finish twice: the stop and the end of the
+            // stream can both come in. The second one finds the entry
+            // gone, and must not do anything.
+            let transferProcess = transferProcessList[transferId];
+            if (!transferProcess) {
+                return;
+            }
+            if (transferProcess.sync) {
+                transferProcess.sync.end();
             }
             delete transferProcessList[transferId];
             Utils.log('transferFile.onFinishedCallbackWrapper, end, transferId=[' + transferId + ']');
@@ -358,7 +365,7 @@ class ADBHelper {
                         if (transferProcess.lastSpeedTime > 0) {
                             progressString = progressString + ' (' + transferProcess.transferSpeed + ')';
                         }
-                        onProgressCallback(progressString);
+                        onProgressCallback(progressPercent, progressString);
                     });
                     pullTransfer.on('end', () => {
                         if (transferProcess.transferSpeed && transferProcess.transferSpeed != '') {
@@ -392,7 +399,7 @@ class ADBHelper {
                 pushTransfer.on('progress', (stats) => {
                     let progressPercent = Math.floor((stats.bytesTransferred * 100) / transferProcess.totalSize);
                     transferProcess.percent = progressPercent;
-                    onProgressCallback(progressPercent + '%');
+                    onProgressCallback(progressPercent, progressPercent + '%');
                 });
                 pushTransfer.on('end', () => {
                     onFinishedCallback(adbTransferResult);

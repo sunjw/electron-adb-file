@@ -327,9 +327,9 @@ function initTransferList() {
 }
 
 function updateTransferButton() {
-    let count = adbHelper.getTransferFileCount();
+    let count = adbClient.getTransferFileCount();
     let transferProgress = 0;
-    let minProgress = adbHelper.getTransferFileMinProgress();
+    let minProgress = adbClient.getTransferFileMinProgress();
     let btnTransferText = transferTitle;
     let spanFinishIcon = $('<span/>')
         .addClass('materialIcons material-icons-round')
@@ -778,7 +778,9 @@ function filterDirList(toFilter) {
 function selectDeviceAndRefreshRootDir(device) {
     // The client keeps the device and sends it along with every request.
     adbClient.setCurDevice(device);
-    // The transfers still run in this process, so they need it too.
+    // TODO(refactor): The transfers run in the worker now, so this helper
+    // is not needed for them any more. It is kept until the last step of
+    // the refactor, where the renderer lets go of ADBHelper entirely.
     adbHelper.setCurDevice(device);
 
     // Enable buttons
@@ -841,20 +843,15 @@ function transferFile(mode, path) {
     // built right away.
     const transferId = eleUtils.getShortUuid();
     // A transfer that was stopped or finished can still report progress:
-    // the events that are already on their way arrive late. They must not
-    // touch the ui any more, the transfer is over.
-    let transferFinished = false;
-    adbHelper.transferFile(mode, path, destPath, null, transferId, (progressPercent) => {
-        if (transferFinished) {
-            return;
-        }
-        const progressText = modeText + ': ' + progressPercent;
-        if (divTransferProgress.text() !== progressText) {
-            divTransferProgress.text(progressText);
+    // the events that are already on their way arrive late. The client
+    // drops those, they must not touch the ui any more.
+    adbClient.transfer(mode, path, destPath, transferId, (progressPercent, progressText) => {
+        const progressLabel = modeText + ': ' + progressText;
+        if (divTransferProgress.text() !== progressLabel) {
+            divTransferProgress.text(progressLabel);
         }
         updateTransferButton();
     }, (adbTransferResult) => {
-        transferFinished = true;
         if (adbTransferResult.code == 0) {
             divTransferProgress.text(modeText + ': done' + adbTransferResult.message);
             divTransferStop.empty();
@@ -899,7 +896,7 @@ function transferFile(mode, path) {
 }
 
 function stopTransferFile(transferId) {
-    adbHelper.stopTransferFile(transferId);
+    adbClient.stopTransfer(transferId);
 }
 
 function pullFile(path) {

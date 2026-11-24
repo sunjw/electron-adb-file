@@ -16,6 +16,8 @@ const messageHandlerMap = {
     'init': onInit,
     'getDevices': onGetDevices,
     'getDirList': onGetDirList,
+    'transfer': onTransfer,
+    'stopTransfer': onStopTransfer,
 };
 
 onmessage = function (e) {
@@ -67,5 +69,47 @@ function onGetDirList(messageData) {
             err: adbDirListResult.err,
             dirList: adbDirListResult.dirList,
         });
+    });
+}
+
+// A transfer is not answered with one message but with a stream: a
+// progress message for every step and one finished message at the end.
+// These messages carry the transfer id instead of the request id, so the
+// client can tell them apart from the replies.
+function onTransfer(messageData) {
+    adbHelper.transferFile(
+        messageData.mode,
+        messageData.filePath,
+        messageData.destPath,
+        messageData.curDevice,
+        messageData.transferId,
+        (progressPercent, progressText) => {
+            postMessage({
+                messageId: 'progress',
+                transferId: messageData.transferId,
+                percent: progressPercent,
+                text: progressText,
+            });
+        },
+        (adbTransferResult) => {
+            postMessage({
+                messageId: 'transferFinished',
+                transferId: messageData.transferId,
+                code: adbTransferResult.code,
+                err: adbTransferResult.err,
+                message: adbTransferResult.message,
+            });
+        });
+    // The transfer is running now. It reports on its own, so this
+    // message is only the acknowledgement that it was taken.
+    reply(messageData, {
+        ok: true,
+    });
+}
+
+function onStopTransfer(messageData) {
+    adbHelper.stopTransferFile(messageData.transferId);
+    reply(messageData, {
+        ok: true,
     });
 }
