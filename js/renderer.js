@@ -353,8 +353,14 @@ function updateTransferButton() {
         if (transferring) {
             transferPendingFinish = true;
             transferring = false;
-            btnTransferText = transferTitle + '&nbsp;(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)';
             aBtnTransfer.addClass('pendingFinish');
+        }
+        if (transferPendingFinish) {
+            // The finish icon is placed over the text, so the text has to
+            // keep the room for it. The room is kept while the icon is
+            // shown, not only when the button switches to that state, a
+            // late progress event can refresh the button afterwards.
+            btnTransferText = transferTitle + '&nbsp;(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)';
         }
     }
     // Only touch the DOM when the content changes, rewriting it makes the cursor flicker.
@@ -834,13 +840,21 @@ function transferFile(mode, path) {
     // The transfer id is generated here, so that the stop link can be
     // built right away.
     const transferId = eleUtils.getShortUuid();
+    // A transfer that was stopped or finished can still report progress:
+    // the events that are already on their way arrive late. They must not
+    // touch the ui any more, the transfer is over.
+    let transferFinished = false;
     adbHelper.transferFile(mode, path, destPath, null, transferId, (progressPercent) => {
+        if (transferFinished) {
+            return;
+        }
         const progressText = modeText + ': ' + progressPercent;
         if (divTransferProgress.text() !== progressText) {
             divTransferProgress.text(progressText);
         }
         updateTransferButton();
     }, (adbTransferResult) => {
+        transferFinished = true;
         if (adbTransferResult.code == 0) {
             divTransferProgress.text(modeText + ': done' + adbTransferResult.message);
             divTransferStop.empty();
