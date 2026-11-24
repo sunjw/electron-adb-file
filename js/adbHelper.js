@@ -5,7 +5,7 @@ const Adbkit = require('@sunjw8888/adbkit');
 
 const Utils = require('./utils.js');
 const ChildProcessHelper = require('./childProcessHelper.js');
-const ADBUtils = require('./adbUtils.js');
+const ADBComm = require('./adbComm.js');
 
 const SPEED_START_INTERVAL = 2; // s
 const SPEED_REFRESH_INTERVAL = 500; // ms
@@ -144,7 +144,7 @@ class ADBHelper {
                     if (pathDelimIdx >= 0) {
                         fileName = fileName.substring(pathDelimIdx + 1);
                     }
-                    file.mode = ADBUtils.MODE_PERMISSION_DENIED;
+                    file.mode = ADBComm.MODE_PERMISSION_DENIED;
                     file.size = 0;
                     file.modified = '';
                     file.name = fileName;
@@ -180,7 +180,7 @@ class ADBHelper {
                     lineNamePart = lineNamePart.substring(lineNamePart.indexOf(detailPart) + detailPart.length);
                 }
                 file.name = lineNamePart.trim();
-                if (ADBUtils.isFileLink(file)) {
+                if (ADBComm.isFileLink(file)) {
                     file.name = file.name.split('->')[0].trim();
                 }
 
@@ -192,7 +192,7 @@ class ADBHelper {
 
             // Fix link
             for (let file of adbDirListResult.dirList) {
-                if (!ADBUtils.isFileLink(file)) {
+                if (!ADBComm.isFileLink(file)) {
                     continue;
                 }
 
