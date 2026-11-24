@@ -1,4 +1,5 @@
 const Utils = require('./utils.js');
+const ADBComm = require('./adbComm.js');
 
 class ADBClient {
     constructor(adbPath) {
@@ -22,7 +23,8 @@ class ADBClient {
         this.worker.onmessage = (e) => {
             let messageData = e.data;
             let messageId = messageData.messageId;
-            if (messageId == 'progress' || messageId == 'transferFinished') {
+            if (messageId == ADBComm.MESSAGE_PROGRESS ||
+                messageId == ADBComm.MESSAGE_TRANSFER_FINISHED) {
                 // The messages of a transfer. They carry the transfer id
                 // instead of the request id.
                 // Utils.log('adbClient.onmessage, messageId=[%s], transferId=[%s]',
@@ -45,7 +47,7 @@ class ADBClient {
         };
 
         // The worker needs the adb path before it can do anything.
-        this.sendMessage('init', { adbPath: this.adbPath }, (messageData) => {});
+        this.sendMessage(ADBComm.MESSAGE_INIT, { adbPath: this.adbPath }, (messageData) => {});
     }
 
     // Send a message to the worker and wait for its reply.
@@ -85,7 +87,7 @@ class ADBClient {
     }
 
     getDevices(onDevicesCallback) {
-        return this.sendMessage('getDevices', {}, (messageData) => {
+        return this.sendMessage(ADBComm.MESSAGE_GET_DEVICES, {}, (messageData) => {
             onDevicesCallback({
                 code: messageData.code,
                 err: messageData.err,
@@ -95,7 +97,7 @@ class ADBClient {
     }
 
     getDirList(onDirListCallback) {
-        return this.sendMessage('getDirList', {
+        return this.sendMessage(ADBComm.MESSAGE_GET_DIR_LIST, {
             curDevice: this.curDevice,
             curDir: this.curDir,
         }, (messageData) => {
@@ -120,7 +122,7 @@ class ADBClient {
             onProgress: onProgressCallback,
             onFinished: onFinishedCallback,
         };
-        return this.sendMessage('transfer', {
+        return this.sendMessage(ADBComm.MESSAGE_TRANSFER, {
             transferId: transferId,
             mode: transferMode,
             curDevice: this.curDevice,
@@ -135,7 +137,7 @@ class ADBClient {
 
     // Stop a transfer that is running.
     stopTransfer(transferId) {
-        return this.sendMessage('stopTransfer', {
+        return this.sendMessage(ADBComm.MESSAGE_STOP_TRANSFER, {
             transferId: transferId,
         }, (messageData) => {});
     }
@@ -168,7 +170,7 @@ class ADBClient {
                 messageData.transferId);
             return;
         }
-        if (messageData.messageId == 'progress') {
+        if (messageData.messageId == ADBComm.MESSAGE_PROGRESS) {
             transfer.percent = messageData.percent;
             transfer.onProgress(messageData.percent, messageData.text);
             return;

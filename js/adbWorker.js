@@ -1,4 +1,5 @@
 const ADBHelper = require('./adbHelper.js');
+const ADBComm = require('./adbComm.js');
 const Utils = require('./utils.js');
 
 const fixPath = require('fix-path').default;
@@ -13,11 +14,11 @@ let adbHelper = null;
 // Every ADBHelper method the renderer calls has a message of its own.
 // The handler names follow the method names.
 const messageHandlerMap = {
-    'init': onInit,
-    'getDevices': onGetDevices,
-    'getDirList': onGetDirList,
-    'transfer': onTransfer,
-    'stopTransfer': onStopTransfer,
+    [ADBComm.MESSAGE_INIT]: onInit,
+    [ADBComm.MESSAGE_GET_DEVICES]: onGetDevices,
+    [ADBComm.MESSAGE_GET_DIR_LIST]: onGetDirList,
+    [ADBComm.MESSAGE_TRANSFER]: onTransfer,
+    [ADBComm.MESSAGE_STOP_TRANSFER]: onStopTransfer,
 };
 
 onmessage = function (e) {
@@ -85,7 +86,7 @@ function onTransfer(messageData) {
         messageData.transferId,
         (progressPercent, progressText) => {
             postMessage({
-                messageId: 'progress',
+                messageId: ADBComm.MESSAGE_PROGRESS,
                 transferId: messageData.transferId,
                 percent: progressPercent,
                 text: progressText,
@@ -93,7 +94,7 @@ function onTransfer(messageData) {
         },
         (adbTransferResult) => {
             postMessage({
-                messageId: 'transferFinished',
+                messageId: ADBComm.MESSAGE_TRANSFER_FINISHED,
                 transferId: messageData.transferId,
                 code: adbTransferResult.code,
                 err: adbTransferResult.err,
