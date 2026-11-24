@@ -7,7 +7,6 @@ window.$ = window.jQuery = require('jquery');
 const bootstrap = require('bootstrap');
 
 const Utils = require('./utils');
-const ADBHelper = require('./adbHelper');
 const ADBClient = require('./adbClient');
 const ADBUtils = require('./adbUtils');
 const ListFilter = require('./listfilter');
@@ -47,8 +46,6 @@ const IMGSET_WINDOW_MIN = 'assets/min-k-10.png 1x, assets/min-k-12.png 1.25x, as
 const IMGSET_WINDOW_MAX = 'assets/max-k-10.png 1x, assets/max-k-12.png 1.25x, assets/max-k-15.png 1.5x, assets/max-k-15.png 1.75x, assets/max-k-20.png 2x, assets/max-k-20.png 2.25x, assets/max-k-24.png 2.5x, assets/max-k-30.png 3x, assets/max-k-30.png 3.5x';
 const IMGSET_WINDOW_RESTORE = 'assets/restore-k-10.png 1x, assets/restore-k-12.png 1.25x, assets/restore-k-15.png 1.5x, assets/restore-k-15.png 1.75x, assets/restore-k-20.png 2x, assets/restore-k-20.png 2.25x, assets/restore-k-24.png 2.5x, assets/restore-k-30.png 3x, assets/restore-k-30.png 3.5x';
 const IMGSET_WINDOW_CLOSE = 'assets/close-k-10.png 1x, assets/close-k-12.png 1.25x, assets/close-k-15.png 1.5x, assets/close-k-15.png 1.75x, assets/close-k-20.png 2x, assets/close-k-20.png 2.25x, assets/close-k-24.png 2.5x, assets/close-k-30.png 3x, assets/close-k-30.png 3.5x';
-
-let adbHelper = null;
 
 let adbClient = null;
 
@@ -170,7 +167,6 @@ ipcRenderer.on('leave-full-screen', (event, arg) => {
 });
 
 function init() {
-    adbHelper = new ADBHelper.ADBHelper('adb');
     adbClient = new ADBClient.ADBClient('adb');
 
     aBtnBack = $('#divToolbarWrapper #aBtnBack');
@@ -778,10 +774,6 @@ function filterDirList(toFilter) {
 function selectDeviceAndRefreshRootDir(device) {
     // The client keeps the device and sends it along with every request.
     adbClient.setCurDevice(device);
-    // TODO(refactor): The transfers run in the worker now, so this helper
-    // is not needed for them any more. It is kept until the last step of
-    // the refactor, where the renderer lets go of ADBHelper entirely.
-    adbHelper.setCurDevice(device);
 
     // Enable buttons
     let lsRootCmd = CMD_LS_DIR + CMD_DELIMITER + '/';
