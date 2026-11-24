@@ -10,6 +10,7 @@ const MESSAGE_GET_DEVICES = 'getDevices';
 const MESSAGE_GET_DIR_LIST = 'getDirList';
 const MESSAGE_START_TRANSFER = 'startTransfer';
 const MESSAGE_STOP_TRANSFER = 'stopTransfer';
+const MESSAGE_STOP_ALL_TRANSFER = 'stopAllTransfer';
 
 // Messages that the worker sends on its own. They are not answers to a
 // request, so they carry the transfer id instead of the request id.
@@ -48,6 +49,7 @@ exports.MESSAGE_GET_DEVICES = MESSAGE_GET_DEVICES;
 exports.MESSAGE_GET_DIR_LIST = MESSAGE_GET_DIR_LIST;
 exports.MESSAGE_START_TRANSFER = MESSAGE_START_TRANSFER;
 exports.MESSAGE_STOP_TRANSFER = MESSAGE_STOP_TRANSFER;
+exports.MESSAGE_STOP_ALL_TRANSFER = MESSAGE_STOP_ALL_TRANSFER;
 exports.MESSAGE_TRANSFER_PROGRESS = MESSAGE_TRANSFER_PROGRESS;
 exports.MESSAGE_TRANSFER_FINISHED = MESSAGE_TRANSFER_FINISHED;
 exports.TRANSFER_MESSAGE_IDS = TRANSFER_MESSAGE_IDS;

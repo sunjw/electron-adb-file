@@ -19,6 +19,7 @@ const messageHandlerMap = {
     [ADBComm.MESSAGE_GET_DIR_LIST]: onGetDirList,
     [ADBComm.MESSAGE_START_TRANSFER]: onTransfer,
     [ADBComm.MESSAGE_STOP_TRANSFER]: onStopTransfer,
+    [ADBComm.MESSAGE_STOP_ALL_TRANSFER]: onStopAllTransfer,
 };
 
 onmessage = function (e) {
@@ -110,6 +111,13 @@ function onTransfer(messageData) {
 
 function onStopTransfer(messageData) {
     adbHelper.stopTransferFile(messageData.transferId);
+    reply(messageData, {
+        ok: true,
+    });
+}
+
+function onStopAllTransfer(messageData) {
+    adbHelper.stopAllTransferFile();
     reply(messageData, {
         ok: true,
     });

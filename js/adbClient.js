@@ -141,6 +141,11 @@ class ADBClient {
         }, (messageData) => {});
     }
 
+    // Stop every transfer that is running.
+    stopAllTransfer() {
+        return this.sendMessage(ADBComm.MESSAGE_STOP_ALL_TRANSFER, {}, (messageData) => {});
+    }
+
     // The number of transfers that are running.
     getTransferFileCount() {
         return Object.keys(this.transferMap).length;
