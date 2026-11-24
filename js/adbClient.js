@@ -23,8 +23,7 @@ class ADBClient {
         this.worker.onmessage = (e) => {
             let messageData = e.data;
             let messageId = messageData.messageId;
-            if (messageId == ADBComm.MESSAGE_TRANSFER_PROGRESS ||
-                messageId == ADBComm.MESSAGE_TRANSFER_FINISHED) {
+            if (ADBComm.TRANSFER_MESSAGE_IDS.includes(messageId)) {
                 // The messages of a transfer. They carry the transfer id
                 // instead of the request id.
                 // Utils.log('adbClient.onmessage, messageId=[%s], transferId=[%s]',

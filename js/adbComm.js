@@ -16,6 +16,13 @@ const MESSAGE_STOP_TRANSFER = 'stopTransfer';
 const MESSAGE_TRANSFER_PROGRESS = 'transferProgress';
 const MESSAGE_TRANSFER_FINISHED = 'transferFinished';
 
+// The messages that belong to a transfer. The client routes them by the
+// transfer id, everything else by the request id.
+const TRANSFER_MESSAGE_IDS = [
+    MESSAGE_TRANSFER_PROGRESS,
+    MESSAGE_TRANSFER_FINISHED,
+];
+
 function isFileDir(file) {
     if (file.mode.startsWith('d')) {
         return true;
@@ -43,6 +50,7 @@ exports.MESSAGE_START_TRANSFER = MESSAGE_START_TRANSFER;
 exports.MESSAGE_STOP_TRANSFER = MESSAGE_STOP_TRANSFER;
 exports.MESSAGE_TRANSFER_PROGRESS = MESSAGE_TRANSFER_PROGRESS;
 exports.MESSAGE_TRANSFER_FINISHED = MESSAGE_TRANSFER_FINISHED;
+exports.TRANSFER_MESSAGE_IDS = TRANSFER_MESSAGE_IDS;
 exports.isFileDir = isFileDir;
 exports.isFileLink = isFileLink;
 exports.isPermissionDenied = isPermissionDenied;
