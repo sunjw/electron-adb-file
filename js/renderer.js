@@ -176,7 +176,7 @@ function init() {
     aBtnHiddenFile = $('#divToolbarWrapper #aBtnHiddenFile');
     aBtnAndroid = $('#divToolbarWrapper #aBtnAndroid');
     aBtnSdcard = $('#divToolbarWrapper #aBtnSdcard');
-    aBtnTransfer = $('#divToolbarWrapper #aBtnTransfer');
+    aBtnTransfer = $('#divToolbarWrapper #aBtnTransfer').addClass('tabularNums');
 
     divTipsWaiting = $('#divTipsWaiting');
     divToolbarFunc = $('#divToolbarFunc');
@@ -822,7 +822,7 @@ function transferFile(mode, path) {
     let divTransferLine = $('<div/>').addClass('transferLine');
     let divFileName = $('<div/>').addClass('fileName').html(fileNameHtml);
     divTransferLine.append(divFileName);
-    let divTransferProgress = $('<div/>').addClass('transferProgress').text(modeText + 'ing...');
+    let divTransferProgress = $('<div/>').addClass('transferProgress tabularNums').text(modeText + 'ing...');
     divTransferLine.append(divTransferProgress);
     let divTransferStop = $('<div/>').addClass('transferStop');
     divTransferLine.append(divTransferStop);

@@ -99,6 +99,10 @@ ul {
 .tips {
     color: var(--color-gray);
 }
+.tabularNums {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
+}
 /* Common */
 
 /* Wrapper */
